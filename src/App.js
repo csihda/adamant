@@ -8,10 +8,18 @@ export default function App() {
 
 
   return (
+    /*
     <div className="the_app">
       <Switch>
         <Redirect exact from="/" to="/pbb/adamant" />
         <Route exact path="/pbb/adamant" component={AdamantMain}></Route>
+      </Switch>
+    </div>
+    */
+    <div className="the_app">
+      <Switch>
+        <Redirect exact from="/" to="/adamant" />
+        <Route exact path="/adamant" component={AdamantMain}></Route>
       </Switch>
     </div>
   );
