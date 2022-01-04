@@ -1,6 +1,6 @@
 {
   "homepage": "http://csihda.github.io/adamant",
-  "name": "client",
+  "name": "adamant",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
