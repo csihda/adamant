@@ -25,6 +25,11 @@ const createFormDataBlueprint = (schemaProperties) => {
     if (schemaProperties[item]["type"] !== "object") {
       if (schemaProperties[item]["default"] !== undefined) {
         newObject[item] = schemaProperties[item]["default"];
+      } else if (
+        (schemaProperties[item]["type"] === "boolean") &
+        (schemaProperties[item]["default"] === undefined)
+      ) {
+        newObject[item] = false;
       }
     } else {
       if (
@@ -238,7 +243,7 @@ const AdamantMain = () => {
       }
     }
     set(jData, path, value);
-    console.log(jData);
+    console.log("Current form data:", jData);
     setJsonData(jData);
   };
   //
@@ -257,7 +262,7 @@ const AdamantMain = () => {
       let jData = { ...jsonData };
       jData = deleteKeySchema(jData, pathSchema);
       setJsonData(jData);
-      console.log(jData);
+      console.log("Current form data:", jData);
     } else {
       let newPathSchema = pathSchema.split(".");
       newPathSchema.pop();
@@ -268,7 +273,7 @@ const AdamantMain = () => {
       set(jData, newPathSchema, value);
       jData = deleteKeySchema(jData, pathSchema);
       setJsonData(jData);
-      console.log(jData);
+      console.log("Current form data:", jData);
     }
   };
 

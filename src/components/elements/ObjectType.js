@@ -133,7 +133,7 @@ const ObjectType = ({ path, pathSchema, field_required, field_id, field_index, e
                 </AccordionDetails>
             </Accordion>
         </div>
-        {openDialog ? <EditElement field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} /> : null}
+        {openDialog ? <EditElement pathSchema={pathSchema} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} /> : null}
         {openDialogAddElement ? <AddElement openDialog={openDialogAddElement} setOpenDialog={setOpenDialogAddElement} path={path} defaultSchema={defaultSchema} UISchema={UISchema} /> : null}
     </>);
 };

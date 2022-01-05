@@ -188,7 +188,7 @@ const AddElement = ({ enumerated, field_enumerate, field_required, defaultSchema
             </DialogTitle>
             <Divider />
             <DialogContent>
-                <DialogContentText id="alert-dialog-description">
+                <DialogContentText id="alert-dialog-description" component="span">
                     <div>
                         <FormControl component="widget-type">
                             <FormLabel style={{ color: "#01579b" }} component="legend">Basic Descriptors:</FormLabel>
