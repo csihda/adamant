@@ -5,9 +5,10 @@ import ObjectType from './elements/ObjectType';
 import IntegerType from './elements/IntegerType';
 import BooleanType from './elements/BooleanType';
 import ArrayType from './elements/ArrayType';
+import AnyOfKeyword from './elements/AnyOfKeyword';
 
 
-const ElementRenderer = ({ path, elementRequired, fieldId, fieldIndex, edit, field: { type, title, description, properties, required, enumerate, items, defaultValue, } }) => {
+const ElementRenderer = ({ path, elementRequired, fieldId, fieldIndex, edit, field: { type, title, description, properties, required, enumerate, items, defaultValue, anyOf } }) => {
 
     switch (type) {
         case 'string':
@@ -77,6 +78,22 @@ const ElementRenderer = ({ path, elementRequired, fieldId, fieldIndex, edit, fie
                 field_properties={properties}
                 edit={edit}
             />)
+        case undefined:
+            if (anyOf) {
+                return (
+                    <AnyOfKeyword
+                        path={path + "." + fieldIndex}
+                        field_id={fieldId}
+                        field_label={title}
+                        field_description={description}
+                        field_required={elementRequired}
+                        anyOf_list={anyOf}
+                        edit={edit}
+                    />
+                )
+            } else {
+                return null
+            }
 
         default:
             return null;

@@ -1,21 +1,13 @@
 import React, { useContext, useState } from 'react'
-import TextField from "@material-ui/core/TextField"
 import { makeStyles } from '@material-ui/core/styles';
-import { IconButton } from '@material-ui/core';
-import { Typography } from '@material-ui/core';
 import ElementRenderer from "../../ElementRenderer";
 import Divider from '@material-ui/core/Divider';
 import Accordion from "@material-ui/core/Accordion";
 import { AccordionDetails, AccordionSummary } from '@material-ui/core';
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { Button } from '@material-ui/core';
-import EditIcon from '@material-ui/icons/Edit';
-import AddIcon from "@material-ui/icons/AddBox";
 import DeleteIcon from "@material-ui/icons/Delete";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { FormContext } from "../../../FormContext"
-import DragHandleIcon from "@material-ui/icons/DragIndicator";
-import deleteKey from "../../utils/deleteKey";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -39,6 +31,7 @@ const ItemObjectType = ({ path, field_required, field_items, field_type, edit, i
     const [expand, setExpand] = useState(true); // set to "true" for normally open accordion
     const { updateParent, convertedSchema } = useContext(FormContext);
     let field_properties = field_items["properties"]
+    let globalIndex = index
 
     // This is to expand or contract the accordion, because normally open is used 
     const expandOnChange = () => {
@@ -77,7 +70,7 @@ const ItemObjectType = ({ path, field_required, field_items, field_type, edit, i
                                 tempField["enumerate"] = tempField["enum"]
                             }
                             return (
-                                <div style={{ display: "flex" }}>
+                                <div key={item} style={{ display: "flex" }}>
                                     <ElementRenderer path={path + ".properties"} fieldId={item} fieldIndex={index} elementRequired={field_required} edit={false} field={tempField} />
                                 </div>
                             )

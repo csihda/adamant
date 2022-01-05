@@ -17,6 +17,8 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ArrayItemRenderer from "./ArrayItemRenderer";
 import generateUniqueID from "../utils/generateUniqueID";
 import { IconButton } from "@material-ui/core";
+import { TextField } from "@material-ui/core";
+import ElementRenderer from "../ElementRenderer";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -29,12 +31,13 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const ArrayType = ({ path, field_required, field_id, field_index, edit, field_label, field_description, field_items, field_prefixItems }) => {
+const AnyOfKeyword = ({ path, field_required, field_id, field_index, edit, field_label, field_description, field_prefixItems, anyOf_list }) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [expand, setExpand] = useState(true); // set to "true" for normally open accordion
     const { updateParent, convertedSchema } = useContext(FormContext);
     const [inputItems, setInputItems] = useState([]);
-    const [itemSchema, setItemSchema] = useState();
+    const [field_items, setField_items] = useState(Array.isArray(anyOf_list) & anyOf_list[0]["type"] === "array" ? anyOf_list[0]["items"] : anyOf_list[0])
+    const [globalIndex, setGlobalIndex] = useState(0)
 
     // This is to expand or contract the accordion, because normally open is used 
     const expandOnChange = () => {
@@ -42,6 +45,18 @@ const ArrayType = ({ path, field_required, field_id, field_index, edit, field_la
         setExpand(!value)
     };
 
+    let schemaList = Array(anyOf_list.length).fill().map((x, i) => i)
+
+    // select existing schema option from anyOf list
+    const handleChooseAnyOfSchema = (event) => {
+        const index = parseInt(event.target.value)
+        setGlobalIndex(index)
+        if (anyOf_list[index]["type"] === "array") {
+            setField_items(anyOf_list[index]["items"])
+        } else {
+            setField_items(anyOf_list[index])
+        }
+    }
 
     var required;
     if (field_required === undefined) {
@@ -75,7 +90,7 @@ const ArrayType = ({ path, field_required, field_id, field_index, edit, field_la
         "title": field_label,
         "description": field_description,
         "items": field_items,
-        "type": "array"
+        "type": [anyOf_list[globalIndex]["type"]]
     }
 
     // handle add array item
@@ -134,36 +149,56 @@ const ArrayType = ({ path, field_required, field_id, field_index, edit, field_la
                     </div>
                 </AccordionSummary>
                 <Divider />
-                <AccordionDetails>
-                    <DragDropContext onDragEnd={handleOnDragEnd}>
-                        <Droppable droppableId="subforms">
-                            {(provided) => (
-                                <div style={{ width: "100%" }}  {...provided.droppableProps} ref={provided.innerRef}>
-                                    {Object.keys(inputItems).map((item, index) => {
-                                        return (
-                                            <Draggable isDragDisabled={false} key={inputItems[index]["field_id"]} draggableId={inputItems[index]["field_id"]} index={index}>
-                                                {(provided) => (
-                                                    <div {...provided.draggableProps} ref={provided.innerRef}>
-                                                        <div style={{ display: "flex" }}>
-                                                            <div style={{ width: "20px", marginTop: "10px", height: "30px" }} {...provided.dragHandleProps}>
-                                                                <DragHandleIcon fontSize="small" />
+                <TextField
+                    onChange={(event) => handleChooseAnyOfSchema(event)}
+                    style={{ width: "220px", marginLeft: "10px", marginTop: "20px" }}
+                    fullWidth={false}
+                    select
+                    id={"select-schema"}
+                    label={"Choose a subschema"}
+                    SelectProps={{ native: true }}
+                >
+                    {schemaList.map((content, index) => (
+                        <option key={index} value={content}>
+                            {content}
+                        </option>
+                    ))}
+                </TextField>
+                {anyOf_list[globalIndex]["type"] === "array" ?
+                    <AccordionDetails>
+                        <DragDropContext onDragEnd={handleOnDragEnd}>
+                            <Droppable droppableId="subforms">
+                                {(provided) => (
+                                    <div style={{ width: "100%" }}  {...provided.droppableProps} ref={provided.innerRef}>
+                                        {Object.keys(inputItems).map((item, index) => {
+                                            return (
+                                                <Draggable key={inputItems[index]["field_id"]} draggableId={inputItems[index]["field_id"]} index={index}>
+                                                    {(provided) => (
+                                                        <div {...provided.draggableProps} ref={provided.innerRef}>
+                                                            <div style={{ display: "flex" }}>
+                                                                <div style={{ width: "20px", marginTop: "10px", height: "30px" }} {...provided.dragHandleProps}>
+                                                                    <DragHandleIcon fontSize="small" />
+                                                                </div>
+                                                                <ArrayItemRenderer field_items={inputItems[index]} edit={true} handleDeleteArrayItem={handleDeleteArrayItem} path={path + ".properties"} fieldIndex={index} fieldId={inputItems[index]["field_id"]} type={inputItems[index]["type"]} />
                                                             </div>
-                                                            <ArrayItemRenderer field_items={field_items} edit={true} handleDeleteArrayItem={handleDeleteArrayItem} path={path + ".properties"} fieldIndex={index} fieldId={inputItems[index]["field_id"]} type={inputItems[index]["type"]} />
                                                         </div>
-                                                    </div>
-                                                )}
-                                            </Draggable>
-                                        );
-                                    })}
-                                    {provided.placeholder}
-                                    <div style={{ display: "flex", justifyContent: "right" }}>
-                                        <IconButton onClick={() => { handleAddArrayItem() }} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><AddIcon fontSize="small" color="primary" /></IconButton>
+                                                    )}
+                                                </Draggable>
+                                            );
+                                        })}
+                                        {provided.placeholder}
+                                        <div style={{ display: "flex", justifyContent: "right" }}>
+                                            <IconButton onClick={() => { handleAddArrayItem() }} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><AddIcon fontSize="small" color="primary" /></IconButton>
+                                        </div>
                                     </div>
-                                </div>
-                            )}
-                        </Droppable>
-                    </DragDropContext>
-                </AccordionDetails>
+                                )}
+                            </Droppable>
+                        </DragDropContext>
+                    </AccordionDetails>
+                    :
+                    <div style={{ padding: "10px" }}>
+                        <ElementRenderer path={path} fieldId={field_id} fieldIndex={0} elementRequired={field_required} edit={false} field={field_items} />
+                    </div>}
             </Accordion>
         </div>
         {openDialog ? <EditElement field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
@@ -171,4 +206,4 @@ const ArrayType = ({ path, field_required, field_id, field_index, edit, field_la
     );
 };
 
-export default ArrayType;
+export default AnyOfKeyword;

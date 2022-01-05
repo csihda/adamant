@@ -51,9 +51,9 @@ const ItemNumberType = ({ path, field_type, edit, index, field_id, handleDeleteA
 
     return (
         <>
-            <div style={{ padding: "5px" }}>
+            {index !== undefined ? <div style={{ padding: "5px" }}>
                 <Typography className={classes.heading}>{index + 1}.</Typography>
-            </div>
+            </div> : null}
             <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
                 <TextField onBlur={() => handleInputOnBlur()} onChange={e => handleInputOnChange(e)} value={inputValue} fullWidth={true} className={classes.heading} id={field_id} variant="outlined" />
                 {edit ? <>
