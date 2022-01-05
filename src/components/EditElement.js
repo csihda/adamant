@@ -35,14 +35,14 @@ const style = {
     paddingBottom: "10px",
 }
 
-const EditElement = ({ enumerated, field_enumerate, field_required, field_id, UISchema, path, openDialog, setOpenDialog, defaultValue }) => {
+const EditElement = ({ enumerated, field_enumerate, field_required, field_id, UISchema, path, pathSchema, openDialog, setOpenDialog, defaultValue }) => {
 
     const [selectedType, setSelectedType] = useState(UISchema["type"])
     const [title, setTitle] = useState(UISchema["title"])
     const [fieldId, setFieldId] = useState(UISchema["fieldId"])
     const [description, setDescription] = useState(UISchema["description"])
     const [defValue, setDefValue] = useState(defaultValue)
-    const { updateParent, convertedSchema } = useContext(FormContext);
+    const { updateParent, convertedSchema, updateFormDataId } = useContext(FormContext);
     const [requiredChecked, setRequiredChecked] = useState(field_required === undefined ? false : field_required)
     const [enumChecked, setEnumChecked] = useState(enumerated === undefined ? false : enumerated)
     const [enumList, setEnumList] = useState(field_enumerate === undefined ? [] : field_enumerate);
@@ -104,7 +104,6 @@ const EditElement = ({ enumerated, field_enumerate, field_required, field_id, UI
             setEnumChecked(false);
         }
         const set = require("set-value");
-        console.log(tempUISchema)
         set(convertedSchema, path, tempUISchema)
         // update the required value
         const newConvertedSchema = updateRequired({ selectedType, path, requiredChecked, field_id, convertedSchema })
@@ -148,9 +147,14 @@ const EditElement = ({ enumerated, field_enumerate, field_required, field_id, UI
                     }
             }
         }
-
+        // update main component
         updateParent(newConvertedSchema)
         setOpenDialog(false)
+
+        //* update form data if fieldId change
+        // update pathSchema with new fieldId
+        updateFormDataId(field_id, fieldId, pathSchema, defaultValue)
+
     }
 
     // change descriptor value
@@ -208,7 +212,7 @@ const EditElement = ({ enumerated, field_enumerate, field_required, field_id, UI
             </DialogTitle>
             <Divider />
             <DialogContent>
-                <DialogContentText id="alert-dialog-description">
+                <DialogContentText id="alert-dialog-description" component="span">
                     <div>
                         <FormControl component="widget-type">
                             <FormLabel style={{ color: "#01579b" }} component="legend">Basic Descriptors:</FormLabel>
@@ -238,9 +242,9 @@ const EditElement = ({ enumerated, field_enumerate, field_required, field_id, UI
                             </TextField>
                             {["string", "integer", "number"].includes(selectedType) ?
                                 <>
-                                    <FormControlLabel control={<Checkbox onChange={() => handleEnumBoxOnChange()} checked={enumChecked} />} label="Enumerated (choose from an available list of inputs)" />
+                                    <FormControlLabel control={<Checkbox onChange={() => handleEnumBoxOnChange()} checked={enumChecked} />} label="Enumerated. Choose from an available list of inputs." />
                                     <div style={{ marginTop: "10px", marginBottom: "10px" }}>
-                                        {enumChecked ? <TextField defaultValue={enumList !== undefined ? enumList : ""} onChange={handleOnChangeListField} variant="outlined" fullWidth={true} label="Enumerate List" multiline rows={4} helperText="A list of input separated by commas, e,g.: item 1, item 2, item 3. Make sure that the item data type matches the field input data type. Invalid items will be replaced with NaN upon saving." /> : null}
+                                        {enumChecked ? <TextField defaultValue={enumList !== undefined ? enumList : ""} onChange={handleOnChangeListField} variant="outlined" fullWidth={true} label="Enumerate List" multiline rows={4} helperText="A list of inputs separated by commas, e,g.: item 1, item 2, item 3. Make sure that the item data type matches the field input data type. Invalid items will be replaced with NaN upon saving." /> : null}
                                     </div>
                                 </> : null}
                         </FormControl>

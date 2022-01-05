@@ -148,7 +148,7 @@ const ArrayType = ({ path, field_required, field_id, field_index, edit, field_la
                                                             <div style={{ width: "20px", marginTop: "10px", height: "30px" }} {...provided.dragHandleProps}>
                                                                 <DragHandleIcon fontSize="small" />
                                                             </div>
-                                                            <ArrayItemRenderer field_items={field_items} edit={true} handleDeleteArrayItem={handleDeleteArrayItem} path={path + ".properties"} fieldIndex={index} fieldId={inputItems[index]["field_id"]} type={inputItems[index]["type"]} />
+                                                            <ArrayItemRenderer field_label={field_label} field_items={field_items} edit={true} handleDeleteArrayItem={handleDeleteArrayItem} path={path + ".properties"} fieldIndex={index} fieldId={inputItems[index]["field_id"]} type={inputItems[index]["type"]} />
                                                         </div>
                                                     </div>
                                                 )}

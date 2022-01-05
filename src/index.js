@@ -6,6 +6,18 @@ import App from "./App";
 import CssBaseline from "@material-ui/core/CssBaseline";
 
 const rootElement = document.getElementById("root");
+
+// strict mode is disabled so that findDOMNode warning is suppressed
+ReactDOM.render(
+  <Router>
+    <CssBaseline />
+    <App />
+  </Router>,
+  rootElement
+);
+
+
+/* use this for strict mode, however it always throws the findDOMNode warning
 ReactDOM.render(
   <React.StrictMode>
     <Router>
@@ -15,3 +27,4 @@ ReactDOM.render(
   </React.StrictMode>,
   rootElement
 );
+*/

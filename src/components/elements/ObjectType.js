@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const ObjectType = ({ path, field_required, field_id, field_index, edit, field_label, field_description, field_properties }) => {
+const ObjectType = ({ path, pathSchema, field_required, field_id, field_index, edit, field_label, field_description, field_properties }) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [openDialogAddElement, setOpenDialogAddElement] = useState(false);
     const [expand, setExpand] = useState(true); // set to "true" for normally open accordion
@@ -115,7 +115,7 @@ const ObjectType = ({ path, field_required, field_id, field_index, edit, field_l
                                                             {edit ? <div style={{ width: "20px", marginTop: "10px", height: "30px" }} {...provided.dragHandleProps}>
                                                                 <DragHandleIcon fontSize="small" />
                                                             </div> : null}
-                                                            <ElementRenderer path={path + ".properties"} fieldId={field_properties[item]["fieldId"]} fieldIndex={item} elementRequired={field_required} edit={edit} field={field_properties[item]} />
+                                                            <ElementRenderer path={path + ".properties"} pathSchema={pathSchema} fieldId={field_properties[item]["fieldId"]} fieldIndex={item} elementRequired={field_required} edit={edit} field={field_properties[item]} />
                                                         </div>
                                                     </div>
                                                 )}

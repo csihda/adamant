@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import TextField from "@material-ui/core/TextField";
 import { makeStyles } from '@material-ui/core/styles';
 import EditIcon from '@material-ui/icons/Edit';
@@ -22,11 +22,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const NumberType = ({ path, defaultValue, field_required, field_index, edit, field_id, field_label, field_description, field_enumerate }) => {
+const NumberType = ({ path, pathSchema, defaultValue, field_required, field_index, edit, field_id, field_label, field_description, field_enumerate }) => {
     //const [descriptionText, setDescriptionText] = useState(field_description);
     const [openDialog, setOpenDialog] = useState(false);
-    const { updateParent, convertedSchema } = useContext(FormContext);
-    const [inputValue, setInputValue] = useState()
+    const { updateParent, convertedSchema, handleDataInputOnBlur } = useContext(FormContext);
+    const [inputValue, setInputValue] = useState(defaultValue)
     //const [required, setRequired] = useState(false)
     const classes = useStyles();
 
@@ -85,6 +85,9 @@ const NumberType = ({ path, defaultValue, field_required, field_index, edit, fie
         if (!isNaN(value)) {
             setInputValue(value)
         }
+
+        // store in jData
+        handleDataInputOnBlur(parseFloat(inputValue), pathSchema, "number")
     }
 
     if (field_enumerate === undefined) {
@@ -98,7 +101,7 @@ const NumberType = ({ path, defaultValue, field_required, field_index, edit, fie
                     {edit ? <><IconButton onClick={() => setOpenDialog(true)} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><EditIcon fontSize="small" color="primary" /></IconButton>
                         <IconButton onClick={() => handleDeleteElement()} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><DeleteIcon fontSize="small" color="secondary" /></IconButton></> : null}
                 </div>
-                {openDialog ? <EditElement field_enumerate={field_enumerate} enumerated={enumerated} defaultValue={defaultValue} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
+                {openDialog ? <EditElement pathSchema={pathSchema} field_enumerate={field_enumerate} enumerated={enumerated} defaultValue={defaultValue} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
             </>
         )
     } else {
@@ -107,7 +110,6 @@ const NumberType = ({ path, defaultValue, field_required, field_index, edit, fie
                 <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
                     <TextField
                         select
-                        defaultValue={defaultValue}
                         onBlur={() => handleInputOnBlur()}
                         onChange={e => handleInputOnChange(e)}
                         value={inputValue === undefined ? defaultValue : inputValue}
@@ -135,7 +137,7 @@ const NumberType = ({ path, defaultValue, field_required, field_index, edit, fie
                     {edit ? <><IconButton onClick={() => setOpenDialog(true)} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><EditIcon fontSize="small" color="primary" /></IconButton>
                         <IconButton onClick={() => handleDeleteElement()} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><DeleteIcon fontSize="small" color="secondary" /></IconButton></> : null}
                 </div>
-                {openDialog ? <EditElement field_enumerate={field_enumerate} enumerated={enumerated} defaultValue={defaultValue} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
+                {openDialog ? <EditElement pathSchema={pathSchema} field_enumerate={field_enumerate} enumerated={enumerated} defaultValue={defaultValue} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
             </>
         )
     }

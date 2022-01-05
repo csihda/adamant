@@ -25,10 +25,10 @@ const style = {
 }
 
 
-const BooleanType = ({ path, field_required, field_index, edit, field_id, field_label, field_description, defaultValue }) => {
+const BooleanType = ({ path, pathSchema, field_required, field_index, edit, field_id, field_label, field_description, defaultValue }) => {
     //const [descriptionText, setDescriptionText] = useState(field_description);
     const [openDialog, setOpenDialog] = useState(false);
-    const { updateParent, convertedSchema } = useContext(FormContext);
+    const { updateParent, convertedSchema, handleDataInputOnBlur } = useContext(FormContext);
     const [inputValue, setInputValue] = useState(typeof (defaultValue) === "boolean" ? defaultValue : false);
     //const [required, setRequired] = useState(false)
     const classes = useStyles();
@@ -58,6 +58,7 @@ const BooleanType = ({ path, field_required, field_index, edit, field_id, field_
     const handleInputOnChange = () => {
         let value = inputValue
         setInputValue(!value)
+        handleDataInputOnBlur(!value, pathSchema, "boolean")
     }
 
 
@@ -66,7 +67,7 @@ const BooleanType = ({ path, field_required, field_index, edit, field_id, field_
             <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', alignItems: "center", width: '100%' }}>
                 <div style={{ paddingLeft: "15px", width: "100%" }}>
                     <FormControl >
-                        <FormLabel>{field_label + ":"}</FormLabel>
+                        <FormLabel>{field_label === undefined ? "" : field_label + ":"}</FormLabel>
                         <div style={{ textAlign: "center", width: "100%" }}>
                             <Checkbox onChange={() => handleInputOnChange()} checked={inputValue} />
                         </div>
@@ -76,7 +77,7 @@ const BooleanType = ({ path, field_required, field_index, edit, field_id, field_
                 {edit ? <><IconButton onClick={() => setOpenDialog(true)} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><EditIcon fontSize="small" color="primary" /></IconButton>
                     <IconButton onClick={() => handleDeleteElement()} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><DeleteIcon fontSize="small" color="secondary" /></IconButton></> : null}
             </div>
-            {openDialog ? <EditElement defaultValue={defaultValue} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
+            {openDialog ? <EditElement pathSchema={pathSchema} defaultValue={defaultValue} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
         </>
     )
 };

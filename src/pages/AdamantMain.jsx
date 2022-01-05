@@ -10,6 +10,36 @@ import { FormContext } from "../FormContext";
 import JSONSchemaViewer from "../components/JSONSchemaViewer";
 import array2object from "../components/utils/array2object";
 import object2array from "../components/utils/object2array";
+import { Menu, MenuItem } from "@material-ui/core";
+import DownloadIcon from "@material-ui/icons/GetApp";
+import set from "set-value";
+import getValue from "../components/utils/getValue";
+import deleteKey from "../components/utils/deleteKey";
+import deleteKeySchema from "../components/utils/deleteKeySchema";
+
+// function that receive the schema and convert it to Form/json data blueprint
+const createFormDataBlueprint = (schemaProperties) => {
+  let newObject = {};
+
+  Object.keys(schemaProperties).forEach((item) => {
+    if (schemaProperties[item]["type"] !== "object") {
+      if (schemaProperties[item]["default"] !== undefined) {
+        newObject[item] = schemaProperties[item]["default"];
+      }
+    } else {
+      if (
+        (schemaProperties[item]["properties"] !== undefined) &
+        schemaProperties[item]["properties"]
+      ) {
+        newObject[item] = createFormDataBlueprint(
+          schemaProperties[item]["properties"]
+        );
+      }
+    }
+  });
+
+  return newObject;
+};
 
 const AdamantMain = () => {
   // state management
@@ -24,6 +54,16 @@ const AdamantMain = () => {
   const [inputMode, setInputMode] = useState(false);
   const [convertedSchema, setConvertedSchema] = useState(null);
   const [createScratchMode, setCreateScratchMode] = useState(false);
+  const [jsonData, setJsonData] = useState({});
+  // for dropdown buttons
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  }; //
 
   // place holders
   let schemaList = [
@@ -31,7 +71,7 @@ const AdamantMain = () => {
     "SEM-request-form",
     "Plasma-MDS",
     "unreasonably long title lalalala...",
-  ];
+  ]; //
 
   // function to check if the file accepted is of json format and json schema valid
   const checkSchemaValidity = (schemaFile) => {
@@ -52,12 +92,17 @@ const AdamantMain = () => {
 
           // update states
           setSchemaValidity(true);
-          setSchemaMessage(`${schemaFile[0]["name"]} is valid`);
+          setSchemaMessage(`${schemaFile[0]["name"]} is a valid schema`);
           setSchema(obj);
           let oriSchema = JSON.parse(JSON.stringify(obj));
           setOriginalSchema(oriSchema);
           setConvertedSchema(convertedSchema);
           setEditMode(true);
+
+          // create form data
+          let formData = createFormDataBlueprint(obj["properties"]);
+          setJsonData(formData);
+          console.log(formData);
         } catch (error) {
           console.log(error);
           // update states
@@ -87,9 +132,11 @@ const AdamantMain = () => {
       setRenderReady(false);
       setDisable(true);
       setCreateScratchMode(false);
+      setJsonData({});
     },
     [setRenderReady]
   );
+  //
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -117,6 +164,7 @@ const AdamantMain = () => {
     // update browse schema render states
     setSchemaValidity(false);
     setSchemaMessage();
+    setJsonData({});
 
     let schemaBlueprint = { properties: {}, type: "object" };
     const obj = JSON.parse(JSON.stringify(schemaBlueprint));
@@ -178,9 +226,62 @@ const AdamantMain = () => {
     setSchema(value);
   };
 
+  // handle data input on blur
+  const handleDataInputOnBlur = (event, path, type) => {
+    let jData = { ...jsonData };
+    let value;
+    if (["string", "number", "integer", "boolean"].includes(type)) {
+      if (["number", "integer", "boolean"].includes(type)) {
+        value = event;
+      } else {
+        value = event.target.value;
+      }
+    }
+    set(jData, path, value);
+    console.log(jData);
+    setJsonData(jData);
+  };
+  //
+
+  // update form data id if a fieldId changes, simply delete key value pair of the oldfieldid from jsonData
+  const updateFormDataId = (
+    oldFieldId,
+    newFieldId,
+    pathSchema,
+    defaultValue
+  ) => {
+    if (oldFieldId === newFieldId) {
+      return;
+    }
+    if (defaultValue === undefined) {
+      let jData = { ...jsonData };
+      jData = deleteKeySchema(jData, pathSchema);
+      setJsonData(jData);
+      console.log(jData);
+    } else {
+      let newPathSchema = pathSchema.split(".");
+      newPathSchema.pop();
+      newPathSchema.push(newFieldId);
+
+      let jData = { ...jsonData };
+      let value = getValue(jData, pathSchema);
+      set(jData, newPathSchema, value);
+      jData = deleteKeySchema(jData, pathSchema);
+      setJsonData(jData);
+      console.log(jData);
+    }
+  };
+
   return (
     <>
-      <FormContext.Provider value={{ updateParent, convertedSchema }}>
+      <FormContext.Provider
+        value={{
+          updateParent,
+          convertedSchema,
+          handleDataInputOnBlur,
+          updateFormDataId,
+        }}
+      >
         <div style={{ paddingBottom: "5px" }}>
           <img
             style={{ width: "100%", borderRadius: "5px" }}
@@ -345,18 +446,50 @@ const AdamantMain = () => {
           }}
         >
           {inputMode ? (
-            <>
+            <div style={{ width: "100%", display: "inline-block" }}>
               <Button
                 onClick={() => toEditMode()}
-                style={{ marginRight: "5px" }}
+                style={{ float: "left", marginRight: "5px" }}
                 variant="outlined"
               >
                 Back to Edit Mode
               </Button>
-              <Button variant="contained" color="primary">
+              <Button
+                style={{ float: "right" }}
+                variant="contained"
+                color="primary"
+              >
                 Proceed
               </Button>
-            </>
+              <Button
+                style={{ float: "right", marginRight: "5px" }}
+                id="demo-positioned-button"
+                aria-controls={open ? "demo-positioned-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? "true" : undefined}
+                onClick={handleClick}
+              >
+                <DownloadIcon /> Download Schema/Data
+              </Button>
+              <Menu
+                id="demo-positioned-menu"
+                aria-labelledby="demo-positioned-button"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "left",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "left",
+                }}
+              >
+                <MenuItem onClick={handleClose}>Download JSON Schema</MenuItem>
+                <MenuItem onClick={handleClose}>Download JSON Data</MenuItem>
+              </Menu>
+            </div>
           ) : (
             <Button
               disabled={disable}

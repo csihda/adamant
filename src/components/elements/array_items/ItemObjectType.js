@@ -27,11 +27,10 @@ const style = {
 }
 
 
-const ItemObjectType = ({ path, field_required, field_items, field_type, edit, index, field_id, handleDeleteArrayItem }) => {
+const ItemObjectType = ({ field_label, path, field_required, field_items, field_type, edit, index, field_id, handleDeleteArrayItem }) => {
     const [expand, setExpand] = useState(true); // set to "true" for normally open accordion
     const { updateParent, convertedSchema } = useContext(FormContext);
     let field_properties = field_items["properties"]
-    let globalIndex = index
 
     // This is to expand or contract the accordion, because normally open is used 
     const expandOnChange = () => {
@@ -56,7 +55,7 @@ const ItemObjectType = ({ path, field_required, field_items, field_type, edit, i
                 >
                     <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
                         <div style={{ width: "100%", justifySelf: "center" }}>
-                            ITEM {index + 1}
+                            {field_label + " #" + parseInt(index + 1)}
                         </div>
                         {edit ? <Button onClick={() => handleDeleteArrayItem(index)} style={{ marginLeft: "5px" }}><DeleteIcon color="secondary" /></Button> : null}
                     </div>

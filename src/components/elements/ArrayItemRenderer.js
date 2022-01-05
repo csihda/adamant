@@ -5,7 +5,7 @@ import ItemStringType from "./array_items/ItemStringType";
 import ItemObjectType from "./array_items/ItemObjectType";
 
 
-const ElementRenderer = ({ field_items, path, type, edit, fieldIndex, fieldId, enumerate, handleDeleteArrayItem, properties }) => {
+const ElementRenderer = ({ field_label, field_items, path, type, edit, fieldIndex, fieldId, enumerate, handleDeleteArrayItem, properties }) => {
 
     switch (type) {
         case 'string':
@@ -37,6 +37,7 @@ const ElementRenderer = ({ field_items, path, type, edit, fieldIndex, fieldId, e
             />)
         case 'object':
             return (<ItemObjectType
+                field_label={field_label}
                 path={path + "." + fieldIndex}
                 index={fieldIndex}
                 field_id={fieldId}
