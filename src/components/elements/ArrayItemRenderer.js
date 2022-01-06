@@ -5,11 +5,14 @@ import ItemStringType from "./array_items/ItemStringType";
 import ItemObjectType from "./array_items/ItemObjectType";
 
 
-const ElementRenderer = ({ field_label, field_items, path, type, edit, fieldIndex, fieldId, enumerate, handleDeleteArrayItem, properties }) => {
+const ArrayItemRenderer = ({ pathSchema, dataInputItems, setDataInputItems, field_label, field_items, path, type, edit, fieldIndex, fieldId, enumerate, handleDeleteArrayItem, properties }) => {
 
     switch (type) {
         case 'string':
             return (<ItemStringType
+                setDataInputItems={setDataInputItems}
+                pathSchema={pathSchema}
+                dataInputItems={dataInputItems}
                 path={path + "." + fieldIndex}
                 index={fieldIndex}
                 field_id={fieldId}
@@ -20,6 +23,9 @@ const ElementRenderer = ({ field_label, field_items, path, type, edit, fieldInde
         case 'number':
             return (<ItemNumberType
                 path={path + "." + fieldIndex}
+                pathSchema={pathSchema}
+                setDataInputItems={setDataInputItems}
+                dataInputItems={dataInputItems}
                 index={fieldIndex}
                 field_id={fieldId}
                 handleDeleteArrayItem={handleDeleteArrayItem}
@@ -29,6 +35,9 @@ const ElementRenderer = ({ field_label, field_items, path, type, edit, fieldInde
         case 'integer':
             return (<ItemIntegerType
                 path={path + "." + fieldIndex}
+                pathSchema={pathSchema}
+                setDataInputItems={setDataInputItems}
+                dataInputItems={dataInputItems}
                 index={fieldIndex}
                 field_id={fieldId}
                 handleDeleteArrayItem={handleDeleteArrayItem}
@@ -37,7 +46,10 @@ const ElementRenderer = ({ field_label, field_items, path, type, edit, fieldInde
             />)
         case 'object':
             return (<ItemObjectType
+                setDataInputItems={setDataInputItems}
+                dataInputItems={dataInputItems}
                 field_label={field_label}
+                pathSchema={pathSchema}
                 path={path + "." + fieldIndex}
                 index={fieldIndex}
                 field_id={fieldId}
@@ -54,4 +66,4 @@ const ElementRenderer = ({ field_label, field_items, path, type, edit, fieldInde
 
 }
 
-export default ElementRenderer;
+export default ArrayItemRenderer;

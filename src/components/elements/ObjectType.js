@@ -33,7 +33,7 @@ const ObjectType = ({ path, pathSchema, field_required, field_id, field_index, e
     const [openDialog, setOpenDialog] = useState(false);
     const [openDialogAddElement, setOpenDialogAddElement] = useState(false);
     const [expand, setExpand] = useState(true); // set to "true" for normally open accordion
-    const { updateParent, convertedSchema } = useContext(FormContext);
+    const { updateParent, convertedSchema, handleDataDelete } = useContext(FormContext);
 
     // This is to expand or contract the accordion, because normally open is used 
     const expandOnChange = () => {
@@ -58,6 +58,8 @@ const ObjectType = ({ path, pathSchema, field_required, field_id, field_index, e
     const handleDeleteElement = () => {
         const value = deleteKey(convertedSchema, path)
         updateParent(value)
+
+        handleDataDelete(pathSchema);
     }
 
     // construct UI schema

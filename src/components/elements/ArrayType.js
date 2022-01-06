@@ -29,11 +29,12 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const ArrayType = ({ path, field_required, field_id, field_index, edit, field_label, field_description, field_items, field_prefixItems }) => {
+const ArrayType = ({ pathSchema, path, field_required, field_id, field_index, edit, field_label, field_description, field_items, field_prefixItems }) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [expand, setExpand] = useState(true); // set to "true" for normally open accordion
-    const { updateParent, convertedSchema } = useContext(FormContext);
+    const { updateParent, convertedSchema, handleDataInput, handleDataDelete } = useContext(FormContext);
     const [inputItems, setInputItems] = useState([]);
+    const [dataInputItems, setDataInputItems] = useState([]);
     const [itemSchema, setItemSchema] = useState();
 
     // This is to expand or contract the accordion, because normally open is used 
@@ -53,18 +54,33 @@ const ArrayType = ({ path, field_required, field_id, field_index, edit, field_la
     // update the order in properties on drag end
     const handleOnDragEnd = (result) => {
         if (!result.destination) return;
+
+        // for schema
         let arr = inputItems
         const items = Array.from(arr);
         const [reorderedItem] = items.splice(result.source.index, 1);
         items.splice(result.destination.index, 0, reorderedItem);
-
         setInputItems(items)
+        console.log(items)
+
+        // for data
+        let arr2 = dataInputItems
+        const items2 = Array.from(arr2);
+        const [reorderedItem2] = items2.splice(result.source.index, 1);
+        items2.splice(result.destination.index, 0, reorderedItem2);
+        setDataInputItems(items2)
+        console.log(items2)
+
+        // for form data
+        handleDataInput(items2, pathSchema, "array");
     }
 
     // handle delete object UI
     const handleDeleteElement = () => {
         const value = deleteKey(convertedSchema, path)
         updateParent(value)
+
+        handleDataDelete(pathSchema);
     }
 
     const classes = useStyles();
@@ -88,6 +104,13 @@ const ArrayType = ({ path, field_required, field_id, field_index, edit, field_la
                 const items = Array.from(arr);
                 items.push(field_items);
                 setInputItems(items);
+
+                // push a new item for the data
+                let arr2 = dataInputItems;
+                const items2 = Array.from(arr2);
+                items2.push("");
+                setDataInputItems(items2)
+                console.log(items2)
             } else {
                 // use existing schema if items is not empty
                 let newFieldItems = JSON.parse(JSON.stringify(field_items))
@@ -96,16 +119,41 @@ const ArrayType = ({ path, field_required, field_id, field_index, edit, field_la
                 const items = Array.from(arr);
                 items.push(newFieldItems);
                 setInputItems(items);
+
+                if (["string", "number", "integer", "boolean"].includes(newFieldItems["type"])) {
+                    // push a new item for the data
+                    let arr2 = dataInputItems;
+                    const items2 = Array.from(arr2);
+                    items2.push("");
+                    setDataInputItems(items2)
+                    console.log(items2)
+                } else if (newFieldItems["type"] === "object") {
+                    let arr2 = dataInputItems;
+                    const items2 = Array.from(arr2);
+                    items2.push({});
+                    setDataInputItems(items2)
+                    console.log(items2)
+                }
             }
         }
     }
 
     // handle delete item
     const handleDeleteArrayItem = (index) => {
+        // for schema
         let arr = inputItems
         const items = Array.from(arr);
         items.splice(index, 1);
         setInputItems(items)
+
+        // for data
+        let arr2 = dataInputItems;
+        const items2 = Array.from(arr2);
+        items2.splice(index, 1);
+        setDataInputItems(items2)
+
+        // for form data
+        handleDataInput(items2, pathSchema, "array");
     }
 
     return (<>
@@ -148,7 +196,7 @@ const ArrayType = ({ path, field_required, field_id, field_index, edit, field_la
                                                             <div style={{ width: "20px", marginTop: "10px", height: "30px" }} {...provided.dragHandleProps}>
                                                                 <DragHandleIcon fontSize="small" />
                                                             </div>
-                                                            <ArrayItemRenderer field_label={field_label} field_items={field_items} edit={true} handleDeleteArrayItem={handleDeleteArrayItem} path={path + ".properties"} fieldIndex={index} fieldId={inputItems[index]["field_id"]} type={inputItems[index]["type"]} />
+                                                            <ArrayItemRenderer pathSchema={pathSchema} dataInputItems={dataInputItems} setDataInputItems={setDataInputItems} field_label={field_label} field_items={field_items} edit={true} handleDeleteArrayItem={handleDeleteArrayItem} path={path + ".properties"} fieldIndex={index} fieldId={inputItems[index]["field_id"]} type={inputItems[index]["type"]} />
                                                         </div>
                                                     </div>
                                                 )}
@@ -166,7 +214,7 @@ const ArrayType = ({ path, field_required, field_id, field_index, edit, field_la
                 </AccordionDetails>
             </Accordion>
         </div>
-        {openDialog ? <EditElement field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
+        {openDialog ? <EditElement pathSchema={pathSchema} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
     </>
     );
 };

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { Checkbox, FormLabel, FormHelperText, FormControl } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import EditIcon from '@material-ui/icons/Edit';
@@ -28,7 +28,7 @@ const style = {
 const BooleanType = ({ path, pathSchema, field_required, field_index, edit, field_id, field_label, field_description, defaultValue }) => {
     //const [descriptionText, setDescriptionText] = useState(field_description);
     const [openDialog, setOpenDialog] = useState(false);
-    const { updateParent, convertedSchema, handleDataInputOnBlur } = useContext(FormContext);
+    const { updateParent, convertedSchema, handleDataInput, handleDataDelete } = useContext(FormContext);
     const [inputValue, setInputValue] = useState(typeof (defaultValue) === "boolean" ? defaultValue : false);
     //const [required, setRequired] = useState(false)
     const classes = useStyles();
@@ -52,14 +52,22 @@ const BooleanType = ({ path, pathSchema, field_required, field_index, edit, fiel
     const handleDeleteElement = () => {
         const value = deleteKey(convertedSchema, path)
         updateParent(value)
+
+        handleDataDelete(pathSchema);
     }
 
     // handle input on change for checkbox (boolean type: checked is true unchecked is false)
     const handleInputOnChange = () => {
         let value = inputValue
         setInputValue(!value)
-        handleDataInputOnBlur(!value, pathSchema, "boolean")
+        handleDataInput(!value, pathSchema, "boolean")
     }
+
+    // if boolean field is newly created then store a false input data already to the form data
+    useEffect(() => {
+        if (defaultValue === undefined)
+            handleDataInput(false, pathSchema, "boolean")
+    }, [])
 
 
     return (

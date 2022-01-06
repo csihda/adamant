@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import DeleteIcon from "@material-ui/icons/Delete";
 import { IconButton } from '@material-ui/core';
 import { Typography } from '@material-ui/core';
+import { FormContext } from '../../../FormContext';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -22,9 +23,10 @@ const style = {
 }
 
 
-const ItemNumberType = ({ path, field_type, edit, index, field_id, handleDeleteArrayItem }) => {
+const ItemNumberType = ({ pathSchema, dataInputItems, setDataInputItems, path, field_type, edit, index, field_id, handleDeleteArrayItem }) => {
     const classes = useStyles();
     const [inputValue, setInputValue] = useState("");
+    const { handleDataInput } = useContext(FormContext);
 
 
     // handle input on change for number a.k.a signed float
@@ -46,6 +48,16 @@ const ItemNumberType = ({ path, field_type, edit, index, field_id, handleDeleteA
         value = parseFloat(value)
         if (!isNaN(value)) {
             setInputValue(value)
+
+            // store it to input data array
+            let arr = dataInputItems;
+            const items = Array.from(arr);
+            items[index] = value;
+            setDataInputItems(items);
+            console.log(items)
+
+            // store to the main form data
+            handleDataInput(items, pathSchema, "array")
         }
     }
 

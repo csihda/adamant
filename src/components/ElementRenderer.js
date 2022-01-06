@@ -8,11 +8,14 @@ import ArrayType from './elements/ArrayType';
 import AnyOfKeyword from './elements/AnyOfKeyword';
 
 
-const ElementRenderer = ({ path, pathSchema, elementRequired, fieldId, fieldIndex, edit, field: { type, title, description, properties, required, enumerate, items, defaultValue, anyOf } }) => {
+const ElementRenderer = ({ dataInputItems, setDataInputItems, withinArray, path, pathSchema, elementRequired, fieldId, fieldIndex, edit, field: { type, title, description, properties, required, enumerate, items, defaultValue, anyOf } }) => {
 
     switch (type) {
         case 'string':
             return (<StringType
+                withinArray={withinArray}
+                dataInputItems={dataInputItems}
+                setDataInputItems={setDataInputItems}
                 path={path + "." + fieldIndex}
                 pathSchema={pathSchema !== undefined ? pathSchema + "." + fieldId : fieldId}
                 field_id={fieldId}
@@ -26,6 +29,9 @@ const ElementRenderer = ({ path, pathSchema, elementRequired, fieldId, fieldInde
             />)
         case 'number':
             return (<NumberType
+                withinArray={withinArray}
+                dataInputItems={dataInputItems}
+                setDataInputItems={setDataInputItems}
                 path={path + "." + fieldIndex}
                 pathSchema={pathSchema !== undefined ? pathSchema + "." + fieldId : fieldId}
                 field_id={fieldId}
@@ -39,6 +45,9 @@ const ElementRenderer = ({ path, pathSchema, elementRequired, fieldId, fieldInde
             />)
         case 'integer':
             return (<IntegerType
+                withinArray={withinArray}
+                dataInputItems={dataInputItems}
+                setDataInputItems={setDataInputItems}
                 path={path + "." + fieldIndex}
                 pathSchema={pathSchema !== undefined ? pathSchema + "." + fieldId : fieldId}
                 field_id={fieldId}
@@ -52,6 +61,7 @@ const ElementRenderer = ({ path, pathSchema, elementRequired, fieldId, fieldInde
             />)
         case 'boolean':
             return (<BooleanType
+                withinArray={withinArray}
                 path={path + "." + fieldIndex}
                 pathSchema={pathSchema !== undefined ? pathSchema + "." + fieldId : fieldId}
                 field_id={fieldId}
@@ -64,6 +74,7 @@ const ElementRenderer = ({ path, pathSchema, elementRequired, fieldId, fieldInde
             />)
         case 'array':
             return (<ArrayType
+                withinArray={withinArray}
                 path={path + "." + fieldIndex}
                 pathSchema={pathSchema !== undefined ? pathSchema + "." + fieldId : fieldId}
                 field_id={fieldId}
@@ -75,6 +86,7 @@ const ElementRenderer = ({ path, pathSchema, elementRequired, fieldId, fieldInde
             />)
         case 'object':
             return (<ObjectType
+                withinArray={withinArray}
                 path={path + "." + fieldIndex}
                 pathSchema={pathSchema !== undefined ? pathSchema + "." + fieldId : fieldId}
                 field_id={fieldId}
@@ -88,6 +100,7 @@ const ElementRenderer = ({ path, pathSchema, elementRequired, fieldId, fieldInde
             if (anyOf) {
                 return (
                     <AnyOfKeyword
+                        withinArray={withinArray}
                         path={path + "." + fieldIndex}
                         field_id={fieldId}
                         field_label={title}

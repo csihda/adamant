@@ -25,10 +25,10 @@ const style = {
 }
 
 
-const StringType = ({ path, pathSchema, field_required, field_index, edit, field_id, field_label, field_description, field_enumerate, defaultValue }) => {
+const StringType = ({ dataInputItems, setDataInputItems, withinArray, path, pathSchema, field_required, field_index, edit, field_id, field_label, field_description, field_enumerate, defaultValue }) => {
     //const [descriptionText, setDescriptionText] = useState(field_description);
     const [openDialog, setOpenDialog] = useState(false);
-    const { updateParent, convertedSchema, handleDataInputOnBlur } = useContext(FormContext);
+    const { updateParent, convertedSchema, handleDataInput, handleDataDelete } = useContext(FormContext);
     //const [required, setRequired] = useState(false)
     const classes = useStyles();
 
@@ -58,14 +58,76 @@ const StringType = ({ path, pathSchema, field_required, field_index, edit, field
     const handleDeleteElement = () => {
         const value = deleteKey(convertedSchema, path)
         updateParent(value)
+
+        handleDataDelete(pathSchema);
     }
+
+    // handle on blur
+    const handleOnBlur = (event, pathSchema, type) => {
+        if (withinArray !== undefined & withinArray) {
+            let newPathSchema = pathSchema.split(".");
+            newPathSchema.pop()
+            newPathSchema = newPathSchema.join(".")
+            console.log(newPathSchema)
+
+            let arr = dataInputItems;
+            console.log(pathSchema)
+            const items = Array.from(arr);
+            items[field_index][field_id] = event.target.value;
+            setDataInputItems(items);
+            console.log(items)
+
+            // store to the main form data
+            let value = {
+                "target": {
+                    "value":
+                        items
+                }
+            }
+            handleDataInput(value, newPathSchema, "string")
+        } else {
+            handleDataInput(event, pathSchema, type)
+        }
+    }
+
+    // if enumerate and no defaultValue then already store the first enumerate value to form data
+    useEffect(() => {
+        if (field_enumerate !== undefined & defaultValue === undefined & withinArray === undefined) {
+            let event = {
+                "target": {
+                    "value":
+                        field_enumerate[0]
+                }
+            }
+            handleDataInput(event, pathSchema, "string")
+        } else if (field_enumerate !== undefined & withinArray !== undefined & withinArray === true) {
+            let newPathSchema = pathSchema.split(".");
+            newPathSchema.pop()
+            newPathSchema = newPathSchema.join(".")
+            console.log(newPathSchema)
+            let arr = dataInputItems;
+            const items = Array.from(arr);
+            items[field_index][field_id] = field_enumerate[0];
+            setDataInputItems(items);
+            console.log(items)
+
+            // store to the main form data
+            let event = {
+                "target": {
+                    "value":
+                        items
+                }
+            }
+            handleDataInput(event, newPathSchema, "string")
+        }
+    }, [])
 
 
     if (field_enumerate === undefined) {
         return (
             <>
                 <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
-                    <TextField onBlur={(event) => handleDataInputOnBlur(event, pathSchema, "string")} required={required} helperText={field_description} defaultValue={defaultValue} fullWidth={true} className={classes.heading} id={field_id} label={field_label} variant="outlined" />
+                    <TextField onBlur={(event) => handleOnBlur(event, pathSchema, "string")} required={required} helperText={field_description} defaultValue={defaultValue} fullWidth={true} className={classes.heading} id={field_id} label={field_label} variant="outlined" />
                     {edit ? <><IconButton onClick={() => setOpenDialog(true)} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><EditIcon fontSize="small" color="primary" /></IconButton>
                         <IconButton onClick={() => handleDeleteElement()} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><DeleteIcon fontSize="small" color="secondary" /></IconButton></> : null}
                 </div>
@@ -77,7 +139,7 @@ const StringType = ({ path, pathSchema, field_required, field_index, edit, field
             <>
                 <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
                     < TextField
-                        onBlur={(event) => handleDataInputOnBlur(event, pathSchema, "string")}
+                        onBlur={(event) => handleOnBlur(event, pathSchema, "string")}
                         required={required}
                         select
                         fullWidth={true}

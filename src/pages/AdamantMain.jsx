@@ -18,6 +18,7 @@ import deleteKey from "../components/utils/deleteKey";
 import deleteKeySchema from "../components/utils/deleteKeySchema";
 
 // function that receive the schema and convert it to Form/json data blueprint
+// also to already put the default value to this blueprint
 const createFormDataBlueprint = (schemaProperties) => {
   let newObject = {};
 
@@ -174,6 +175,11 @@ const AdamantMain = () => {
     let schemaBlueprint = { properties: {}, type: "object" };
     const obj = JSON.parse(JSON.stringify(schemaBlueprint));
 
+    // create form data again
+    let formData = createFormDataBlueprint(obj["properties"]);
+    setJsonData(formData);
+    console.log(formData);
+
     // convert obj schema to iterable array properties
     let convertedSchema = JSON.parse(JSON.stringify(obj));
     convertedSchema["properties"] = object2array(obj["properties"]);
@@ -229,10 +235,15 @@ const AdamantMain = () => {
     convertedSchema["properties"] = object2array(value["properties"]);
     setConvertedSchema(convertedSchema);
     setSchema(value);
+
+    // create form data again
+    let formData = createFormDataBlueprint(value["properties"]);
+    setJsonData(formData);
+    console.log(formData);
   };
 
   // handle data input on blur
-  const handleDataInputOnBlur = (event, path, type) => {
+  const handleDataInput = (event, path, type) => {
     let jData = { ...jsonData };
     let value;
     if (["string", "number", "integer", "boolean"].includes(type)) {
@@ -241,12 +252,22 @@ const AdamantMain = () => {
       } else {
         value = event.target.value;
       }
+    } else if (type === "array") {
+      value = event;
     }
     set(jData, path, value);
     console.log("Current form data:", jData);
     setJsonData(jData);
   };
   //
+
+  // delete data in jsonData when the field in schema is deleted
+  const handleDataDelete = (path) => {
+    let jData = { ...jsonData };
+    let value = deleteKeySchema(jData, path);
+    setJsonData(value);
+    console.log(value);
+  };
 
   // update form data id if a fieldId changes, simply delete key value pair of the oldfieldid from jsonData
   const updateFormDataId = (
@@ -283,8 +304,9 @@ const AdamantMain = () => {
         value={{
           updateParent,
           convertedSchema,
-          handleDataInputOnBlur,
+          handleDataInput,
           updateFormDataId,
+          handleDataDelete,
         }}
       >
         <div style={{ paddingBottom: "5px" }}>

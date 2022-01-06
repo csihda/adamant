@@ -22,11 +22,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const NumberType = ({ path, pathSchema, defaultValue, field_required, field_index, edit, field_id, field_label, field_description, field_enumerate }) => {
+const NumberType = ({ dataInputItems, setDataInputItems, withinArray, path, pathSchema, defaultValue, field_required, field_index, edit, field_id, field_label, field_description, field_enumerate }) => {
     //const [descriptionText, setDescriptionText] = useState(field_description);
     const [openDialog, setOpenDialog] = useState(false);
-    const { updateParent, convertedSchema, handleDataInputOnBlur } = useContext(FormContext);
-    const [inputValue, setInputValue] = useState(defaultValue)
+    const { updateParent, convertedSchema, handleDataInput, handleDataDelete } = useContext(FormContext);
+    const [inputValue, setInputValue] = useState(defaultValue === undefined ? "" : defaultValue)
     //const [required, setRequired] = useState(false)
     const classes = useStyles();
 
@@ -58,6 +58,8 @@ const NumberType = ({ path, pathSchema, defaultValue, field_required, field_inde
     const handleDeleteElement = () => {
         const value = deleteKey(convertedSchema, path)
         updateParent(value)
+
+        handleDataDelete(pathSchema);
     }
 
     // handle input on change for number a.k.a signed float
@@ -80,14 +82,38 @@ const NumberType = ({ path, pathSchema, defaultValue, field_required, field_inde
 
     // handle input on blur for signed integer
     const handleInputOnBlur = () => {
-        let value = inputValue;
-        value = parseFloat(value)
-        if (!isNaN(value)) {
-            setInputValue(value)
-        }
 
-        // store in jData
-        handleDataInputOnBlur(parseFloat(inputValue), pathSchema, "number")
+        if (withinArray !== undefined & withinArray) {
+
+            let value = inputValue;
+            value = parseFloat(value)
+            if (!isNaN(value)) {
+                setInputValue(value)
+                // store in jData
+                let newPathSchema = pathSchema.split(".");
+                newPathSchema.pop()
+                newPathSchema = newPathSchema.join(".")
+                console.log(newPathSchema)
+
+                let arr = dataInputItems;
+                console.log(pathSchema)
+                const items = Array.from(arr);
+                items[field_index][field_id] = value;
+                setDataInputItems(items);
+                console.log(items)
+
+                // store to the main form data
+                handleDataInput(items, newPathSchema, "number")
+            }
+        } else {
+            let value = inputValue;
+            value = parseFloat(value)
+            if (!isNaN(value)) {
+                setInputValue(value)
+                // store in jData
+                handleDataInput(parseFloat(inputValue), pathSchema, "number")
+            }
+        }
     }
 
     if (field_enumerate === undefined) {

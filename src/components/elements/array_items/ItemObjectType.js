@@ -27,10 +27,12 @@ const style = {
 }
 
 
-const ItemObjectType = ({ field_label, path, field_required, field_items, field_type, edit, index, field_id, handleDeleteArrayItem }) => {
+const ItemObjectType = ({ dataInputItems, setDataInputItems, field_label, pathSchema, field_required, field_items, field_type, edit, index, field_id, handleDeleteArrayItem }) => {
     const [expand, setExpand] = useState(true); // set to "true" for normally open accordion
     const { updateParent, convertedSchema } = useContext(FormContext);
+    let objectIndex = index;
     let field_properties = field_items["properties"]
+    let withinArray = true;
 
     // This is to expand or contract the accordion, because normally open is used 
     const expandOnChange = () => {
@@ -70,7 +72,7 @@ const ItemObjectType = ({ field_label, path, field_required, field_items, field_
                             }
                             return (
                                 <div key={item} style={{ display: "flex" }}>
-                                    <ElementRenderer path={path + ".properties"} fieldId={item} fieldIndex={index} elementRequired={field_required} edit={false} field={tempField} />
+                                    <ElementRenderer pathSchema={pathSchema} withinArray={withinArray} dataInputItems={dataInputItems} setDataInputItems={setDataInputItems} fieldId={item} fieldIndex={objectIndex} elementRequired={field_required} edit={false} field={tempField} />
                                 </div>
                             )
                         })

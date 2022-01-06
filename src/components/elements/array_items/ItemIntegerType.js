@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import TextField from "@material-ui/core/TextField"
 import { makeStyles } from '@material-ui/core/styles';
 import DeleteIcon from "@material-ui/icons/Delete";
 import { IconButton } from '@material-ui/core';
 import { Typography } from '@material-ui/core';
+import { FormContext } from '../../../FormContext';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -22,9 +23,10 @@ const style = {
 }
 
 
-const ItemIntegerType = ({ path, field_type, edit, index, field_id, handleDeleteArrayItem }) => {
+const ItemIntegerType = ({ pathSchema, dataInputItems, setDataInputItems, edit, index, field_id, handleDeleteArrayItem }) => {
     const classes = useStyles();
     const [inputValue, setInputValue] = useState("");
+    const { handleDataInput } = useContext(FormContext);
 
     // handle input on change for signed integer
     const handleInputOnChange = (event) => {
@@ -48,6 +50,16 @@ const ItemIntegerType = ({ path, field_type, edit, index, field_id, handleDelete
         value = parseInt(value)
         if (!isNaN(value)) {
             setInputValue(value)
+
+            // store it to input data array
+            let arr = dataInputItems;
+            const items = Array.from(arr);
+            items[index] = value;
+            setDataInputItems(items);
+            console.log(items)
+
+            // store to form data
+            handleDataInput(items, pathSchema, "array")
         }
     }
 
