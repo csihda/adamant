@@ -66,7 +66,7 @@ const ItemObjectType = ({ dataInputItems, setDataInputItems, field_label, pathSc
                 <AccordionDetails>
                     <div style={{ width: "100%" }}>
                         {Object.keys(field_properties).map((item, index) => {
-                            let tempField = field_properties[item]
+                            let tempField = JSON.parse(JSON.stringify(field_properties[item]));
                             if (tempField["enum"]) {
                                 tempField["enumerate"] = tempField["enum"]
                             }

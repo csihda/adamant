@@ -87,27 +87,18 @@ const StringType = ({ dataInputItems, setDataInputItems, withinArray, path, path
         }
     }
 
-    /* maybe not need this, already handled in AdamantMain.jsx
+
     // if enumerate and no defaultValue then already store the first enumerate value to form data
+    // this is for any enumerate in a subschema (e.g., in anyOf), for the rest of enumerate is taken care of in AdamantMain.jsx
     useEffect(() => {
-        if (field_enumerate !== undefined & defaultValue === undefined & withinArray === undefined) {
-            let event = {
-                "target": {
-                    "value":
-                        field_enumerate[0]
-                }
-            }
-            handleDataInput(event, pathSchema, "string")
-        } else if (field_enumerate !== undefined & withinArray !== undefined & withinArray === true) {
+        if (field_enumerate !== undefined & withinArray !== undefined & withinArray === true) {
             let newPathSchema = pathSchema.split(".");
             newPathSchema.pop()
             newPathSchema = newPathSchema.join(".")
-            console.log(newPathSchema)
             let arr = dataInputItems;
             const items = Array.from(arr);
             items[field_index][field_id] = field_enumerate[0];
             setDataInputItems(items);
-            console.log(items)
 
             // store to the main form data
             let event = {
@@ -119,7 +110,6 @@ const StringType = ({ dataInputItems, setDataInputItems, withinArray, path, path
             handleDataInput(event, newPathSchema, "string")
         }
     }, [])
-    */
 
     if (field_enumerate === undefined) {
         return (
