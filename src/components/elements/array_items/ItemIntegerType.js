@@ -56,7 +56,6 @@ const ItemIntegerType = ({ pathSchema, dataInputItems, setDataInputItems, edit, 
             const items = Array.from(arr);
             items[index] = value;
             setDataInputItems(items);
-            console.log(items)
 
             // store to form data
             handleDataInput(items, pathSchema, "array")

@@ -54,7 +54,6 @@ const ItemNumberType = ({ pathSchema, dataInputItems, setDataInputItems, path, f
             const items = Array.from(arr);
             items[index] = value;
             setDataInputItems(items);
-            console.log(items)
 
             // store to the main form data
             handleDataInput(items, pathSchema, "array")

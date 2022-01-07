@@ -100,6 +100,7 @@ const ElementRenderer = ({ dataInputItems, setDataInputItems, withinArray, path,
             if (anyOf) {
                 return (
                     <AnyOfKeyword
+                        pathSchema={pathSchema !== undefined ? pathSchema + "." + fieldId : fieldId}
                         withinArray={withinArray}
                         path={path + "." + fieldIndex}
                         field_id={fieldId}

@@ -61,7 +61,6 @@ const ArrayType = ({ pathSchema, path, field_required, field_id, field_index, ed
         const [reorderedItem] = items.splice(result.source.index, 1);
         items.splice(result.destination.index, 0, reorderedItem);
         setInputItems(items)
-        console.log(items)
 
         // for data
         let arr2 = dataInputItems
@@ -69,7 +68,6 @@ const ArrayType = ({ pathSchema, path, field_required, field_id, field_index, ed
         const [reorderedItem2] = items2.splice(result.source.index, 1);
         items2.splice(result.destination.index, 0, reorderedItem2);
         setDataInputItems(items2)
-        console.log(items2)
 
         // for form data
         handleDataInput(items2, pathSchema, "array");
@@ -110,7 +108,6 @@ const ArrayType = ({ pathSchema, path, field_required, field_id, field_index, ed
                 const items2 = Array.from(arr2);
                 items2.push("");
                 setDataInputItems(items2)
-                console.log(items2)
             } else {
                 // use existing schema if items is not empty
                 let newFieldItems = JSON.parse(JSON.stringify(field_items))
@@ -126,13 +123,11 @@ const ArrayType = ({ pathSchema, path, field_required, field_id, field_index, ed
                     const items2 = Array.from(arr2);
                     items2.push("");
                     setDataInputItems(items2)
-                    console.log(items2)
                 } else if (newFieldItems["type"] === "object") {
                     let arr2 = dataInputItems;
                     const items2 = Array.from(arr2);
                     items2.push({});
                     setDataInputItems(items2)
-                    console.log(items2)
                 }
             }
         }

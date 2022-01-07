@@ -93,14 +93,11 @@ const NumberType = ({ dataInputItems, setDataInputItems, withinArray, path, path
                 let newPathSchema = pathSchema.split(".");
                 newPathSchema.pop()
                 newPathSchema = newPathSchema.join(".")
-                console.log(newPathSchema)
 
                 let arr = dataInputItems;
-                console.log(pathSchema)
                 const items = Array.from(arr);
                 items[field_index][field_id] = value;
                 setDataInputItems(items);
-                console.log(items)
 
                 // store to the main form data
                 handleDataInput(items, newPathSchema, "number")

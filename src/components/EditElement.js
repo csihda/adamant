@@ -49,6 +49,11 @@ const EditElement = ({ enumerated, field_enumerate, field_required, field_id, UI
 
     let tempUISchema = JSON.parse(JSON.stringify(UISchema))
 
+    let notImplemented = false;
+    if (!["string", "number", "integer", "object", "array", "boolean"].includes(UISchema["type"])) {
+        notImplemented = true;
+    }
+
 
     const datatypes = ["string", "number", "integer", "object", "array", "boolean"]
 
@@ -196,149 +201,140 @@ const EditElement = ({ enumerated, field_enumerate, field_required, field_id, UI
     }
 
     return (
-        <><Dialog
-            open={openDialog}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-        >
-            <DialogTitle id="alert-dialog-title">
-                <div style={{ display: "inline-flex", width: "100%", verticalAlign: "middle" }}>
-                    <EditIcon fontSize="large" color="primary" style={{ alignSelf: "center" }} />
-                    <div style={{ width: "100%", alignSelf: "center" }}>
-                        Edit "{tempUISchema["title"]}"
-                    </div>
-                    <IconButton onClick={() => handleCancelEdit()}><CloseIcon fontSize="large" color="secondary" /></IconButton>
-                </div>
-            </DialogTitle>
-            <Divider />
-            <DialogContent>
-                <DialogContentText id="alert-dialog-description" component="span">
-                    <div>
-                        <FormControl component="widget-type">
-                            <FormLabel style={{ color: "#01579b" }} component="legend">Basic Descriptors:</FormLabel>
-                            <TextField margin="normal" required onChange={event => handleChangeUISchema(event, "fieldId")} style={{ marginTop: "20px" }} defaultValue={field_id} variant="outlined" fullWidth={true} label={"Field ID or Key"} helperText='A unique json key or id for this field. Usually short and no spaces (use "_" instead). Spaces are replaced automatically with "_" upon saving.' />
-                            <TextField margin="normal" onChange={event => handleChangeUISchema(event, "title")} style={{ marginTop: "10px" }} defaultValue={tempUISchema["title"]} variant="outlined" fullWidth={true} label={"Field Title"} helperText='Label or title of the field. For a field that requires a unit, the unit can be placed within a square bracket, e,g., "Chamber Pressure [Pa]".' />
-                            <TextField margin="normal" onChange={event => handleChangeUISchema(event, "description")} style={{ marginTop: "10px" }} defaultValue={tempUISchema["description"]} variant="outlined" fullWidth={true} label={"Field Description"} multiline rows={3} helperText='A detailed description of the field, how the input should be formated, etc.' />
-                            <TextField
-                                margin="normal"
-                                helperText='Data type of the field input.'
-                                onChange={event => handleChangeUISchema(event, "type")}
-                                style={{ marginTop: "10px" }}
-                                defaultValue={tempUISchema["type"]}
-                                select
-                                fullWidth={true}
-                                id={field_id}
-                                label={"Field Data Type"}
-                                variant="outlined"
-                                SelectProps={{
-                                    native: true,
-                                }}
-                            >
-                                {datatypes.map((content, index) => (
-                                    <option key={index} value={content}>
-                                        {content}
-                                    </option>
-                                ))}
-                            </TextField>
-                            {["string", "integer", "number"].includes(selectedType) ?
-                                <>
-                                    <FormControlLabel control={<Checkbox onChange={() => handleEnumBoxOnChange()} checked={enumChecked} />} label="Enumerated. Choose from an available list of inputs." />
-                                    <div style={{ marginTop: "10px", marginBottom: "10px" }}>
-                                        {enumChecked ? <TextField defaultValue={enumList !== undefined ? enumList : ""} onChange={handleOnChangeListField} variant="outlined" fullWidth={true} label="Enumerate List" multiline rows={4} helperText="A list of inputs separated by commas, e,g.: item 1, item 2, item 3. Make sure that the item data type matches the field input data type. Invalid items will be replaced with NaN upon saving." /> : null}
-                                    </div>
-                                </> : null}
-                        </FormControl>
-                        <div style={{ paddingTop: "10px", paddingBottom: "10px" }}>
-                            <FormControl component="validation-related">
-                                <FormLabel style={{ color: "#01579b" }} component="legend">Validation Related:</FormLabel>
-                            </FormControl>
-                            <FormGroup>
-                                {selectedType === "array" ?
-                                    <FormControlLabel control={<Checkbox onChange={() => handleCheckBoxOnChange()} checked={requiredChecked} />} label="Required. Checked means the field must be filled." />
-                                    : null}
-                                {selectedType !== "object" & selectedType !== "array" & selectedType !== "boolean" ?
-                                    <>
-                                        <FormControlLabel control={<Checkbox onChange={() => handleCheckBoxOnChange()} checked={requiredChecked} />} label="Required. Checked means the field must be filled." />
-                                        <TextField margin='normal' onChange={event => handleChangeUISchema(event, "defaultValue")} style={{ marginTop: "10px" }} defaultValue={defaultValue} variant="outlined" fullWidth={true} label={"Field Default Value"} helperText="Initial value of the field." />
-                                    </>
-                                    : null}
-                                {selectedType === "boolean" ?
-                                    <>
-                                        <TextField
-                                            margin='normal'
-                                            onChange={event => handleChangeUISchema(event, "defaultValue")}
-                                            style={{ marginTop: "20px" }}
-                                            defaultValue={defaultValue !== undefined ? defaultValue : ""}
-                                            select
-                                            fullWidth={true}
-                                            id={field_id}
-                                            label={"Boolean Field Default Value"}
-                                            variant="outlined"
-                                            SelectProps={{
-                                                native: true,
-                                            }}
-                                        >
-                                            {["", "true", "false"].map((content, index) => (
-                                                <option key={index} value={content}>
-                                                    {content}
-                                                </option>
-                                            ))}
-                                        </TextField>
-                                    </>
-                                    : null}
-                            </FormGroup>
-                        </div>
-                    </div>
-                </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={() => handleCancelEdit()} color="secondary">
-                    Cancel
-                </Button>
-                <Button onClick={() => handleUpdateSchemaOnClick()} color="primary" autoFocus>
-                    Save
-                </Button>
-            </DialogActions>
-        </Dialog>
-            {/*<Dialog
-                open={openDialog}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-            >
-                <DialogTitle id="alert-dialog-title"><EditIcon fontSize="large" color="primary" style={{ display: "inline-block", marginBottom: "-10px" }} />  Edit Field "{UISchema[`${field_id}`]["title"]}"</DialogTitle>
-                <Divider />
-                <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                        <div>
-                            <FormControl component="widget-type">
-                                <FormLabel component="legend">Available widgets for string type:</FormLabel>
-                                <RadioGroup row aria-label="widgetType" name="row-radio-buttons-group" value={value}
-                                    onChange={handleRadioChange}>
-                                    <FormControlLabel value="Text" control={<Radio />} label="Text" />
-                                    <FormControlLabel value="Long Text" control={<Radio />} label="Long Text" />
-                                    <FormControlLabel value="List" control={<Radio />} label="List" />
-                                    <FormControlLabel value="Autocomplete" control={<Radio disabled />} label="Autocomplete" />
-                                    <FormControlLabel value="Tag-like" control={<Radio disabled />} label="Tag-like" />
-                                </RadioGroup>
-                            </FormControl>
-                            <div style={{ marginTop: "10px", marginBottom: "10px" }}>
-                                {value === "List" ? <TextField defaultValue={inputList} onChange={handleOnChangeListField} variant="outlined" fullWidth={true} label="List" multiline rows={4} /> : null}
+        <>
+            {notImplemented ?
+                <Dialog
+                    open={openDialog}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">
+                        <div style={{ display: "inline-flex", width: "100%", verticalAlign: "middle" }}>
+                            <EditIcon fontSize="large" color="primary" style={{ alignSelf: "center" }} />
+                            <div style={{ width: "100%", alignSelf: "center" }}>
+                                Edit "{tempUISchema["title"]}"
                             </div>
-                            <FormControl component="validation">
-                                <FormLabel component="legend">Validation:</FormLabel>
-                            </FormControl>
+                            <IconButton onClick={() => handleCancelEdit()}><CloseIcon fontSize="large" color="secondary" /></IconButton>
                         </div>
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setOpenDialog(false)} color="secondary">
-                        Cancel
-                    </Button>
-                    <Button onClick={() => handleSaveChange()} color="primary" autoFocus>
-                        Save
-                    </Button>
-                </DialogActions>
-            </Dialog>*/}
+                    </DialogTitle>
+                    <Divider />
+                    <DialogContent>
+                        We are sorry! Editing feature for the "{UISchema["type"]}" type/keyword is not yet implemented.
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => handleCancelEdit()} color="secondary">
+                            Cancel
+                        </Button>
+                        <Button disabled onClick={() => handleUpdateSchemaOnClick()} color="primary" autoFocus>
+                            Save
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+                :
+                <Dialog
+                    open={openDialog}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">
+                        <div style={{ display: "inline-flex", width: "100%", verticalAlign: "middle" }}>
+                            <EditIcon fontSize="large" color="primary" style={{ alignSelf: "center" }} />
+                            <div style={{ width: "100%", alignSelf: "center" }}>
+                                Edit "{tempUISchema["title"]}"
+                            </div>
+                            <IconButton onClick={() => handleCancelEdit()}><CloseIcon fontSize="large" color="secondary" /></IconButton>
+                        </div>
+                    </DialogTitle>
+                    <Divider />
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description" component="span">
+                            <div>
+                                <FormControl component="widget-type">
+                                    <FormLabel style={{ color: "#01579b" }} component="legend">Basic Descriptors:</FormLabel>
+                                    <TextField margin="normal" required onChange={event => handleChangeUISchema(event, "fieldId")} style={{ marginTop: "20px" }} defaultValue={field_id} variant="outlined" fullWidth={true} label={"Field ID or Key"} helperText='A unique json key or id for this field. Usually short and no spaces (use "_" instead). Spaces are replaced automatically with "_" upon saving.' />
+                                    <TextField margin="normal" onChange={event => handleChangeUISchema(event, "title")} style={{ marginTop: "10px" }} defaultValue={tempUISchema["title"]} variant="outlined" fullWidth={true} label={"Field Title"} helperText='Label or title of the field. For a field that requires a unit, the unit can be placed within a square bracket, e,g., "Chamber Pressure [Pa]".' />
+                                    <TextField margin="normal" onChange={event => handleChangeUISchema(event, "description")} style={{ marginTop: "10px" }} defaultValue={tempUISchema["description"]} variant="outlined" fullWidth={true} label={"Field Description"} multiline rows={3} helperText='A detailed description of the field, how the input should be formated, etc.' />
+                                    <TextField
+                                        margin="normal"
+                                        helperText='Data type of the field input.'
+                                        onChange={event => handleChangeUISchema(event, "type")}
+                                        style={{ marginTop: "10px" }}
+                                        defaultValue={tempUISchema["type"]}
+                                        select
+                                        fullWidth={true}
+                                        id={field_id}
+                                        label={"Field Data Type"}
+                                        variant="outlined"
+                                        SelectProps={{
+                                            native: true,
+                                        }}
+                                    >
+                                        {datatypes.map((content, index) => (
+                                            <option key={index} value={content}>
+                                                {content}
+                                            </option>
+                                        ))}
+                                    </TextField>
+                                    {["string", "integer", "number"].includes(selectedType) ?
+                                        <>
+                                            <FormControlLabel control={<Checkbox onChange={() => handleEnumBoxOnChange()} checked={enumChecked} />} label="Enumerated. Choose from an available list of inputs." />
+                                            <div style={{ marginTop: "10px", marginBottom: "10px" }}>
+                                                {enumChecked ? <TextField defaultValue={enumList !== undefined ? enumList : ""} onChange={handleOnChangeListField} variant="outlined" fullWidth={true} label="Enumerate List" multiline rows={4} helperText="A list of inputs separated by commas, e,g.: item 1, item 2, item 3. Make sure that the item data type matches the field input data type. Invalid items will be replaced with NaN upon saving." /> : null}
+                                            </div>
+                                        </> : null}
+                                </FormControl>
+                                <div style={{ paddingTop: "10px", paddingBottom: "10px" }}>
+                                    <FormControl component="validation-related">
+                                        <FormLabel style={{ color: "#01579b" }} component="legend">Validation Related:</FormLabel>
+                                    </FormControl>
+                                    <FormGroup>
+                                        {selectedType === "array" ?
+                                            <FormControlLabel control={<Checkbox onChange={() => handleCheckBoxOnChange()} checked={requiredChecked} />} label="Required. Checked means the field must be filled." />
+                                            : null}
+                                        {selectedType !== "object" & selectedType !== "array" & selectedType !== "boolean" ?
+                                            <>
+                                                <FormControlLabel control={<Checkbox onChange={() => handleCheckBoxOnChange()} checked={requiredChecked} />} label="Required. Checked means the field must be filled." />
+                                                <TextField margin='normal' onChange={event => handleChangeUISchema(event, "defaultValue")} style={{ marginTop: "10px" }} defaultValue={defaultValue} variant="outlined" fullWidth={true} label={"Field Default Value"} helperText="Initial value of the field." />
+                                            </>
+                                            : null}
+                                        {selectedType === "boolean" ?
+                                            <>
+                                                <TextField
+                                                    margin='normal'
+                                                    onChange={event => handleChangeUISchema(event, "defaultValue")}
+                                                    style={{ marginTop: "20px" }}
+                                                    defaultValue={defaultValue !== undefined ? defaultValue : ""}
+                                                    select
+                                                    fullWidth={true}
+                                                    id={field_id}
+                                                    label={"Boolean Field Default Value"}
+                                                    variant="outlined"
+                                                    SelectProps={{
+                                                        native: true,
+                                                    }}
+                                                >
+                                                    {["", "true", "false"].map((content, index) => (
+                                                        <option key={index} value={content}>
+                                                            {content}
+                                                        </option>
+                                                    ))}
+                                                </TextField>
+                                            </>
+                                            : null}
+                                    </FormGroup>
+                                </div>
+                            </div>
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => handleCancelEdit()} color="secondary">
+                            Cancel
+                        </Button>
+                        <Button onClick={() => handleUpdateSchemaOnClick()} color="primary" autoFocus>
+                            Save
+                        </Button>
+                    </DialogActions>
+                </Dialog>}
         </>
 
     )

@@ -33,7 +33,6 @@ const ItemStringType = ({ pathSchema, dataInputItems, setDataInputItems, path, f
         const items = Array.from(arr);
         items[index] = event.target.value;
         setDataInputItems(items);
-        console.log(items)
 
         // store to form data
         handleDataInput(items, pathSchema, "array")

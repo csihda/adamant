@@ -68,14 +68,11 @@ const StringType = ({ dataInputItems, setDataInputItems, withinArray, path, path
             let newPathSchema = pathSchema.split(".");
             newPathSchema.pop()
             newPathSchema = newPathSchema.join(".")
-            console.log(newPathSchema)
 
             let arr = dataInputItems;
-            console.log(pathSchema)
             const items = Array.from(arr);
             items[field_index][field_id] = event.target.value;
             setDataInputItems(items);
-            console.log(items)
 
             // store to the main form data
             let value = {
@@ -90,6 +87,7 @@ const StringType = ({ dataInputItems, setDataInputItems, withinArray, path, path
         }
     }
 
+    /* maybe not need this, already handled in AdamantMain.jsx
     // if enumerate and no defaultValue then already store the first enumerate value to form data
     useEffect(() => {
         if (field_enumerate !== undefined & defaultValue === undefined & withinArray === undefined) {
@@ -121,7 +119,7 @@ const StringType = ({ dataInputItems, setDataInputItems, withinArray, path, path
             handleDataInput(event, newPathSchema, "string")
         }
     }, [])
-
+    */
 
     if (field_enumerate === undefined) {
         return (

@@ -14,8 +14,9 @@ import { Menu, MenuItem } from "@material-ui/core";
 import DownloadIcon from "@material-ui/icons/GetApp";
 import set from "set-value";
 import getValue from "../components/utils/getValue";
-import deleteKey from "../components/utils/deleteKey";
+import CryptoJS from "crypto-js";
 import deleteKeySchema from "../components/utils/deleteKeySchema";
+import validateAgainstSchema from "../components/utils/validateAgainstSchema";
 
 // function that receive the schema and convert it to Form/json data blueprint
 // also to already put the default value to this blueprint
@@ -27,16 +28,18 @@ const createFormDataBlueprint = (schemaProperties) => {
       if (schemaProperties[item]["default"] !== undefined) {
         newObject[item] = schemaProperties[item]["default"];
       } else if (
+        (schemaProperties[item]["default"] === undefined) &
+        (schemaProperties[item]["enum"] !== undefined)
+      ) {
+        newObject[item] = schemaProperties[item]["enum"][0];
+      } else if (
         (schemaProperties[item]["type"] === "boolean") &
         (schemaProperties[item]["default"] === undefined)
       ) {
         newObject[item] = false;
       }
     } else {
-      if (
-        (schemaProperties[item]["properties"] !== undefined) &
-        schemaProperties[item]["properties"]
-      ) {
+      if (schemaProperties[item]["properties"] !== undefined) {
         newObject[item] = createFormDataBlueprint(
           schemaProperties[item]["properties"]
         );
@@ -45,6 +48,32 @@ const createFormDataBlueprint = (schemaProperties) => {
   });
 
   return newObject;
+};
+
+/*
+// function to remove empty artributes
+const removeEmpty = (obj) => {
+  return Object.fromEntries(
+    Object.entries(obj)
+      .filter(([_, v]) => (v !== null) & (v !== "") & (v !== {}) & (v !== []))
+      .map(([k, v]) => [k, v === Object(v) ? removeEmpty(v) : v])
+  );
+};
+*/
+
+// function to remove empty artributes
+const removeEmpty = (obj) => {
+  Object.keys(obj).forEach((key) => {
+    if (obj[key] && typeof obj[key] === "object") {
+      const childObject = removeEmpty(obj[key]);
+      if (childObject === undefined) {
+        delete obj[key];
+      }
+    } else if (obj[key] === "" || obj[key] === null || obj[key] === undefined) {
+      delete obj[key];
+    }
+  });
+  return Object.keys(obj).length > 0 || obj instanceof Array ? obj : undefined;
 };
 
 const AdamantMain = () => {
@@ -108,7 +137,6 @@ const AdamantMain = () => {
           // create form data
           let formData = createFormDataBlueprint(obj["properties"]);
           setJsonData(formData);
-          console.log(formData);
         } catch (error) {
           console.log(error);
           // update states
@@ -266,7 +294,7 @@ const AdamantMain = () => {
     let jData = { ...jsonData };
     let value = deleteKeySchema(jData, path);
     setJsonData(value);
-    console.log(value);
+    console.log("Current form data:", value);
   };
 
   // update form data id if a fieldId changes, simply delete key value pair of the oldfieldid from jsonData
@@ -296,6 +324,66 @@ const AdamantMain = () => {
       setJsonData(jData);
       console.log("Current form data:", jData);
     }
+  };
+
+  // handle download json schema
+  const handleDownloadJsonSchema = () => {
+    let content = { ...schema };
+
+    // calculate hash for the content
+    // calculate hash using CryptoJS
+    let sha256_hash = CryptoJS.SHA256(JSON.stringify(content));
+
+    let a = document.createElement("a");
+    let file = new Blob([JSON.stringify(content)], {
+      type: "application/json",
+    });
+    a.href = URL.createObjectURL(file);
+    a.download = `jsonschema-${sha256_hash}.json`;
+    a.click();
+
+    handleClose();
+  };
+
+  // handle download json schema
+  const handleDownloadFormData = () => {
+    let content = { ...jsonData };
+    let contentSchema = { ...schema };
+
+    // get rid of empty values in content
+    content = removeEmpty(content);
+    if (content === undefined) {
+      content = {};
+    }
+    console.log("content", content);
+
+    //
+    // validate jsonData against its schema before download
+    //
+    const [valid, validation] = validateAgainstSchema(content, contentSchema);
+    if (!valid) {
+      let errorMessages = "";
+      for (let i = 0; i < validation.errors.length; i++) {
+        let currentMessage = validation.errors[i].message + ".";
+        errorMessages += currentMessage + "\n";
+      }
+      alert(`Form data is not valid.\n\nError messages:\n${errorMessages}`);
+      return;
+    }
+
+    // calculate hash for the content
+    // calculate hash using CryptoJS
+    let sha256_hash = CryptoJS.SHA256(JSON.stringify(content));
+
+    let a = document.createElement("a");
+    let file = new Blob([JSON.stringify(content)], {
+      type: "application/json",
+    });
+    a.href = URL.createObjectURL(file);
+    a.download = `formdata-${sha256_hash}.json`;
+    a.click();
+
+    handleClose();
   };
 
   return (
@@ -513,8 +601,12 @@ const AdamantMain = () => {
                   horizontal: "left",
                 }}
               >
-                <MenuItem onClick={handleClose}>Download JSON Schema</MenuItem>
-                <MenuItem onClick={handleClose}>Download JSON Data</MenuItem>
+                <MenuItem onClick={handleDownloadJsonSchema}>
+                  Download JSON Schema
+                </MenuItem>
+                <MenuItem onClick={handleDownloadFormData}>
+                  Download JSON Data
+                </MenuItem>
               </Menu>
             </div>
           ) : (
