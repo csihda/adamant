@@ -468,8 +468,9 @@ const AdamantMain = () => {
           progress: undefined,
         }
       );
-      // clear token
+      // clear states
       setToken("");
+      setExperimentTitle("");
       return;
     }
 
@@ -478,7 +479,7 @@ const AdamantMain = () => {
       "<dl>\n" +
       formData2descriptionList(JSON.parse(JSON.stringify(content))) +
       "</dl>";
-
+    console.log(descriptionList);
     // call create experiment api
     var $ = require("jquery");
     console.log(content);
@@ -511,8 +512,9 @@ const AdamantMain = () => {
           }
         );
 
-        // clear token
+        // clear states
         setToken("");
+        setExperimentTitle("");
       },
       error: function (status) {
         console.log("ERROR");
@@ -532,8 +534,9 @@ const AdamantMain = () => {
             progress: undefined,
           }
         );
-        // clear token
+        // clear states
         setToken("");
+        setExperimentTitle("");
       },
     });
   };

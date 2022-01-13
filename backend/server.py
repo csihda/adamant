@@ -32,7 +32,6 @@ def create_experiment():
     manager = elabapy.Manager(
         endpoint='https://pm-labbook.intranet.inp-greifswald.de/api/v1/', token=token)
     response = manager.create_experiment()
-    print(f"Created experiment with id {response['id']}.")
 
     # create the experiment body which is the description list attained by converting the jsdata
 
