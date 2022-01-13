@@ -17,6 +17,11 @@ import getValue from "../components/utils/getValue";
 import CryptoJS from "crypto-js";
 import deleteKeySchema from "../components/utils/deleteKeySchema";
 import validateAgainstSchema from "../components/utils/validateAgainstSchema";
+import SubmitDialog from "../components/SubmitDialog";
+import { useEffect } from "react";
+import formData2descriptionList from "../components/utils/formData2descriptionList";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // function that receive the schema and convert it to Form/json data blueprint
 // also to already put the default value to this blueprint
@@ -90,8 +95,13 @@ const AdamantMain = () => {
   const [convertedSchema, setConvertedSchema] = useState(null);
   const [createScratchMode, setCreateScratchMode] = useState(false);
   const [jsonData, setJsonData] = useState({});
+  const [token, setToken] = useState("");
+  const [experimentTitle, setExperimentTitle] = useState("");
+  const [onlineMode, setOnlineMode] = useState(false);
+  const [tags, setTags] = useState([]);
   // for dropdown buttons
   const [anchorEl, setAnchorEl] = useState(null);
+  const [openSubmitDialog, setOpenSubmitDialog] = useState(false);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -99,6 +109,44 @@ const AdamantMain = () => {
   const handleClose = () => {
     setAnchorEl(null);
   }; //
+
+  // check if the front-end is connected to backend at all
+  useEffect(() => {
+    let $ = require("jquery");
+    $.ajax({
+      type: "GET",
+      url: "/adamant/api/check_mode",
+      success: function () {
+        console.log("Connection to server is established. Online mode");
+        setOnlineMode(true);
+        toast.success("Connection to server is established. Online mode.", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: false,
+          progress: undefined,
+        });
+      },
+      error: function () {
+        console.log("Failed to establish connection to server. Offline mode");
+        setOnlineMode(false);
+        toast.warning(
+          "Failed to establish connection to server. Offline mode.",
+          {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: false,
+            progress: undefined,
+          }
+        );
+      },
+    });
+  }, []);
 
   // place holders
   let schemaList = [
@@ -386,6 +434,110 @@ const AdamantMain = () => {
     handleClose();
   };
 
+  const createExperimentELabFTW = () => {
+    // validate the data first using ajv
+    let content = { ...jsonData };
+    let contentSchema = { ...schema };
+
+    // get rid of empty values in content
+    content = removeEmpty(content);
+    if (content === undefined) {
+      content = {};
+    }
+    console.log("content", content);
+
+    //
+    // validate jsonData against its schema before submission
+    //
+    const [valid, validation] = validateAgainstSchema(content, contentSchema);
+    if (!valid) {
+      let errorMessages = "";
+      for (let i = 0; i < validation.errors.length; i++) {
+        let currentMessage = validation.errors[i].message + ".";
+        errorMessages += currentMessage + "\n";
+      }
+      toast.error(
+        `Form data is not valid.\n\nError messages:\n${errorMessages}`,
+        {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: false,
+          progress: undefined,
+        }
+      );
+      // clear token
+      setToken("");
+      return;
+    }
+
+    // create description list
+    let descriptionList =
+      "<dl>\n" +
+      formData2descriptionList(JSON.parse(JSON.stringify(content))) +
+      "</dl>";
+
+    // call create experiment api
+    var $ = require("jquery");
+    console.log(content);
+    $.ajax({
+      type: "POST",
+      url: "/adamant/api/create_experiment",
+      dataType: "json",
+      data: {
+        javascript_data: JSON.stringify(content),
+        elabToken: token,
+        title: experimentTitle,
+        body: descriptionList,
+      },
+      success: function (status) {
+        console.log("SUCCESS");
+        console.log(status);
+
+        // close submit dialog
+        setOpenSubmitDialog(false);
+        toast.success(
+          `Successfully created an experiment with id: ${status["experimentId"]}!`,
+          {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: false,
+            progress: undefined,
+          }
+        );
+
+        // clear token
+        setToken("");
+      },
+      error: function (status) {
+        console.log("ERROR");
+        console.log(status);
+
+        // close submit dialog
+        setOpenSubmitDialog(false);
+        toast.error(
+          `Failed to create an experiment!\nNot sure what went wrong.`,
+          {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: false,
+            progress: undefined,
+          }
+        );
+        // clear token
+        setToken("");
+      },
+    });
+  };
+
   return (
     <>
       <FormContext.Provider
@@ -570,6 +722,8 @@ const AdamantMain = () => {
                 Back to Edit Mode
               </Button>
               <Button
+                disabled={!onlineMode}
+                onClick={() => setOpenSubmitDialog(true)}
                 style={{ float: "right" }}
                 variant="contained"
                 color="primary"
@@ -622,6 +776,16 @@ const AdamantMain = () => {
         </div>
         <div style={{ padding: "5px" }}>ADAMANT v0.0.1</div>
       </FormContext.Provider>
+      <SubmitDialog
+        setTags={setTags}
+        setExperimentTitle={setExperimentTitle}
+        createExperimentELabFTW={createExperimentELabFTW}
+        setToken={setToken}
+        token={token}
+        setOpenSubmitDialog={setOpenSubmitDialog}
+        openSubmitDialog={openSubmitDialog}
+      />
+      <ToastContainer />
     </>
   );
 };
