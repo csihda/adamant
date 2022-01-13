@@ -11,6 +11,9 @@
 # production
 /build
 
+# python venv
+/backend/venv
+
 # misc
 .DS_Store
 .env.local
@@ -21,6 +24,3 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# python venv
-/backend/venv
