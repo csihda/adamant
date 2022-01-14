@@ -20,17 +20,38 @@ def check_mode():
     return {"message": "connection is a success"}
 
 
+@app.route('/adamant/api/get_tags', methods=['POST'])
+def get_tags():
+    elabURL = request.form['eLabURL']
+    token = request.form['eLabToken']
+    # create elab manager
+    elabURL = '{}/api/v1/'.format(elabURL)
+    elabURL = elabURL.replace('//api', '/api')
+    manager = elabapy.Manager(
+        endpoint=elabURL, token=token)
+    all_tags = manager.get_tags()
+
+    return json.dumps(all_tags)
+
+
 @app.route('/adamant/api/create_experiment', methods=['POST'])
 def create_experiment():
     jsdata = request.form['javascript_data']
-    token = request.form['elabToken']
+    jsschema = request.form['schema']
+    elabURL = request.form['eLabURL']
+    token = request.form['eLabToken']
     title = request.form['title']
     body = request.form['body']
+    tags = request.form['tags']
+    tags = json.loads(tags)
+    print(tags)
     jsdata = json.loads(jsdata)
 
     # create experiment in eLabFtw
+    elabURL = '{}/api/v1/'.format(elabURL)
+    elabURL = elabURL.replace('//api', '/api')
     manager = elabapy.Manager(
-        endpoint='https://pm-labbook.intranet.inp-greifswald.de/api/v1/', token=token)
+        endpoint=elabURL, token=token)
     response = manager.create_experiment()
 
     # create the experiment body which is the description list attained by converting the jsdata
@@ -38,6 +59,26 @@ def create_experiment():
     # update the experiment
     params = {"title": title, "body": body}
     manager.post_experiment(response['id'], params)
+
+    # upload the schema
+    with open('temp-files//json_schema.json', 'w') as outfile:
+        outfile.write(jsschema)
+    with open('temp-files//json_schema.json', 'r+b') as file:
+        file_param = {'file': file}
+        manager.upload_to_experiment(response['id'], file_param)
+
+    # upload form data/jsdata
+    with open('temp-files//json_data.json', 'w') as outfile:
+        outfile.write(json.dumps(jsdata))
+    with open('temp-files//json_data.json', 'r+b') as file:
+        file_param = {'file': file}
+        manager.upload_to_experiment(response['id'], file_param)
+
+    # now if tags is not empty then add tags to this experiment id one by one
+    if len(tags) != 0:
+        for i in tags:
+            params = {'tag': i['tag']}
+            manager.add_tag_to_experiment(response['id'], params)
 
     """ to append the body
     params = {"bodyappend": "appended text<br>"}

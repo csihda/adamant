@@ -11,8 +11,9 @@
 # production
 /build
 
-# python venv
+# python floders
 /backend/venv
+/backend/temp-files
 
 # misc
 .DS_Store

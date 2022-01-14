@@ -17,7 +17,7 @@ import getValue from "../components/utils/getValue";
 import CryptoJS from "crypto-js";
 import deleteKeySchema from "../components/utils/deleteKeySchema";
 import validateAgainstSchema from "../components/utils/validateAgainstSchema";
-import SubmitDialog from "../components/SubmitDialog";
+import CreateELabFTWExperimentDialog from "../components/CreateELabFTWExperimentDialog";
 import { useEffect } from "react";
 import formData2descriptionList from "../components/utils/formData2descriptionList";
 import { ToastContainer, toast } from "react-toastify";
@@ -95,10 +95,13 @@ const AdamantMain = () => {
   const [convertedSchema, setConvertedSchema] = useState(null);
   const [createScratchMode, setCreateScratchMode] = useState(false);
   const [jsonData, setJsonData] = useState({});
+  const [jsonDataElab, SetJsonDataElab] = useState({});
   const [token, setToken] = useState("");
+  const [eLabURL, setELabURL] = useState("");
   const [experimentTitle, setExperimentTitle] = useState("");
   const [onlineMode, setOnlineMode] = useState(false);
   const [tags, setTags] = useState([]);
+  const [retrievedTags, setRetrievedTags] = useState([]);
   // for dropdown buttons
   const [anchorEl, setAnchorEl] = useState(null);
   const [openSubmitDialog, setOpenSubmitDialog] = useState(false);
@@ -130,10 +133,10 @@ const AdamantMain = () => {
         });
       },
       error: function () {
-        console.log("Failed to establish connection to server. Offline mode");
+        console.log("Unable to establish connection to server. Offline mode");
         setOnlineMode(false);
         toast.warning(
-          "Failed to establish connection to server. Offline mode.",
+          "Unable to establish connection to server. Offline mode.",
           {
             position: "top-right",
             autoClose: 5000,
@@ -248,7 +251,11 @@ const AdamantMain = () => {
     setSchemaMessage();
     setJsonData({});
 
-    let schemaBlueprint = { properties: {}, type: "object" };
+    let schemaBlueprint = {
+      $schema: "http://json-schema.org/draft-04/schema#",
+      properties: {},
+      type: "object",
+    };
     const obj = JSON.parse(JSON.stringify(schemaBlueprint));
 
     // create form data again
@@ -415,7 +422,27 @@ const AdamantMain = () => {
         let currentMessage = validation.errors[i].message + ".";
         errorMessages += currentMessage + "\n";
       }
-      alert(`Form data is not valid.\n\nError messages:\n${errorMessages}`);
+      errorMessages = errorMessages.split("\n");
+      toast.error(
+        <>
+          <div>
+            <strong>Form data is not valid.</strong>
+          </div>
+          <div style={{ paddingBottom: "10px" }}>Check your inputs!</div>
+          {errorMessages.map((item) => {
+            return <div>{item}</div>;
+          })}
+        </>,
+        {
+          position: "top-right",
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: false,
+          progress: undefined,
+        }
+      );
       return;
     }
 
@@ -434,6 +461,51 @@ const AdamantMain = () => {
     handleClose();
   };
 
+  // get available tags from elabftw
+  const getTagsELabFTW = () => {
+    var $ = require("jquery");
+    $.ajax({
+      type: "POST",
+      url: "/adamant/api/get_tags",
+      dataType: "json",
+      data: {
+        eLabURL: eLabURL,
+        eLabToken: token,
+      },
+      success: function (status) {
+        console.log("Tags retrieved successfully");
+        //let arr = [];
+        //for (let i = 0; i < status.length; i++) {
+        //  arr.push(status[i]["tag"]);
+        //}
+        setRetrievedTags(status);
+        toast.success(`Successfully retrieved the tags!`, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: false,
+          progress: undefined,
+        });
+      },
+      error: function (status) {
+        console.log("Failed to retrieve tags");
+        console.log(status);
+        toast.error(`Failed to get the tags!\nMaybe wrong url or token?`, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: false,
+          progress: undefined,
+        });
+      },
+    });
+  };
+
+  // create an experiment in elabftw based on the schema and data
   const createExperimentELabFTW = () => {
     // validate the data first using ajv
     let content = { ...jsonData };
@@ -444,7 +516,7 @@ const AdamantMain = () => {
     if (content === undefined) {
       content = {};
     }
-    console.log("content", content);
+    //console.log("content", content);
 
     //
     // validate jsonData against its schema before submission
@@ -456,12 +528,21 @@ const AdamantMain = () => {
         let currentMessage = validation.errors[i].message + ".";
         errorMessages += currentMessage + "\n";
       }
+      errorMessages = errorMessages.split("\n");
       toast.error(
-        `Form data is not valid.\n\nError messages:\n${errorMessages}`,
+        <>
+          <div>
+            <strong>Form data is not valid.</strong>
+          </div>
+          <div style={{ paddingBottom: "10px" }}>Check your inputs!</div>
+          {errorMessages.map((item) => {
+            return <div>{item}</div>;
+          })}
+        </>,
         {
           position: "top-right",
-          autoClose: 2000,
-          hideProgressBar: true,
+          autoClose: 10000,
+          hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
           draggable: false,
@@ -471,6 +552,7 @@ const AdamantMain = () => {
       // clear states
       setToken("");
       setExperimentTitle("");
+      setTags([]);
       return;
     }
 
@@ -479,19 +561,21 @@ const AdamantMain = () => {
       "<dl>\n" +
       formData2descriptionList(JSON.parse(JSON.stringify(content))) +
       "</dl>";
-    console.log(descriptionList);
     // call create experiment api
+    console.log("tags:", tags);
     var $ = require("jquery");
-    console.log(content);
     $.ajax({
       type: "POST",
       url: "/adamant/api/create_experiment",
       dataType: "json",
       data: {
         javascript_data: JSON.stringify(content),
-        elabToken: token,
+        schema: JSON.stringify(contentSchema),
+        eLabURL: eLabURL,
+        eLabToken: token,
         title: experimentTitle,
         body: descriptionList,
+        tags: JSON.stringify(tags),
       },
       success: function (status) {
         console.log("SUCCESS");
@@ -515,6 +599,8 @@ const AdamantMain = () => {
         // clear states
         setToken("");
         setExperimentTitle("");
+        setRetrievedTags([]);
+        setTags([]);
       },
       error: function (status) {
         console.log("ERROR");
@@ -523,7 +609,7 @@ const AdamantMain = () => {
         // close submit dialog
         setOpenSubmitDialog(false);
         toast.error(
-          `Failed to create an experiment!\nNot sure what went wrong.`,
+          `Failed to create an experiment!\nMaybe wrong url or token?`,
           {
             position: "top-right",
             autoClose: 5000,
@@ -537,8 +623,63 @@ const AdamantMain = () => {
         // clear states
         setToken("");
         setExperimentTitle("");
+        setRetrievedTags([]);
+        setTags([]);
       },
     });
+  };
+
+  const handleOnClickProceedButton = () => {
+    // validate the data first using ajv
+    let content = { ...jsonData };
+    let contentSchema = { ...schema };
+
+    // get rid of empty values in content
+    content = removeEmpty(content);
+    if (content === undefined) {
+      content = {};
+    }
+    //console.log("content", content);
+
+    //
+    // validate jsonData against its schema before submission
+    //
+    const [valid, validation] = validateAgainstSchema(content, contentSchema);
+    if (!valid) {
+      let errorMessages = "";
+      for (let i = 0; i < validation.errors.length; i++) {
+        let currentMessage = validation.errors[i].message + ".";
+        errorMessages += currentMessage + "\n";
+      }
+      errorMessages = errorMessages.split("\n");
+      toast.error(
+        <>
+          <div>
+            <strong>Form data is not valid.</strong>
+          </div>
+          <div style={{ paddingBottom: "10px" }}>Check your inputs!</div>
+          {errorMessages.map((item) => {
+            return <div>{item}</div>;
+          })}
+        </>,
+        {
+          position: "top-right",
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: false,
+          progress: undefined,
+        }
+      );
+      // clear states
+      setToken("");
+      setExperimentTitle("");
+      setTags([]);
+      return;
+    } else {
+      setOpenSubmitDialog(true);
+    }
   };
 
   return (
@@ -615,7 +756,7 @@ const AdamantMain = () => {
                 variant="contained"
                 color="primary"
               >
-                CREATE SCHEMA/FORM
+                CREATE FROM SCRATCH
               </Button>
             </div>
           ) : null}
@@ -726,7 +867,7 @@ const AdamantMain = () => {
               </Button>
               <Button
                 disabled={!onlineMode}
-                onClick={() => setOpenSubmitDialog(true)}
+                onClick={() => handleOnClickProceedButton()}
                 style={{ float: "right" }}
                 variant="contained"
                 color="primary"
@@ -779,14 +920,20 @@ const AdamantMain = () => {
         </div>
         <div style={{ padding: "5px" }}>ADAMANT v0.0.1</div>
       </FormContext.Provider>
-      <SubmitDialog
+      <CreateELabFTWExperimentDialog
         setTags={setTags}
+        tags={tags}
+        setRetrievedTags={setRetrievedTags}
+        retrievedTags={retrievedTags}
         setExperimentTitle={setExperimentTitle}
         createExperimentELabFTW={createExperimentELabFTW}
         setToken={setToken}
         token={token}
+        setELabURL={setELabURL}
+        eLabURL={eLabURL}
         setOpenSubmitDialog={setOpenSubmitDialog}
         openSubmitDialog={openSubmitDialog}
+        getTagsELabFTW={getTagsELabFTW}
       />
       <ToastContainer />
     </>
