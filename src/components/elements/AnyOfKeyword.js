@@ -21,6 +21,8 @@ import { TextField } from "@material-ui/core";
 import ElementRenderer from "../ElementRenderer";
 import ObjectType from "./ObjectType";
 import object2array from "../utils/object2array";
+import getValue from "../utils/getValue";
+import set from "set-value";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -74,8 +76,24 @@ const AnyOfKeyword = ({ pathFormData, path, field_required, field_id, field_inde
         setDataInputItems([]);
         setInputItems([]);
 
-        // get rid of the current value
+        // get rid of the current value everytime the subschema changes
         handleDataDelete(pathFormData)
+        let val = getValue(convertedSchema, path)
+        delete val["value"]
+        set(convertedSchema, path, val)
+        console.log(convertedSchema)
+        // if properties exist then delete it
+        let val2 = getValue(convertedSchema, path)
+        if (val2["properties"] !== undefined) {
+            delete val2["properties"]
+            set(convertedSchema, path, val2)
+        }
+        // if type exist then delete it
+        let val3 = getValue(convertedSchema, path)
+        if (val3["type"] !== undefined) {
+            delete val3["type"]
+            set(convertedSchema, path, val3)
+        }
 
         const index = parseInt(event.target.value)
         setGlobalIndex(index)
@@ -84,6 +102,11 @@ const AnyOfKeyword = ({ pathFormData, path, field_required, field_id, field_inde
         }
         else if (anyOf_list[index]["type"] === "object") {
             let prop = object2array(anyOf_list[index]["properties"])
+            let val = getValue(convertedSchema, path)
+            val["properties"] = prop
+            val["type"] = "object"
+            set(convertedSchema, path, val)
+            updateParent(convertedSchema)
             setField_items(prop)
         }
         else {

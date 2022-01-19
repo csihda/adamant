@@ -97,18 +97,35 @@ const ElementRenderer = ({ dataInputItems, setDataInputItems, withinArray, path,
                 edit={edit}
             />)
         case 'object':
-            return (<ObjectType
-                withinArray={withinArray}
-                path={path + "." + fieldIndex}
-                pathSchema={pathSchema + "." + fieldId}
-                pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldId : fieldId}
-                field_id={fieldId}
-                field_label={title}
-                field_description={description}
-                field_required={required}
-                field_properties={properties}
-                edit={edit}
-            />)
+            if (anyOf !== undefined) {
+                return (
+                    <AnyOfKeyword
+                        pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldId : fieldId}
+                        withinArray={withinArray}
+                        path={path + "." + fieldIndex}
+                        field_index={fieldIndex}
+                        field_id={fieldId}
+                        field_label={title}
+                        field_description={description}
+                        field_required={elementRequired}
+                        anyOf_list={anyOf}
+                        edit={edit}
+                    />
+                )
+            } else {
+                return (<ObjectType
+                    withinArray={withinArray}
+                    path={path + "." + fieldIndex}
+                    pathSchema={pathSchema + "." + fieldId}
+                    pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldId : fieldId}
+                    field_id={fieldId}
+                    field_label={title}
+                    field_description={description}
+                    field_required={required}
+                    field_properties={properties}
+                    edit={edit}
+                />)
+            }
         case undefined:
             if (anyOf) {
                 return (

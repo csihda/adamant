@@ -25,6 +25,7 @@ import "react-toastify/dist/ReactToastify.css";
 import convData2DescList from "../components/utils/convData2DescList";
 import preProcessB4DescList from "../components/utils/preProcessB4DescList";
 import nicelySort from "../components/utils/nicelySort";
+import array2objectAnyOf from "../components/utils/array2objectAnyOf";
 
 // function that receive the schema and convert it to Form/json data blueprint
 // also to already put the default value to this blueprint
@@ -90,6 +91,7 @@ const AdamantMain = () => {
   const [schemaMessage, setSchemaMessage] = useState(null);
   const [schemaValidity, setSchemaValidity] = useState(false);
   const [schema, setSchema] = useState(null);
+  const [schemaIntermediate, setSchemaIntermediate] = useState(null);
   const [renderReady, setRenderReady] = useState(false);
   const [editMode, setEditMode] = useState(true);
   const [schemaFile, setSchemaFile] = useState();
@@ -313,6 +315,12 @@ const AdamantMain = () => {
 
     setConvertedSchema(newValue);
     setSchema(updatedSchema);
+
+    // update intermediate schema
+    const updatedSchema2 = JSON.parse(JSON.stringify(newValue));
+    const tempSchema2 = JSON.parse(JSON.stringify(newValue));
+    updatedSchema2["properties"] = array2objectAnyOf(tempSchema2["properties"]);
+    setSchemaIntermediate(updatedSchema2);
   };
 
   // revert all changes to the schema
@@ -364,6 +372,7 @@ const AdamantMain = () => {
     }
     set(convSchemaData, path, value);
     setConvertedSchema(convSchemaData);
+    //console.log(convSchemaData);
 
     // convert to form data
     /*
