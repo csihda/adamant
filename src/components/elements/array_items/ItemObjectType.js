@@ -27,9 +27,8 @@ const style = {
 }
 
 
-const ItemObjectType = ({ dataInputItems, setDataInputItems, field_label, pathSchema, field_required, field_items, field_type, edit, index, field_id, handleDeleteArrayItem }) => {
+const ItemObjectType = ({ path, dataInputItems, setDataInputItems, field_label, pathFormData, field_required, field_items, field_type, edit, index, field_id, handleDeleteArrayItem }) => {
     const [expand, setExpand] = useState(true); // set to "true" for normally open accordion
-    const { updateParent, convertedSchema } = useContext(FormContext);
     let objectIndex = index;
     let field_properties = field_items["properties"]
     let withinArray = true;
@@ -41,7 +40,7 @@ const ItemObjectType = ({ dataInputItems, setDataInputItems, field_label, pathSc
     };
 
 
-    const classes = useStyles();
+    //const classes = useStyles();
 
     return (<>
         <div style={{ width: "100%", padding: "10px 0px 10px 0px" }}>
@@ -70,9 +69,12 @@ const ItemObjectType = ({ dataInputItems, setDataInputItems, field_label, pathSc
                             if (tempField["enum"]) {
                                 tempField["enumerate"] = tempField["enum"]
                             }
+                            if (tempField["default"]) {
+                                tempField["defaultValue"] = tempField["default"]
+                            }
                             return (
                                 <div key={item} style={{ display: "flex" }}>
-                                    <ElementRenderer pathSchema={pathSchema} withinArray={withinArray} dataInputItems={dataInputItems} setDataInputItems={setDataInputItems} fieldId={item} fieldIndex={objectIndex} elementRequired={field_required} edit={false} field={tempField} />
+                                    <ElementRenderer path={path} pathFormData={pathFormData} withinArray={withinArray} dataInputItems={dataInputItems} setDataInputItems={setDataInputItems} fieldId={item} fieldIndex={objectIndex} elementRequired={field_required} edit={false} field={tempField} />
                                 </div>
                             )
                         })

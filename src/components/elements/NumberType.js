@@ -22,13 +22,21 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const NumberType = ({ dataInputItems, setDataInputItems, withinArray, path, pathSchema, defaultValue, field_required, field_index, edit, field_id, field_label, field_description, field_enumerate }) => {
+const NumberType = ({ value, dataInputItems, setDataInputItems, withinArray, path, pathFormData, defaultValue, field_required, field_index, edit, field_id, field_label, field_description, field_enumerate }) => {
     //const [descriptionText, setDescriptionText] = useState(field_description);
     const [openDialog, setOpenDialog] = useState(false);
-    const { updateParent, convertedSchema, handleDataInput, handleDataDelete } = useContext(FormContext);
-    const [inputValue, setInputValue] = useState(defaultValue === undefined ? "" : defaultValue)
+    const { updateParent, convertedSchema, handleDataInput, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
+    const [inputValue, setInputValue] = useState(defaultValue !== undefined & value === undefined ? defaultValue : value === undefined ? "" : value)//useState(defaultValue !== undefined ? defaultValue : value)
     //const [required, setRequired] = useState(false)
     const classes = useStyles();
+
+    // clean up empty strings in the paths
+    path = path.split(".")
+    path = path.filter(e => e)
+    path = path.join(".")
+    pathFormData = pathFormData.split(".")
+    pathFormData = pathFormData.filter(e => e)
+    pathFormData = pathFormData.join(".")
 
     let unit = getUnit(field_label)
 
@@ -51,7 +59,8 @@ const NumberType = ({ dataInputItems, setDataInputItems, withinArray, path, path
         "fieldId": field_id,
         "title": field_label,
         "description": field_description,
-        "type": "number"
+        "type": "number",
+        "value": value,
     }
 
     // handle delete field UI
@@ -59,7 +68,7 @@ const NumberType = ({ dataInputItems, setDataInputItems, withinArray, path, path
         const value = deleteKey(convertedSchema, path)
         updateParent(value)
 
-        handleDataDelete(pathSchema);
+        handleDataDelete(pathFormData);
     }
 
     // handle input on change for number a.k.a signed float
@@ -90,9 +99,13 @@ const NumberType = ({ dataInputItems, setDataInputItems, withinArray, path, path
             if (!isNaN(value)) {
                 setInputValue(value)
                 // store in jData
-                let newPathSchema = pathSchema.split(".");
-                newPathSchema.pop()
-                newPathSchema = newPathSchema.join(".")
+                let newPathFormData = pathFormData.split(".");
+                newPathFormData.pop()
+                newPathFormData = newPathFormData.join(".")
+
+                let newPath = path.split(".")
+                newPath.pop()
+                newPath = newPath.join(".")
 
                 let arr = dataInputItems;
                 const items = Array.from(arr);
@@ -100,7 +113,9 @@ const NumberType = ({ dataInputItems, setDataInputItems, withinArray, path, path
                 setDataInputItems(items);
 
                 // store to the main form data
-                handleDataInput(items, newPathSchema, "number")
+                handleDataInput(items, newPathFormData, "number")
+                // conv. schema data
+                handleConvertedDataInput(items, newPath + ".value", "number")
             }
         } else {
             let value = inputValue;
@@ -108,10 +123,82 @@ const NumberType = ({ dataInputItems, setDataInputItems, withinArray, path, path
             if (!isNaN(value)) {
                 setInputValue(value)
                 // store in jData
-                handleDataInput(parseFloat(inputValue), pathSchema, "number")
+                handleDataInput(parseFloat(inputValue), pathFormData, "number")
+                // conv. schema data
+                handleConvertedDataInput(parseFloat(inputValue), path + ".value", "number")
             }
         }
     }
+
+    // if enumerate and no defaultValue then already store the first enumerate value to form data
+    // this is for any enumerate in a subschema (e.g., in anyOf), for the rest of enumerate is taken care of in AdamantMain.jsx
+    useEffect(() => {
+        if (field_enumerate !== undefined & withinArray !== undefined & withinArray === true) {
+            let newPathFormData = pathFormData.split(".");
+            newPathFormData.pop()
+            newPathFormData = newPathFormData.join(".")
+
+            let newPath = path.split(".")
+            newPath.pop()
+            newPath = newPath.join(".")
+
+            let arr = dataInputItems;
+            const items = Array.from(arr);
+            items[field_index][field_id] = (defaultValue === undefined ? field_enumerate[0] : defaultValue);
+            setDataInputItems(items);
+
+            // store to the main form data
+            let event = {
+                "target": {
+                    "value":
+                        items
+                }
+            }
+            handleDataInput(event, newPathFormData, "number")
+            // conv. schema data
+            handleConvertedDataInput(field_enumerate[0], newPath + ".value", "number")
+            // update field value
+            setInputValue(field_enumerate[0])
+        } else if (field_enumerate !== undefined & withinArray === undefined) {
+            handleDataInput(field_enumerate[0], pathFormData, "number")
+            // conv. schema data
+            handleConvertedDataInput(field_enumerate[0], path + ".value", "number")
+            // update field value
+            setInputValue(field_enumerate[0])
+        } else if (field_enumerate === undefined & withinArray === undefined & defaultValue !== undefined) {
+            handleDataInput(defaultValue, pathFormData, "number")
+            // conv. schema data
+            handleConvertedDataInput(defaultValue, path + ".value", "number")
+            // update field value
+            setInputValue(defaultValue)
+        } else if (field_enumerate === undefined & withinArray !== undefined & defaultValue !== undefined) {
+            let newPathFormData = pathFormData.split(".");
+            newPathFormData.pop()
+            newPathFormData = newPathFormData.join(".")
+
+            let newPath = path.split(".")
+            newPath.pop()
+            newPath = newPath.join(".")
+
+            let arr = dataInputItems;
+            const items = Array.from(arr);
+            items[field_index][field_id] = defaultValue;
+            setDataInputItems(items);
+
+            // store to the main form data
+            let event = {
+                "target": {
+                    "value":
+                        items
+                }
+            }
+            handleDataInput(event, newPathFormData, "number")
+            // conv. schema data
+            handleConvertedDataInput(defaultValue, newPath + ".value", "number")
+            // update field value
+            setInputValue(defaultValue)
+        }
+    }, [])
 
     if (field_enumerate === undefined) {
 
@@ -124,7 +211,7 @@ const NumberType = ({ dataInputItems, setDataInputItems, withinArray, path, path
                     {edit ? <><IconButton onClick={() => setOpenDialog(true)} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><EditIcon fontSize="small" color="primary" /></IconButton>
                         <IconButton onClick={() => handleDeleteElement()} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><DeleteIcon fontSize="small" color="secondary" /></IconButton></> : null}
                 </div>
-                {openDialog ? <EditElement pathSchema={pathSchema} field_enumerate={field_enumerate} enumerated={enumerated} defaultValue={defaultValue} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
+                {openDialog ? <EditElement pathFormData={pathFormData} field_enumerate={field_enumerate} enumerated={enumerated} defaultValue={defaultValue} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
             </>
         )
     } else {
@@ -160,7 +247,7 @@ const NumberType = ({ dataInputItems, setDataInputItems, withinArray, path, path
                     {edit ? <><IconButton onClick={() => setOpenDialog(true)} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><EditIcon fontSize="small" color="primary" /></IconButton>
                         <IconButton onClick={() => handleDeleteElement()} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><DeleteIcon fontSize="small" color="secondary" /></IconButton></> : null}
                 </div>
-                {openDialog ? <EditElement pathSchema={pathSchema} field_enumerate={field_enumerate} enumerated={enumerated} defaultValue={defaultValue} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
+                {openDialog ? <EditElement pathFormData={pathFormData} field_enumerate={field_enumerate} enumerated={enumerated} defaultValue={defaultValue} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
             </>
         )
     }

@@ -29,11 +29,19 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const ObjectType = ({ path, pathSchema, field_required, field_id, field_index, edit, field_label, field_description, field_properties }) => {
+const ObjectType = ({ path, pathSchema, pathFormData, field_required, field_id, field_index, edit, field_label, field_description, field_properties }) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [openDialogAddElement, setOpenDialogAddElement] = useState(false);
     const [expand, setExpand] = useState(true); // set to "true" for normally open accordion
     const { updateParent, convertedSchema, handleDataDelete } = useContext(FormContext);
+
+    // clean up empty strings in the paths
+    path = path.split(".")
+    path = path.filter(e => e)
+    path = path.join(".")
+    pathFormData = pathFormData.split(".")
+    pathFormData = pathFormData.filter(e => e)
+    pathFormData = pathFormData.join(".")
 
     // This is to expand or contract the accordion, because normally open is used 
     const expandOnChange = () => {
@@ -59,7 +67,7 @@ const ObjectType = ({ path, pathSchema, field_required, field_id, field_index, e
         const value = deleteKey(convertedSchema, path)
         updateParent(value)
 
-        handleDataDelete(pathSchema);
+        handleDataDelete(pathFormData);
     }
 
     // construct UI schema
@@ -117,7 +125,7 @@ const ObjectType = ({ path, pathSchema, field_required, field_id, field_index, e
                                                             {edit ? <div style={{ width: "20px", marginTop: "10px", height: "30px" }} {...provided.dragHandleProps}>
                                                                 <DragHandleIcon fontSize="small" />
                                                             </div> : null}
-                                                            <ElementRenderer path={path + ".properties"} pathSchema={pathSchema} fieldId={field_properties[item]["fieldId"]} fieldIndex={item} elementRequired={field_required} edit={edit} field={field_properties[item]} />
+                                                            <ElementRenderer path={path + ".properties"} pathSchema={pathSchema + ".properties"} pathFormData={pathFormData} fieldId={field_properties[item]["fieldId"]} fieldIndex={item} elementRequired={field_required} edit={edit} field={field_properties[item]} />
                                                         </div>
                                                     </div>
                                                 )}
@@ -135,7 +143,7 @@ const ObjectType = ({ path, pathSchema, field_required, field_id, field_index, e
                 </AccordionDetails>
             </Accordion>
         </div>
-        {openDialog ? <EditElement pathSchema={pathSchema} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} /> : null}
+        {openDialog ? <EditElement pathFormData={pathFormData} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} /> : null}
         {openDialogAddElement ? <AddElement openDialog={openDialogAddElement} setOpenDialog={setOpenDialogAddElement} path={path} defaultSchema={defaultSchema} UISchema={UISchema} /> : null}
     </>);
 };

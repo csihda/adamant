@@ -23,14 +23,15 @@ const style = {
 }
 
 
-const ItemIntegerType = ({ pathSchema, dataInputItems, setDataInputItems, edit, index, field_id, handleDeleteArrayItem }) => {
+const ItemIntegerType = ({ value, path, pathFormData, dataInputItems, setDataInputItems, edit, index, field_id, handleDeleteArrayItem }) => {
     const classes = useStyles();
-    const [inputValue, setInputValue] = useState("");
-    const { handleDataInput } = useContext(FormContext);
+    const [inputValue, setInputValue] = useState(value === undefined ? "" : value[index] === undefined ? "" : value[index]);
+    const { handleDataInput, handleConvertedDataInput } = useContext(FormContext);
 
     // handle input on change for signed integer
     const handleInputOnChange = (event) => {
         let inputValueVar = inputValue
+
         inputValueVar = inputValueVar.toString()
         if (event.target.value === ".") {
             return
@@ -58,7 +59,10 @@ const ItemIntegerType = ({ pathSchema, dataInputItems, setDataInputItems, edit, 
             setDataInputItems(items);
 
             // store to form data
-            handleDataInput(items, pathSchema, "array")
+            handleDataInput(items, pathFormData, "array")
+
+            // conv. schema data
+            handleConvertedDataInput(items, path + ".value", "array")
         }
     }
 

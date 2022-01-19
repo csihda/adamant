@@ -25,12 +25,24 @@ const style = {
 }
 
 
-const StringType = ({ dataInputItems, setDataInputItems, withinArray, path, pathSchema, field_required, field_index, edit, field_id, field_label, field_description, field_enumerate, defaultValue }) => {
+const StringType = ({ dataInputItems, setDataInputItems, withinArray, path, pathFormData, field_required, field_index, edit, field_id, field_label, field_description, field_enumerate, defaultValue, value }) => {
+
     //const [descriptionText, setDescriptionText] = useState(field_description);
     const [openDialog, setOpenDialog] = useState(false);
-    const { updateParent, convertedSchema, handleDataInput, handleDataDelete } = useContext(FormContext);
+    const { updateParent, convertedSchema, handleDataInput, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
+    const [fieldValue, setFieldValue] = useState(defaultValue !== undefined ? defaultValue : value)
     //const [required, setRequired] = useState(false)
     const classes = useStyles();
+
+
+    // clean up empty strings in the paths
+    path = path.split(".")
+    path = path.filter(e => e)
+    path = path.join(".")
+    pathFormData = pathFormData.split(".")
+    pathFormData = pathFormData.filter(e => e)
+    pathFormData = pathFormData.join(".")
+
 
     var required
     if (field_required === undefined) {
@@ -51,7 +63,8 @@ const StringType = ({ dataInputItems, setDataInputItems, withinArray, path, path
         "fieldId": field_id,
         "title": field_label,
         "description": field_description,
-        "type": "string"
+        "type": "string",
+        "value": value,
     }
 
     // handle delete field UI
@@ -59,15 +72,19 @@ const StringType = ({ dataInputItems, setDataInputItems, withinArray, path, path
         const value = deleteKey(convertedSchema, path)
         updateParent(value)
 
-        handleDataDelete(pathSchema);
+        handleDataDelete(pathFormData);
     }
 
     // handle on blur
-    const handleOnBlur = (event, pathSchema, type) => {
+    const handleOnBlur = (event, pathFormData, type) => {
         if (withinArray !== undefined & withinArray) {
-            let newPathSchema = pathSchema.split(".");
-            newPathSchema.pop()
-            newPathSchema = newPathSchema.join(".")
+            let newPathFormData = pathFormData.split(".");
+            newPathFormData.pop()
+            newPathFormData = newPathFormData.join(".")
+
+            let newPath = path.split(".")
+            newPath.pop()
+            newPath = newPath.join(".")
 
             let arr = dataInputItems;
             const items = Array.from(arr);
@@ -81,9 +98,18 @@ const StringType = ({ dataInputItems, setDataInputItems, withinArray, path, path
                         items
                 }
             }
-            handleDataInput(value, newPathSchema, "string")
+            handleDataInput(value, newPathFormData, "string")
+            // conv. schema data
+            handleConvertedDataInput(value, newPath + ".value", "string")
+
+            // update field value
+            setFieldValue(event.target.value)
         } else {
-            handleDataInput(event, pathSchema, type)
+            handleDataInput(event, pathFormData, type)
+            // conv. schema data
+            handleConvertedDataInput(event, path + ".value", "string")
+            // update field value
+            setFieldValue(event.target.value)
         }
     }
 
@@ -92,9 +118,14 @@ const StringType = ({ dataInputItems, setDataInputItems, withinArray, path, path
     // this is for any enumerate in a subschema (e.g., in anyOf), for the rest of enumerate is taken care of in AdamantMain.jsx
     useEffect(() => {
         if (field_enumerate !== undefined & withinArray !== undefined & withinArray === true) {
-            let newPathSchema = pathSchema.split(".");
-            newPathSchema.pop()
-            newPathSchema = newPathSchema.join(".")
+            let newPathFormData = pathFormData.split(".");
+            newPathFormData.pop()
+            newPathFormData = newPathFormData.join(".")
+
+            let newPath = path.split(".")
+            newPath.pop()
+            newPath = newPath.join(".")
+
             let arr = dataInputItems;
             const items = Array.from(arr);
             items[field_index][field_id] = field_enumerate[0];
@@ -107,7 +138,63 @@ const StringType = ({ dataInputItems, setDataInputItems, withinArray, path, path
                         items
                 }
             }
-            handleDataInput(event, newPathSchema, "string")
+            handleDataInput(event, newPathFormData, "string")
+            // conv. schema data
+            handleConvertedDataInput(event, newPath + ".value", "string")
+            // update field value
+            setFieldValue(field_enumerate[0])
+        } else if (field_enumerate !== undefined & withinArray === undefined) {
+            // store to the main form data
+            let event = {
+                "target": {
+                    "value":
+                        field_enumerate[0]
+                }
+            }
+            handleDataInput(event, pathFormData, "string")
+            // conv. schema data
+            handleConvertedDataInput(event, path + ".value", "string")
+            // update field value
+            setFieldValue(field_enumerate[0])
+        } else if (field_enumerate === undefined & withinArray === undefined & defaultValue !== undefined) {
+            // store to the main form data
+            let event = {
+                "target": {
+                    "value":
+                        defaultValue
+                }
+            }
+            handleDataInput(event, pathFormData, "string")
+            // conv. schema data
+            handleConvertedDataInput(event, path + ".value", "string")
+            // update field value
+            setFieldValue(defaultValue)
+        } else if (field_enumerate === undefined & withinArray !== undefined & defaultValue !== undefined) {
+            let newPathFormData = pathFormData.split(".");
+            newPathFormData.pop()
+            newPathFormData = newPathFormData.join(".")
+
+            let newPath = path.split(".")
+            newPath.pop()
+            newPath = newPath.join(".")
+
+            let arr = dataInputItems;
+            const items = Array.from(arr);
+            items[field_index][field_id] = defaultValue;
+            setDataInputItems(items);
+
+            // store to the main form data
+            let event = {
+                "target": {
+                    "value":
+                        items
+                }
+            }
+            handleDataInput(event, newPathFormData, "string")
+            // conv. schema data
+            handleConvertedDataInput(event, newPath + ".value", "string")
+            // update field value
+            setFieldValue(defaultValue)
         }
     }, [])
 
@@ -115,11 +202,11 @@ const StringType = ({ dataInputItems, setDataInputItems, withinArray, path, path
         return (
             <>
                 <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
-                    <TextField onBlur={(event) => handleOnBlur(event, pathSchema, "string")} required={required} helperText={field_description} defaultValue={defaultValue} fullWidth={true} className={classes.heading} id={field_id} label={field_label} variant="outlined" />
+                    <TextField onBlur={(event) => handleOnBlur(event, pathFormData, "string")} required={required} helperText={field_description} defaultValue={fieldValue} fullWidth={true} className={classes.heading} id={field_id} label={field_label} variant="outlined" />
                     {edit ? <><IconButton onClick={() => setOpenDialog(true)} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><EditIcon fontSize="small" color="primary" /></IconButton>
                         <IconButton onClick={() => handleDeleteElement()} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><DeleteIcon fontSize="small" color="secondary" /></IconButton></> : null}
                 </div>
-                {openDialog ? <EditElement pathSchema={pathSchema} defaultValue={defaultValue} enumerated={enumerated} field_enumerate={field_enumerate} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
+                {openDialog ? <EditElement pathFormData={pathFormData} defaultValue={defaultValue} enumerated={enumerated} field_enumerate={field_enumerate} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
             </>
         )
     } else {
@@ -127,7 +214,7 @@ const StringType = ({ dataInputItems, setDataInputItems, withinArray, path, path
             <>
                 <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
                     < TextField
-                        onBlur={(event) => handleOnBlur(event, pathSchema, "string")}
+                        onBlur={(event) => handleOnBlur(event, pathFormData, "string")}
                         required={required}
                         select
                         fullWidth={true}
@@ -140,7 +227,7 @@ const StringType = ({ dataInputItems, setDataInputItems, withinArray, path, path
                         }
                         }
                         helperText={field_description}
-                        defaultValue={defaultValue}
+                        defaultValue={fieldValue}
                     >
                         {
                             field_enumerate.map((content, index) => (
@@ -153,7 +240,7 @@ const StringType = ({ dataInputItems, setDataInputItems, withinArray, path, path
                     {edit ? <><IconButton onClick={() => setOpenDialog(true)} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><EditIcon fontSize="small" color="primary" /></IconButton>
                         <IconButton onClick={() => handleDeleteElement()} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><DeleteIcon fontSize="small" color="secondary" /></IconButton></> : null}
                 </div >
-                {openDialog ? <EditElement pathSchema={pathSchema} enumerated={enumerated} defaultValue={defaultValue} field_enumerate={field_enumerate} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
+                {openDialog ? <EditElement pathFormData={pathFormData} enumerated={enumerated} defaultValue={defaultValue} field_enumerate={field_enumerate} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
             </>
         )
     }

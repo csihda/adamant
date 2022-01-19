@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
@@ -29,19 +29,55 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const ArrayType = ({ pathSchema, path, field_required, field_id, field_index, edit, field_label, field_description, field_items, field_prefixItems }) => {
+const ArrayType = ({ value, pathFormData, path, pathSchema, field_required, field_id, field_index, edit, field_label, field_description, field_items, field_prefixItems }) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [expand, setExpand] = useState(true); // set to "true" for normally open accordion
-    const { updateParent, convertedSchema, handleDataInput, handleDataDelete } = useContext(FormContext);
+    const { updateParent, convertedSchema, handleDataInput, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
     const [inputItems, setInputItems] = useState([]);
     const [dataInputItems, setDataInputItems] = useState([]);
     const [itemSchema, setItemSchema] = useState();
+
+    // clean up empty strings in the paths
+    path = path.split(".")
+    path = path.filter(e => e)
+    path = path.join(".")
+    pathFormData = pathFormData.split(".")
+    pathFormData = pathFormData.filter(e => e)
+    pathFormData = pathFormData.join(".")
 
     // This is to expand or contract the accordion, because normally open is used 
     const expandOnChange = () => {
         const value = expand
         setExpand(!value)
     };
+
+
+    useEffect(() => {
+        if (value !== undefined) {
+            if (field_prefixItems === undefined & field_items !== undefined) {
+                if (Object.keys(field_items).length === 0) {
+                    // create field_items if items is empty
+                    let items = [];
+                    for (let i = 0; i < value.length; i++) {
+                        field_items = { type: "string", field_id: `${generateUniqueID()}` }
+                        items.push(field_items);
+                    }
+                    setInputItems(items);
+                    setDataInputItems(value);
+                } else {
+                    // use existing schema if items is not empty
+                    let items = [];
+                    for (let i = 0; i < value.length; i++) {
+                        let newFieldItems = JSON.parse(JSON.stringify(field_items))
+                        newFieldItems["field_id"] = generateUniqueID();
+                        items.push(newFieldItems);
+                    }
+                    setInputItems(items);
+                    setDataInputItems(value);
+                }
+            }
+        }
+    }, [])
 
 
     var required;
@@ -70,7 +106,10 @@ const ArrayType = ({ pathSchema, path, field_required, field_id, field_index, ed
         setDataInputItems(items2)
 
         // for form data
-        handleDataInput(items2, pathSchema, "array");
+        handleDataInput(items2, pathFormData, "array");
+
+        // conv. schema data
+        handleConvertedDataInput(items2, path + ".value", "array")
     }
 
     // handle delete object UI
@@ -78,7 +117,7 @@ const ArrayType = ({ pathSchema, path, field_required, field_id, field_index, ed
         const value = deleteKey(convertedSchema, path)
         updateParent(value)
 
-        handleDataDelete(pathSchema);
+        handleDataDelete(pathFormData);
     }
 
     const classes = useStyles();
@@ -89,7 +128,8 @@ const ArrayType = ({ pathSchema, path, field_required, field_id, field_index, ed
         "title": field_label,
         "description": field_description,
         "items": field_items,
-        "type": "array"
+        "type": "array",
+        "value": value
     }
 
     // handle add array item
@@ -148,7 +188,9 @@ const ArrayType = ({ pathSchema, path, field_required, field_id, field_index, ed
         setDataInputItems(items2)
 
         // for form data
-        handleDataInput(items2, pathSchema, "array");
+        handleDataInput(items2, pathFormData, "array");
+        // conv. schema data
+        handleConvertedDataInput(items2, path + ".value", "array")
     }
 
     return (<>
@@ -191,7 +233,7 @@ const ArrayType = ({ pathSchema, path, field_required, field_id, field_index, ed
                                                             <div style={{ width: "20px", marginTop: "10px", height: "30px" }} {...provided.dragHandleProps}>
                                                                 <DragHandleIcon fontSize="small" />
                                                             </div>
-                                                            <ArrayItemRenderer pathSchema={pathSchema} dataInputItems={dataInputItems} setDataInputItems={setDataInputItems} field_label={field_label} field_items={field_items} edit={true} handleDeleteArrayItem={handleDeleteArrayItem} path={path + ".properties"} fieldIndex={index} fieldId={inputItems[index]["field_id"]} type={inputItems[index]["type"]} />
+                                                            <ArrayItemRenderer value={value} pathSchema={pathSchema} pathFormData={pathFormData} dataInputItems={dataInputItems} setDataInputItems={setDataInputItems} field_label={field_label} field_items={field_items} edit={true} handleDeleteArrayItem={handleDeleteArrayItem} path={path} fieldIndex={index} fieldId={inputItems[index]["field_id"]} type={inputItems[index]["type"]} />
                                                         </div>
                                                     </div>
                                                 )}
@@ -209,7 +251,7 @@ const ArrayType = ({ pathSchema, path, field_required, field_id, field_index, ed
                 </AccordionDetails>
             </Accordion>
         </div>
-        {openDialog ? <EditElement pathSchema={pathSchema} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
+        {openDialog ? <EditElement pathFormData={pathFormData} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
     </>
     );
 };

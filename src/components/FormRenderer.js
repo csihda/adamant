@@ -78,7 +78,7 @@ const FormRenderer = ({ revertAllChanges, schema, edit }) => {
                                                     {edit ? <div style={{ width: "20px", marginTop: "10px", height: "30px" }} {...provided.dragHandleProps}>
                                                         <DragHandleIcon fontSize="small" />
                                                     </div> : null}
-                                                    <ElementRenderer schema={schema} path={"properties"} fieldId={properties[item]["fieldId"]} fieldIndex={item} elementRequired={required} edit={edit} field={properties[item]} />
+                                                    <ElementRenderer schema={schema} path={"properties"} pathSchema={"properties"} fieldId={properties[item]["fieldId"]} fieldIndex={item} elementRequired={required} edit={edit} field={properties[item]} />
                                                 </div>
                                             </div>
                                         )}

@@ -112,7 +112,7 @@ const EditSchemaHeader = ({ schemaID, title, description, schemaURI, openDialog,
                     <div>
                         <FormControl component="widget-type">
                             <FormLabel style={{ color: "#01579b" }} component="legend">Basic Descriptors:</FormLabel>
-                            <TextField disabled margin='normal' onChange={event => handleChangeUISchema(event, "uri")} style={{ marginTop: "20px" }} defaultValue={schemaURI} variant="outlined" fullWidth={true} label={"$schema"} />
+                            <TextField disabled margin='normal' onChange={event => handleChangeUISchema(event, "id")} style={{ marginTop: "20px" }} defaultValue={schemaURI} variant="outlined" fullWidth={true} label={"$schema"} />
                             <TextField margin='normal' onChange={event => handleChangeUISchema(event, "id")} style={{ marginTop: "10px" }} defaultValue={schemaID} variant="outlined" fullWidth={true} label={"Schema ID"} />
                             <TextField margin='normal' onChange={event => handleChangeUISchema(event, "title")} style={{ marginTop: "10px" }} defaultValue={title} variant="outlined" fullWidth={true} label={"Schema Title"} />
                             <TextField margin='normal' onChange={event => handleChangeUISchema(event, "description")} style={{ marginTop: "10px" }} defaultValue={description} variant="outlined" fullWidth={true} label={"Schema Description"} multiline rows={3} />

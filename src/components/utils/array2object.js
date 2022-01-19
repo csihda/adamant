@@ -28,6 +28,9 @@ const array2object = (propert) => {
                     someObject[tempKey]["properties"]
                 );
             }
+            if (item === "value") {
+                delete someObject[tempKey]["value"]
+            }
         });
     });
     return someObject;

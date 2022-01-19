@@ -23,10 +23,10 @@ const style = {
 }
 
 
-const ItemNumberType = ({ pathSchema, dataInputItems, setDataInputItems, path, field_type, edit, index, field_id, handleDeleteArrayItem }) => {
+const ItemNumberType = ({ value, pathFormData, dataInputItems, setDataInputItems, path, field_type, edit, index, field_id, handleDeleteArrayItem }) => {
     const classes = useStyles();
-    const [inputValue, setInputValue] = useState("");
-    const { handleDataInput } = useContext(FormContext);
+    const [inputValue, setInputValue] = useState(value === undefined ? "" : value[index] === undefined ? "" : value[index]);
+    const { handleDataInput, handleConvertedDataInput } = useContext(FormContext);
 
 
     // handle input on change for number a.k.a signed float
@@ -56,7 +56,10 @@ const ItemNumberType = ({ pathSchema, dataInputItems, setDataInputItems, path, f
             setDataInputItems(items);
 
             // store to the main form data
-            handleDataInput(items, pathSchema, "array")
+            handleDataInput(items, pathFormData, "array")
+
+            // conv. schema data
+            handleConvertedDataInput(items, path + ".value", "array")
         }
     }
 

@@ -5,15 +5,17 @@ import ItemStringType from "./array_items/ItemStringType";
 import ItemObjectType from "./array_items/ItemObjectType";
 
 
-const ArrayItemRenderer = ({ pathSchema, dataInputItems, setDataInputItems, field_label, field_items, path, type, edit, fieldIndex, fieldId, enumerate, handleDeleteArrayItem, properties }) => {
+const ArrayItemRenderer = ({ value, pathSchema, pathFormData, dataInputItems, setDataInputItems, field_label, field_items, path, type, edit, fieldIndex, fieldId, enumerate, handleDeleteArrayItem, properties }) => {
 
     switch (type) {
         case 'string':
             return (<ItemStringType
+                value={value}
                 setDataInputItems={setDataInputItems}
-                pathSchema={pathSchema}
+                pathFormData={pathFormData}
+                pathSchema={pathSchema + ".value"}
                 dataInputItems={dataInputItems}
-                path={path + "." + fieldIndex}
+                path={path}
                 index={fieldIndex}
                 field_id={fieldId}
                 handleDeleteArrayItem={handleDeleteArrayItem}
@@ -22,8 +24,10 @@ const ArrayItemRenderer = ({ pathSchema, dataInputItems, setDataInputItems, fiel
             />)
         case 'number':
             return (<ItemNumberType
-                path={path + "." + fieldIndex}
-                pathSchema={pathSchema}
+                value={value}
+                path={path}
+                pathFormData={pathFormData}
+                pathSchema={pathSchema + ".value"}
                 setDataInputItems={setDataInputItems}
                 dataInputItems={dataInputItems}
                 index={fieldIndex}
@@ -34,8 +38,10 @@ const ArrayItemRenderer = ({ pathSchema, dataInputItems, setDataInputItems, fiel
             />)
         case 'integer':
             return (<ItemIntegerType
-                path={path + "." + fieldIndex}
-                pathSchema={pathSchema}
+                value={value}
+                path={path}
+                pathFormData={pathFormData}
+                pathSchema={pathSchema + ".value"}
                 setDataInputItems={setDataInputItems}
                 dataInputItems={dataInputItems}
                 index={fieldIndex}
@@ -49,8 +55,9 @@ const ArrayItemRenderer = ({ pathSchema, dataInputItems, setDataInputItems, fiel
                 setDataInputItems={setDataInputItems}
                 dataInputItems={dataInputItems}
                 field_label={field_label}
-                pathSchema={pathSchema}
-                path={path + "." + fieldIndex}
+                pathFormData={pathFormData}
+                pathSchema={pathSchema + ".value"}
+                path={path}
                 index={fieldIndex}
                 field_id={fieldId}
                 handleDeleteArrayItem={handleDeleteArrayItem}

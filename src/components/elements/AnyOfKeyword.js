@@ -19,6 +19,8 @@ import generateUniqueID from "../utils/generateUniqueID";
 import { IconButton } from "@material-ui/core";
 import { TextField } from "@material-ui/core";
 import ElementRenderer from "../ElementRenderer";
+import ObjectType from "./ObjectType";
+import object2array from "../utils/object2array";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -31,14 +33,31 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const AnyOfKeyword = ({ pathSchema, path, field_required, field_id, field_index, edit, field_label, field_description, field_prefixItems, anyOf_list }) => {
+const AnyOfKeyword = ({ pathFormData, path, field_required, field_id, field_index, edit, field_label, field_description, field_prefixItems, anyOf_list }) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [expand, setExpand] = useState(true); // set to "true" for normally open accordion
-    const { updateParent, convertedSchema, handleDataInput, handleDataDelete } = useContext(FormContext);
+    const { updateParent, convertedSchema, handleDataInput, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
     const [field_items, setField_items] = useState(Array.isArray(anyOf_list) & anyOf_list[0]["type"] === "array" ? anyOf_list[0]["items"] : anyOf_list[0])
     const [globalIndex, setGlobalIndex] = useState(0);
     const [inputItems, setInputItems] = useState([]);
     const [dataInputItems, setDataInputItems] = useState([]);
+
+    // clean up empty strings in the paths
+    path = path.split(".")
+    path = path.filter(e => e)
+    path = path.join(".")
+    pathFormData = pathFormData.split(".")
+    pathFormData = pathFormData.filter(e => e)
+    pathFormData = pathFormData.join(".")
+
+
+    let newPath = path.split(".")
+    newPath.pop()
+    newPath = newPath.join(".")
+
+    let newPathFormData = pathFormData.split(".")
+    newPathFormData.pop()
+    newPathFormData = newPathFormData.join(".")
 
 
     // This is to expand or contract the accordion, because normally open is used 
@@ -56,13 +75,18 @@ const AnyOfKeyword = ({ pathSchema, path, field_required, field_id, field_index,
         setInputItems([]);
 
         // get rid of the current value
-        handleDataDelete(pathSchema)
+        handleDataDelete(pathFormData)
 
         const index = parseInt(event.target.value)
         setGlobalIndex(index)
         if (anyOf_list[index]["type"] === "array") {
             setField_items(anyOf_list[index]["items"])
-        } else {
+        }
+        else if (anyOf_list[index]["type"] === "object") {
+            let prop = object2array(anyOf_list[index]["properties"])
+            setField_items(prop)
+        }
+        else {
             setField_items(anyOf_list[index])
         }
     }
@@ -93,7 +117,9 @@ const AnyOfKeyword = ({ pathSchema, path, field_required, field_id, field_index,
         setDataInputItems(items2)
 
         // for form data
-        handleDataInput(items2, pathSchema, "array");
+        handleDataInput(items2, pathFormData, "array");
+        // conv. schema data
+        handleConvertedDataInput(items2, path + ".value", "array")
     }
 
     // handle delete object UI
@@ -101,7 +127,7 @@ const AnyOfKeyword = ({ pathSchema, path, field_required, field_id, field_index,
         const value = deleteKey(convertedSchema, path)
         updateParent(value)
 
-        handleDataDelete(pathSchema);
+        handleDataDelete(pathFormData);
     }
 
 
@@ -122,7 +148,7 @@ const AnyOfKeyword = ({ pathSchema, path, field_required, field_id, field_index,
         "title": field_label,
         "description": field_description,
         "items": field_items,
-        "type": "anyOf"
+        "type": "anyOf",
     }
 
     // handle add array item
@@ -181,7 +207,9 @@ const AnyOfKeyword = ({ pathSchema, path, field_required, field_id, field_index,
         setDataInputItems(items2)
 
         // for form data
-        handleDataInput(items2, pathSchema, "array");
+        handleDataInput(items2, pathFormData, "array");
+        // conv. schema data
+        handleConvertedDataInput(items2, path + ".value", "array")
     }
 
     return (<>
@@ -244,7 +272,7 @@ const AnyOfKeyword = ({ pathSchema, path, field_required, field_id, field_index,
                                                                 <ArrayItemRenderer field_label={field_label} field_items={inputItems[index]} edit={true} handleDeleteArrayItem={handleDeleteArrayItem} path={path + ".properties"} fieldIndex={index} fieldId={inputItems[index]["field_id"]} type={inputItems[index]["type"]} />
                                                                 */}
 
-                                                                <ArrayItemRenderer pathSchema={pathSchema} dataInputItems={dataInputItems} setDataInputItems={setDataInputItems} field_label={field_label} field_items={field_items} edit={true} handleDeleteArrayItem={handleDeleteArrayItem} path={path + ".properties"} fieldIndex={index} fieldId={inputItems[index]["field_id"]} type={inputItems[index]["type"]} />
+                                                                <ArrayItemRenderer pathFormData={pathFormData} dataInputItems={dataInputItems} setDataInputItems={setDataInputItems} field_label={field_label} field_items={field_items} edit={true} handleDeleteArrayItem={handleDeleteArrayItem} path={path} fieldIndex={index} fieldId={inputItems[index]["field_id"]} type={inputItems[index]["type"]} />
                                                             </div>
                                                         </div>
                                                     )}
@@ -261,12 +289,26 @@ const AnyOfKeyword = ({ pathSchema, path, field_required, field_id, field_index,
                         </DragDropContext>
                     </AccordionDetails>
                     :
-                    <div style={{ padding: "10px" }}>
-                        <ElementRenderer path={path} fieldId={field_id} fieldIndex={0} elementRequired={field_required} edit={false} field={field_items} />
-                    </div>}
+                    anyOf_list[globalIndex]["type"] === "object" ?
+                        <div style={{ padding: "10px" }}>
+                            <ObjectType
+                                path={path}
+                                pathFormData={pathFormData !== undefined ? pathFormData : field_id}
+                                field_id={field_id}
+                                field_label={undefined}
+                                field_description={undefined}
+                                field_required={field_required}
+                                field_properties={field_items}
+                                edit={false}
+                            />
+                        </div>
+                        :
+                        <div style={{ padding: "10px" }}>
+                            <ElementRenderer pathFormData={newPathFormData} path={newPath} fieldId={field_id} fieldIndex={field_index} elementRequired={field_required} edit={false} field={field_items} />
+                        </div>}
             </Accordion>
         </div>
-        {openDialog ? <EditElement anyOf_list={anyOf_list} pathSchema={pathSchema} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
+        {openDialog ? <EditElement anyOf_list={anyOf_list} pathFormData={pathFormData} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
     </>
     );
 };

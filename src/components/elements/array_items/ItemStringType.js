@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import TextField from "@material-ui/core/TextField"
 import { makeStyles } from '@material-ui/core/styles';
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -23,9 +23,10 @@ const style = {
 }
 
 
-const ItemStringType = ({ pathSchema, dataInputItems, setDataInputItems, path, field_type, edit, index, field_id, handleDeleteArrayItem }) => {
+const ItemStringType = ({ value, pathFormData, dataInputItems, setDataInputItems, path, edit, index, field_id, handleDeleteArrayItem }) => {
     const classes = useStyles();
-    const { handleDataInput } = useContext(FormContext)
+    const { handleDataInput, handleConvertedDataInput } = useContext(FormContext)
+    const [fieldValue, setFieldValue] = useState(value === undefined ? undefined : value[index])
 
     // handle input field on blur
     const handleOnBlur = (event, index) => {
@@ -33,9 +34,14 @@ const ItemStringType = ({ pathSchema, dataInputItems, setDataInputItems, path, f
         const items = Array.from(arr);
         items[index] = event.target.value;
         setDataInputItems(items);
+        setFieldValue(event.target.value)
 
         // store to form data
-        handleDataInput(items, pathSchema, "array")
+        handleDataInput(items, pathFormData, "array")
+
+        // conv. schema data
+        handleConvertedDataInput(items, path + ".value", "array")
+
     }
 
 
@@ -45,7 +51,7 @@ const ItemStringType = ({ pathSchema, dataInputItems, setDataInputItems, path, f
                 <Typography className={classes.heading}>{index + 1}.</Typography>
             </div> : null}
             <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
-                <TextField onBlur={(event) => handleOnBlur(event, index)} id={field_id} fullWidth={true} className={classes.heading} variant="outlined" />
+                <TextField onBlur={(event) => handleOnBlur(event, index)} id={field_id} fullWidth={true} className={classes.heading} variant="outlined" defaultValue={fieldValue} />
                 {edit ? <>
                     <IconButton onClick={() => handleDeleteArrayItem(index)} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><DeleteIcon fontSize="small" color="secondary" /></IconButton></> : null}
             </div>

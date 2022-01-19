@@ -35,7 +35,7 @@ const style = {
     paddingBottom: "10px",
 }
 
-const EditElement = ({ enumerated, field_enumerate, field_required, field_id, UISchema, path, pathSchema, openDialog, setOpenDialog, defaultValue }) => {
+const EditElement = ({ enumerated, field_enumerate, field_required, field_id, UISchema, path, pathFormData, openDialog, setOpenDialog, defaultValue }) => {
 
     const [selectedType, setSelectedType] = useState(UISchema["type"])
     const [title, setTitle] = useState(UISchema["title"])
@@ -157,8 +157,8 @@ const EditElement = ({ enumerated, field_enumerate, field_required, field_id, UI
         setOpenDialog(false)
 
         //* update form data if fieldId change
-        // update pathSchema with new fieldId
-        updateFormDataId(field_id, fieldId, pathSchema, defaultValue)
+        // update pathFormData with new fieldId
+        updateFormDataId(field_id, fieldId, pathFormData, defaultValue)
 
     }
 

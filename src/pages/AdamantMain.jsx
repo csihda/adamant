@@ -19,9 +19,12 @@ import deleteKeySchema from "../components/utils/deleteKeySchema";
 import validateAgainstSchema from "../components/utils/validateAgainstSchema";
 import CreateELabFTWExperimentDialog from "../components/CreateELabFTWExperimentDialog";
 import { useEffect } from "react";
-import formData2descriptionList from "../components/utils/formData2descriptionList";
+import createDescriptionList from "../components/utils/createDescriptionList";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import convData2DescList from "../components/utils/convData2DescList";
+import preProcessB4DescList from "../components/utils/preProcessB4DescList";
+import nicelySort from "../components/utils/nicelySort";
 
 // function that receive the schema and convert it to Form/json data blueprint
 // also to already put the default value to this blueprint
@@ -95,7 +98,8 @@ const AdamantMain = () => {
   const [convertedSchema, setConvertedSchema] = useState(null);
   const [createScratchMode, setCreateScratchMode] = useState(false);
   const [jsonData, setJsonData] = useState({});
-  const [jsonDataElab, SetJsonDataElab] = useState({});
+  const [descriptionList, setDescriptionList] = useState("");
+  const [schemaWithValues, setSchemaWithValues] = useState({});
   const [token, setToken] = useState("");
   const [eLabURL, setELabURL] = useState("");
   const [experimentTitle, setExperimentTitle] = useState("");
@@ -140,7 +144,7 @@ const AdamantMain = () => {
           {
             position: "top-right",
             autoClose: 5000,
-            hideProgressBar: true,
+            hideProgressBar: false,
             closeOnClick: true,
             pauseOnHover: true,
             draggable: false,
@@ -182,6 +186,7 @@ const AdamantMain = () => {
           setSchema(obj);
           let oriSchema = JSON.parse(JSON.stringify(obj));
           setOriginalSchema(oriSchema);
+          setSchemaWithValues(JSON.parse(JSON.stringify(oriSchema)));
           setConvertedSchema(convertedSchema);
           setEditMode(true);
 
@@ -261,7 +266,6 @@ const AdamantMain = () => {
     // create form data again
     let formData = createFormDataBlueprint(obj["properties"]);
     setJsonData(formData);
-    console.log(formData);
 
     // convert obj schema to iterable array properties
     let convertedSchema = JSON.parse(JSON.stringify(obj));
@@ -272,6 +276,7 @@ const AdamantMain = () => {
     setSchema(obj);
     let oriSchema = JSON.parse(JSON.stringify(obj));
     setOriginalSchema(oriSchema);
+    setSchemaWithValues(JSON.parse(JSON.stringify(oriSchema)));
     setConvertedSchema(convertedSchema);
     setEditMode(true);
 
@@ -318,11 +323,11 @@ const AdamantMain = () => {
     convertedSchema["properties"] = object2array(value["properties"]);
     setConvertedSchema(convertedSchema);
     setSchema(value);
+    setSchemaWithValues(value);
 
     // create form data again
     let formData = createFormDataBlueprint(value["properties"]);
     setJsonData(formData);
-    console.log(formData);
   };
 
   // handle data input on blur
@@ -339,10 +344,37 @@ const AdamantMain = () => {
       value = event;
     }
     set(jData, path, value);
-    console.log("Current form data:", jData);
+    console.log("Current form data    (jData):", jData);
     setJsonData(jData);
   };
   //
+
+  // handle data input on blur to convertedSchema
+  const handleConvertedDataInput = (event, path, type) => {
+    let convSchemaData = { ...convertedSchema };
+    let value;
+    if (["string", "number", "integer", "boolean"].includes(type)) {
+      if (["number", "integer", "boolean"].includes(type)) {
+        value = event;
+      } else {
+        value = event.target.value;
+      }
+    } else if (type === "array") {
+      value = event;
+    }
+    set(convSchemaData, path, value);
+    setConvertedSchema(convSchemaData);
+
+    // convert to form data
+    /*
+    console.log(
+      "Current form data (convData):",
+      convData2FormData(
+        JSON.parse(JSON.stringify(convSchemaData["properties"]))
+      )
+    );
+    */
+  };
 
   // delete data in jsonData when the field in schema is deleted
   const handleDataDelete = (path) => {
@@ -356,7 +388,7 @@ const AdamantMain = () => {
   const updateFormDataId = (
     oldFieldId,
     newFieldId,
-    pathSchema,
+    pathFormData,
     defaultValue
   ) => {
     if (oldFieldId === newFieldId) {
@@ -364,18 +396,18 @@ const AdamantMain = () => {
     }
     if (defaultValue === undefined) {
       let jData = { ...jsonData };
-      jData = deleteKeySchema(jData, pathSchema);
+      jData = deleteKeySchema(jData, pathFormData);
       setJsonData(jData);
       console.log("Current form data:", jData);
     } else {
-      let newPathSchema = pathSchema.split(".");
-      newPathSchema.pop();
-      newPathSchema.push(newFieldId);
+      let newPathFormData = pathFormData.split(".");
+      newPathFormData.pop();
+      newPathFormData.push(newFieldId);
 
       let jData = { ...jsonData };
-      let value = getValue(jData, pathSchema);
-      set(jData, newPathSchema, value);
-      jData = deleteKeySchema(jData, pathSchema);
+      let value = getValue(jData, pathFormData);
+      set(jData, newPathFormData, value);
+      jData = deleteKeySchema(jData, pathFormData);
       setJsonData(jData);
       console.log("Current form data:", jData);
     }
@@ -456,6 +488,76 @@ const AdamantMain = () => {
     });
     a.href = URL.createObjectURL(file);
     a.download = `formdata-${sha256_hash}.json`;
+    a.click();
+
+    handleClose();
+  };
+
+  // handle download json schema
+  const handleDownloadDescriptionList = () => {
+    let content = { ...jsonData };
+    let contentSchema = { ...schema };
+
+    // get rid of empty values in content
+    content = removeEmpty(content);
+    if (content === undefined) {
+      content = {};
+    }
+
+    //
+    // validate jsonData against its schema before download
+    //
+    const [valid, validation] = validateAgainstSchema(content, contentSchema);
+    if (!valid) {
+      let errorMessages = "";
+      for (let i = 0; i < validation.errors.length; i++) {
+        let currentMessage = validation.errors[i].message + ".";
+        errorMessages += currentMessage + "\n";
+      }
+      errorMessages = errorMessages.split("\n");
+      toast.error(
+        <>
+          <div>
+            <strong>Form data is not valid.</strong>
+          </div>
+          <div style={{ paddingBottom: "10px" }}>Check your inputs!</div>
+          {errorMessages.map((item) => {
+            return <div>{item}</div>;
+          })}
+        </>,
+        {
+          position: "top-right",
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: false,
+          progress: undefined,
+        }
+      );
+      return;
+    }
+    // Create elab ftw description list and store it to the description list state
+    let convSch = { ...convertedSchema };
+    let cleaned = removeEmpty(convData2DescList(convSch["properties"]));
+    //console.log(cleaned);
+    let preProcessed = preProcessB4DescList(cleaned, cleaned, schema, []);
+    //console.log(preProcessed);
+    let nicelySorted = nicelySort(preProcessed);
+    let descList = createDescriptionList(nicelySorted);
+    let descListHeading = `<h1><strong>${convSch["title"]}</strong></h1>\n`;
+    descListHeading += descList;
+    descListHeading += `<div> This experiment template was generated with <span><a title=https://github.com/csihda/adamant href=https://github.com/csihda/adamant>ADAMANT v0.0.1</a></span> </div>`;
+    console.log("created description list:\n", descListHeading);
+    //setDescriptionList(descList);
+
+    let sha256_hash = CryptoJS.SHA256(descListHeading);
+    let a = document.createElement("a");
+    let file = new Blob([descListHeading], {
+      type: "text/plain",
+    });
+    a.href = URL.createObjectURL(file);
+    a.download = `desclist-${sha256_hash}.tpl`;
     a.click();
 
     handleClose();
@@ -556,17 +658,13 @@ const AdamantMain = () => {
       return;
     }
 
-    // create description list
-    let descriptionList =
-      "<dl>\n" +
-      formData2descriptionList(JSON.parse(JSON.stringify(content))) +
-      "</dl>";
     // call create experiment api
     console.log("tags:", tags);
     var $ = require("jquery");
     $.ajax({
       type: "POST",
       url: "/adamant/api/create_experiment",
+      async: false,
       dataType: "json",
       data: {
         javascript_data: JSON.stringify(content),
@@ -630,6 +728,20 @@ const AdamantMain = () => {
   };
 
   const handleOnClickProceedButton = () => {
+    // Create elab ftw description list and store it to the description list state
+    let convSch = { ...convertedSchema };
+    let cleaned = removeEmpty(convData2DescList(convSch["properties"]));
+    //console.log(cleaned);
+    let preProcessed = preProcessB4DescList(cleaned, cleaned, schema, []);
+    //console.log(preProcessed);
+    let nicelySorted = nicelySort(preProcessed);
+    let descList = createDescriptionList(nicelySorted);
+    let descListHeading = `<h1><strong>${convSch["title"]}</strong></h1>\n`;
+    descListHeading += descList;
+    descListHeading += `<div> This experiment template was generated with <span ><a title=https://github.com/csihda/adamant href=https://github.com/csihda/adamant>ADAMANT v0.0.1</a></span> </div>`;
+    console.log("created description list:\n", descListHeading);
+    setDescriptionList(descListHeading);
+
     // validate the data first using ajv
     let content = { ...jsonData };
     let contentSchema = { ...schema };
@@ -691,6 +803,7 @@ const AdamantMain = () => {
           handleDataInput,
           updateFormDataId,
           handleDataDelete,
+          handleConvertedDataInput,
         }}
       >
         <div style={{ paddingBottom: "5px" }}>
@@ -904,6 +1017,9 @@ const AdamantMain = () => {
                 </MenuItem>
                 <MenuItem onClick={handleDownloadFormData}>
                   Download JSON Data
+                </MenuItem>
+                <MenuItem onClick={handleDownloadDescriptionList}>
+                  Download Description List
                 </MenuItem>
               </Menu>
             </div>

@@ -19,7 +19,6 @@ const CreateELabFTWExperimentDialog = ({ getTagsELabFTW, eLabURL, setELabURL, se
 
     const onTagsChange = (event, values) => {
         setTags(values);
-        console.log(values)
     };
 
     // cancel submit
