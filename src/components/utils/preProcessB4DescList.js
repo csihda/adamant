@@ -26,25 +26,27 @@ const preProcessB4DescList = (content, originalContent, originalSchema, arr) => 
             preProcessB4DescList(content[item], originalContent, originalSchema, arr)
         }
         else {
-            /*
-             a function to get a path of a given a key:attribute pair
-            */
-            let path_key = getPaths(originalContent, content[item]["key"])
-            path_key = pathPreProcess(path_key)
-            let path_label = getPaths(originalContent, content[item]["label"])
-            path_label = pathPreProcess(path_label)
-            let path = path_key.filter(value => path_label.includes(value));
-            let URIsAndLabels = getPathURIsAndLabels(originalSchema, path[0])
+            if (content[item]["value"] !== undefined) {
+                /*
+                 a function to get a path of a given a key:attribute pair
+                */
+                let path_key = getPaths(originalContent, content[item]["key"])
+                path_key = pathPreProcess(path_key)
+                let path_label = getPaths(originalContent, content[item]["label"])
+                path_label = pathPreProcess(path_label)
+                let path = path_key.filter(value => path_label.includes(value));
+                let URIsAndLabels = getPathURIsAndLabels(originalSchema, path[0])
 
-            arr.push({
-                "path": path[0],
-                "pathURIs": URIsAndLabels[0],
-                "pathLabels": URIsAndLabels[1],
-                "key": content[item]["key"],
-                "label": content[item]["label"],
-                "value": content[item]["value"],
-                "$id": content[item]["$id"]
-            })
+                arr.push({
+                    "path": path[0],
+                    "pathURIs": URIsAndLabels[0],
+                    "pathLabels": URIsAndLabels[1],
+                    "key": content[item]["key"],
+                    "label": content[item]["label"],
+                    "value": content[item]["value"],
+                    "$id": content[item]["$id"]
+                })
+            }
         }
     })
 

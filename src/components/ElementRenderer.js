@@ -8,7 +8,7 @@ import ArrayType from './elements/ArrayType';
 import AnyOfKeyword from './elements/AnyOfKeyword';
 
 
-const ElementRenderer = ({ dataInputItems, setDataInputItems, withinArray, path, pathSchema, pathFormData, elementRequired, fieldId, fieldIndex, edit, field: { type, title, description, properties, required, enumerate, items, defaultValue, value, anyOf } }) => {
+const ElementRenderer = ({ dataInputItems, setDataInputItems, withinArray, path, pathSchema, pathFormData, elementRequired, fieldId, fieldIndex, edit, field: { type, $id, title, description, properties, required, enumerate, items, defaultValue, value, anyOf } }) => {
 
     switch (type) {
         case 'string':
@@ -23,6 +23,7 @@ const ElementRenderer = ({ dataInputItems, setDataInputItems, withinArray, path,
                 field_id={fieldId}
                 field_index={fieldIndex}
                 field_label={title}
+                field_uri={$id}
                 field_description={description}
                 field_required={elementRequired}
                 field_enumerate={enumerate}
@@ -39,6 +40,7 @@ const ElementRenderer = ({ dataInputItems, setDataInputItems, withinArray, path,
                 pathSchema={pathSchema + "." + fieldId}
                 pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldId : fieldId}
                 field_id={fieldId}
+                field_uri={$id}
                 field_index={fieldIndex}
                 field_label={title}
                 field_description={description}
@@ -57,6 +59,7 @@ const ElementRenderer = ({ dataInputItems, setDataInputItems, withinArray, path,
                 pathSchema={pathSchema + "." + fieldId}
                 pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldId : fieldId}
                 field_id={fieldId}
+                field_uri={$id}
                 field_index={fieldIndex}
                 field_label={title}
                 field_description={description}
@@ -75,6 +78,7 @@ const ElementRenderer = ({ dataInputItems, setDataInputItems, withinArray, path,
                 pathSchema={pathSchema + "." + fieldId}
                 pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldId : fieldId}
                 field_id={fieldId}
+                field_uri={$id}
                 field_index={fieldIndex}
                 field_label={title}
                 field_description={description}
@@ -90,6 +94,7 @@ const ElementRenderer = ({ dataInputItems, setDataInputItems, withinArray, path,
                 pathSchema={pathSchema + "." + fieldId}
                 pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldId : fieldId}
                 field_id={fieldId}
+                field_uri={$id}
                 field_label={title}
                 field_description={description}
                 field_required={elementRequired}
@@ -105,6 +110,7 @@ const ElementRenderer = ({ dataInputItems, setDataInputItems, withinArray, path,
                         path={path + "." + fieldIndex}
                         field_index={fieldIndex}
                         field_id={fieldId}
+                        field_uri={$id}
                         field_label={title}
                         field_description={description}
                         field_required={elementRequired}
@@ -119,6 +125,7 @@ const ElementRenderer = ({ dataInputItems, setDataInputItems, withinArray, path,
                     pathSchema={pathSchema + "." + fieldId}
                     pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldId : fieldId}
                     field_id={fieldId}
+                    field_uri={$id}
                     field_label={title}
                     field_description={description}
                     field_required={required}
@@ -135,6 +142,7 @@ const ElementRenderer = ({ dataInputItems, setDataInputItems, withinArray, path,
                         path={path + "." + fieldIndex}
                         field_index={fieldIndex}
                         field_id={fieldId}
+                        field_uri={$id}
                         field_label={title}
                         field_description={description}
                         field_required={elementRequired}

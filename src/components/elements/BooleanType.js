@@ -25,7 +25,7 @@ const style = {
 }
 
 
-const BooleanType = ({ withinArray, value, dataInputItems, setDataInputItems, path, pathFormData, field_required, field_index, edit, field_id, field_label, field_description, defaultValue }) => {
+const BooleanType = ({ field_uri, withinArray, value, dataInputItems, setDataInputItems, path, pathFormData, field_required, field_index, edit, field_id, field_label, field_description, defaultValue }) => {
     //const [descriptionText, setDescriptionText] = useState(field_description);
     const [openDialog, setOpenDialog] = useState(false);
     const { updateParent, convertedSchema, handleDataInput, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
@@ -53,6 +53,7 @@ const BooleanType = ({ withinArray, value, dataInputItems, setDataInputItems, pa
         "fieldId": field_id,
         "title": field_label,
         "description": field_description,
+        "$id": field_uri,
         "type": "boolean",
         "value": value
     }
@@ -158,7 +159,7 @@ const BooleanType = ({ withinArray, value, dataInputItems, setDataInputItems, pa
                 {edit ? <><IconButton onClick={() => setOpenDialog(true)} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><EditIcon fontSize="small" color="primary" /></IconButton>
                     <IconButton onClick={() => handleDeleteElement()} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><DeleteIcon fontSize="small" color="secondary" /></IconButton></> : null}
             </div>
-            {openDialog ? <EditElement pathFormData={pathFormData} defaultValue={defaultValue} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
+            {openDialog ? <EditElement field_uri={field_uri} pathFormData={pathFormData} defaultValue={defaultValue} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
         </>
     )
 };

@@ -1,0 +1,130 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://all-types",
+    "title": "All JSON Schema data types",
+    "description": "A schema containing all JSON schema data types to test ADAMANT functionalities.",
+    "type": "object",
+    "properties": {
+        "stringType": {
+            "title": "String Type Field",
+            "description": "String Type Field",
+            "type": "string"
+        },
+        "stringEnumType":{
+            "title": "String Type Field with Enumerate",
+            "description": "String Type Field with Enumerate",
+            "type": "string",
+            "enum": ["1","2","3"]
+        },
+        "numberType": {
+            "title": "Number Type Field",
+            "description": "Number Type Field",
+            "default": 0.415,
+            "type": "number"
+        },
+        "numberEnumType": {
+          "title": "Number Type Field with Enumerate",
+          "description": "Number Type Field Enumerate",
+          "enum": [0.1, 0.2,0.3],
+          "type": "number"
+      },
+        "integerType": {
+            "title": "Integer Type Field",
+            "description": "Integer Type Field",
+            "default": 415,
+            "type": "integer"
+        },
+        "integerEnumType": {
+          "title": "Integer Type Field with Enumerate",
+          "description": "Integer Type Field with Enumerate",
+          "enum": [1,2,3,4],
+          "type": "integer"
+      },
+        "booleanType": {
+            "title": "Boolean Type Field",
+            "description": "Boolean Type Field",
+            "type": "boolean",
+            "default": true
+        },
+        "booleanType2": {
+            "title": "Boolean Type Field",
+            "description": "Boolean Type Field",
+            "type": "boolean"
+        },
+        "arrayTypeEmpty": {
+            "title": "Array Type Field (empty)",
+            "description": "Array Type Field (empty)",
+            "type": "array",
+            "items": {}
+        },
+        "arrayTypeString": {
+            "title": "Array Type Field (string)",
+            "description": "Array Type Field (string)",
+            "type": "array",
+            "items": {"type":"string"}
+        },
+        "arrayTypeNumber": {
+            "title": "Array Type Field (number)",
+            "description": "Array Type Field (number)",
+            "type": "array",
+            "items": {"type":"number"}
+        },
+        "arrayTypeInteger": {
+            "title": "Array Type Field (integer)",
+            "description": "Array Type Field (integer)",
+            "type": "array",
+            "items": {"type":"integer"}
+        },
+        "arrayTypeObject": {
+            "title": "Array Type Field (object)",
+            "description": "Array Type Field (object)",
+            "type": "array",
+            "items":
+            {
+            "type": "object",
+            "properties": 
+              {
+              "arrayTypeObject_string": 
+                {
+                  "title": "arrayTypeObject_string",
+                  "description": "arrayTypeObject_string",
+                  "type": "string"
+                },
+              "arrayTypeObject_number": 
+                {
+                  "title": "arrayTypeObject_number",
+                  "description": "arrayTypeObject_number",
+                  "type": "number"
+                },
+              "arrayTypeObject_integer": 
+                {
+                  "title": "arrayTypeObject_integer",
+                  "description": "arrayTypeObject_integer",
+                  "type": "integer"
+                }
+              }
+            }
+        },
+        "objectType": {
+            "title": "Object Type Element",
+            "description": "Object Type Element",
+            "type": "object",
+            "properties": {}
+        },
+        "anyOf": {
+          "title": "AnyOf Keyword",
+          "description": "AnyOf Keyword",
+          "anyOf": [
+            {
+              "type":"array",
+              "items": {
+                "type":"string"
+              }
+            },
+            {
+              "type":"boolean"
+            }
+          ]
+      }
+    }
+}

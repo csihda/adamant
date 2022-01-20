@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const ObjectType = ({ path, pathSchema, pathFormData, field_required, field_id, field_index, edit, field_label, field_description, field_properties }) => {
+const ObjectType = ({ field_uri, path, pathSchema, pathFormData, field_required, field_id, field_index, edit, field_label, field_description, field_properties }) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [openDialogAddElement, setOpenDialogAddElement] = useState(false);
     const [expand, setExpand] = useState(true); // set to "true" for normally open accordion
@@ -76,6 +76,7 @@ const ObjectType = ({ path, pathSchema, pathFormData, field_required, field_id, 
         "title": field_label,
         "description": field_description,
         "properties": field_properties,
+        "$id": field_uri,
         "type": "object"
     }
 
@@ -143,7 +144,7 @@ const ObjectType = ({ path, pathSchema, pathFormData, field_required, field_id, 
                 </AccordionDetails>
             </Accordion>
         </div>
-        {openDialog ? <EditElement pathFormData={pathFormData} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} /> : null}
+        {openDialog ? <EditElement field_uri={field_uri} pathFormData={pathFormData} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} /> : null}
         {openDialogAddElement ? <AddElement openDialog={openDialogAddElement} setOpenDialog={setOpenDialogAddElement} path={path} defaultSchema={defaultSchema} UISchema={UISchema} /> : null}
     </>);
 };

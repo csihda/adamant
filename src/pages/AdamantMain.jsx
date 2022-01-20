@@ -30,6 +30,7 @@ import SchemaOne from "../schemas/plasma-mds.json";
 import SchemaTwo from "../schemas/pak-schema.json";
 import SchemaThree from "../schemas/appj-schema.json";
 import SchemaFour from "../schemas/all-types.json";
+import fillValueWithEmptyString from "../components/utils/fillValueWithEmptyString";
 
 // function that receive the schema and convert it to Form/json data blueprint
 // also to already put the default value to this blueprint
@@ -137,7 +138,7 @@ const AdamantMain = () => {
         toast.success("Connection to server is established. Online mode.", {
           position: "top-right",
           autoClose: 5000,
-          hideProgressBar: true,
+          hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
           draggable: false,
@@ -178,15 +179,47 @@ const AdamantMain = () => {
   useEffect(() => {
     // if online mode then get available schemas from server
     if (onlineMode === true) {
-      // use available schema as a place holder
-      setSchemaNameList([
-        "",
-        "plasma-mds.json",
-        "pak-schema.json",
-        "appj-schema.json",
-        "all-types.json",
-      ]);
-      setSchemaList([null, SchemaOne, SchemaTwo, SchemaThree, SchemaFour]);
+      let $ = require("jquery");
+      $.ajax({
+        type: "GET",
+        url: "/adamant/api/get_schemas",
+        success: function (status) {
+          console.log("SUCCESS");
+
+          // do this to preserver the order
+          let sch = [];
+          status["schema"].forEach((element) => {
+            sch.push(JSON.parse(element));
+          });
+
+          setSchemaList(sch);
+          setSchemaNameList(status["schemaName"]);
+        },
+        error: function () {
+          console.log("ERROR");
+          toast.warning(
+            "Error while fetching the schemas. Using basic list of schemas.",
+            {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: false,
+              progress: undefined,
+            }
+          );
+          // if unable to fetch the schemas then use the basic list of schemas
+          setSchemaNameList([
+            "",
+            "plasma-mds.json",
+            "pak-schema.json",
+            "appj-schema.json",
+            "all-types.json",
+          ]);
+          setSchemaList([null, SchemaOne, SchemaTwo, SchemaThree, SchemaFour]);
+        },
+      });
     }
   }, [onlineMode]);
 
@@ -630,7 +663,11 @@ const AdamantMain = () => {
     }
     // Create elab ftw description list and store it to the description list state
     let convSch = { ...convertedSchema };
-    let cleaned = removeEmpty(convData2DescList(convSch["properties"]));
+    // use this if we want to show all fields in description list
+    let convProp = JSON.parse(JSON.stringify(convSch["properties"]));
+    fillValueWithEmptyString(convProp);
+    let cleaned = convData2DescList(convProp);
+    //let cleaned = removeEmpty(convData2DescList(convSch["properties"]));
     if ((cleaned === undefined) | (cleaned === {})) {
       toast.error(
         <>
@@ -696,7 +733,7 @@ const AdamantMain = () => {
         toast.success(`Successfully retrieved the tags!`, {
           position: "top-right",
           autoClose: 5000,
-          hideProgressBar: true,
+          hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
           draggable: false,
@@ -709,7 +746,7 @@ const AdamantMain = () => {
         toast.error(`Failed to get the tags!\nMaybe wrong url or token?`, {
           position: "top-right",
           autoClose: 5000,
-          hideProgressBar: true,
+          hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
           draggable: false,
@@ -801,7 +838,7 @@ const AdamantMain = () => {
           {
             position: "top-right",
             autoClose: 5000,
-            hideProgressBar: true,
+            hideProgressBar: false,
             closeOnClick: true,
             pauseOnHover: true,
             draggable: false,
@@ -826,7 +863,7 @@ const AdamantMain = () => {
           {
             position: "top-right",
             autoClose: 5000,
-            hideProgressBar: true,
+            hideProgressBar: false,
             closeOnClick: true,
             pauseOnHover: true,
             draggable: false,
@@ -845,8 +882,11 @@ const AdamantMain = () => {
   const handleOnClickProceedButton = () => {
     // Create elab ftw description list and store it to the description list state
     let convSch = { ...convertedSchema };
-    let cleaned = removeEmpty(convData2DescList(convSch["properties"]));
-    //console.log(cleaned);
+    // use this if we want to show all fields in description list
+    let convProp = JSON.parse(JSON.stringify(convSch["properties"]));
+    fillValueWithEmptyString(convProp);
+    let cleaned = convData2DescList(convProp);
+    //let cleaned = removeEmpty(convData2DescList(convSch["properties"]));
     if ((cleaned === undefined) | (cleaned === {})) {
       toast.error(
         <>

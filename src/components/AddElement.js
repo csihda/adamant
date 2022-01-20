@@ -1,6 +1,5 @@
 import React, { useContext, useState } from 'react'
 import TextField from "@material-ui/core/TextField"
-import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 import AddIcon from "@material-ui/icons/AddBox";
 import Divider from '@material-ui/core/Divider';
@@ -14,7 +13,6 @@ import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import { FormContext } from '../FormContext';
 import { Checkbox } from '@material-ui/core';
-import { FormGroup } from '@material-ui/core';
 import updateRequired from './utils/updateRequired';
 import getValue from './utils/getValue';
 import checkIfFieldIDExist from './utils/checkIfFieldIDExist';
@@ -25,6 +23,7 @@ import CloseIcon from '@material-ui/icons/Close';
 const AddElement = ({ enumerated, field_enumerate, field_required, defaultSchema, path, openDialog, setOpenDialog, UISchema, schemaTitle }) => {
 
     const [selectedType, setSelectedType] = useState("string")
+    const [fieldUri, setFieldUri] = useState(undefined)
     const [fieldId, setFieldId] = useState(undefined)
     const [title, setTitle] = useState(undefined)
     const [description, setDescription] = useState(undefined)
@@ -52,6 +51,9 @@ const AddElement = ({ enumerated, field_enumerate, field_required, defaultSchema
         }
 
         tempUISchema["fieldId"] = fieldId;
+        if (fieldUri !== undefined | fieldUri.toString().replace(/\s+/g, '') !== "") {
+            tempUISchema["$id"] = fieldUri
+        }
         tempUISchema["type"] = selectedType;
         if (title !== undefined) { tempUISchema["title"] = title }
         if (description !== undefined) { tempUISchema["description"] = description }
@@ -142,6 +144,8 @@ const AddElement = ({ enumerated, field_enumerate, field_required, defaultSchema
                 return setDescription(event.target.value)
             case 'fieldId':
                 return setFieldId(event.target.value)
+            case '$id':
+                return setFieldUri(event.target.value)
             default:
                 return null;
         }
@@ -192,13 +196,15 @@ const AddElement = ({ enumerated, field_enumerate, field_required, defaultSchema
                     <div>
                         <FormControl component="widget-type">
                             <FormLabel style={{ color: "#01579b" }} component="legend">Basic Descriptors:</FormLabel>
-                            <TextField inputProps={{ maxLength: 12 }} required onBlur={event => handleOnBlurFieldId(event)} onChange={event => handleChangeUISchema(event, "fieldId")} style={{ marginTop: "20px" }} defaultValue={tempUISchema["fieldId"]} variant="outlined" fullWidth={true} label={"Field ID or Key"} />
-                            <TextField onChange={event => handleChangeUISchema(event, "title")} style={{ marginTop: "10px" }} defaultValue={tempUISchema["title"]} variant="outlined" fullWidth={true} label={"Field Title"} />
-                            <TextField onChange={event => handleChangeUISchema(event, "description")} style={{ marginTop: "10px" }} defaultValue={tempUISchema["description"]} variant="outlined" fullWidth={true} label={"Field Description"} multiline rows={3} />
+                            <TextField inputProps={{ maxLength: 12 }} required onBlur={event => handleOnBlurFieldId(event)} onChange={event => handleChangeUISchema(event, "fieldId")} style={{ marginTop: "20px" }} defaultValue={tempUISchema["fieldId"]} variant="outlined" fullWidth={true} label={"Field Key"} helperText='A unique json key for this field. Usually short and no spaces (use "_" instead). Spaces are replaced automatically with "_" upon saving.' />
+                            <TextField margin="normal" onChange={event => handleChangeUISchema(event, "$id")} style={{ marginTop: "10px" }} variant="outlined" fullWidth={true} label={"Field ID/URI"} helperText='ID or URI for this field if available.' />
+                            <TextField onChange={event => handleChangeUISchema(event, "title")} style={{ marginTop: "10px" }} defaultValue={tempUISchema["title"]} variant="outlined" fullWidth={true} label={"Field Title"} helperText='Label or title of the field. For a field that requires a unit, the unit can be placed within a square bracket, e,g., "Chamber Pressure [Pa]".' />
+                            <TextField onChange={event => handleChangeUISchema(event, "description")} style={{ marginTop: "10px" }} defaultValue={tempUISchema["description"]} variant="outlined" fullWidth={true} label={"Field Description"} multiline rows={3} helperText='A detailed description of the field, how the input should be formated, etc.' />
                             <TextField
                                 onChange={event => handleChangeUISchema(event, "type")}
                                 style={{ marginTop: "10px" }}
                                 defaultValue={selectedType}
+                                helperText='Data type of the field input.'
                                 select
                                 fullWidth={true}
                                 label={"Field Data Type"}

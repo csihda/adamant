@@ -1,0 +1,197 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://currentlynotavailable",
+    "title": "Some title",
+    "description": "Some description.",
+    "type": "object",
+    "properties": {
+        "general": {
+            "title": "General Information",
+            "description": "General information regarding...",
+            "type": "object",
+            "required": ["objectives", "project"],
+            "properties": {
+                "objectives": {
+                    "title": "Objective(s)",
+                    "description": "Detailed description of the motivations, hypothesis, reasons for the experiment",
+                    "type": "string"
+                },
+                "priority": {
+                    "title": "Priority",
+                    "description": "No description yet.",
+                    "type": "object",
+                    "required": ["purpose", "deadline", "operating_expense"],
+                    "properties": {
+                        "purpose": {
+                            "title": "Purpose",
+                            "description": "Specify the aim of the experiment: industry report/paper/project meeting/others",
+                            "type": "string"
+                        },
+                        "deadline": {
+                            "title": "Deadline",
+                            "description": "Specify the desired finish of the experiment.",
+                            "type": "string"
+                        },
+                        "operating_expense": {
+                            "title": "Operating Expense",
+                            "description": "Estimate the time and operators requested.",
+                            "type": "string"
+                        }
+                    }
+                },
+                "project": {
+                    "title": "Project",
+                    "description": "Name and number of the project.",
+                    "type": "string"
+                },
+                "responsible_persons": {
+                    "title": "Responsible Persons",
+                    "description": "Names and emails of the responsible persons.",
+                    "type": "object",
+                    "required": ["project_leader_name", "customer_name", "customer_email"],
+                    "properties": {
+                        "project_leader_name": {
+                            "title": "Project Leader Name",
+                            "description": "Name of project leader.",
+                            "type": "string"
+                        },
+                        "customer_name": {
+                            "title": "Customer Name",
+                            "description": "Name of customer.",
+                            "type": "string"
+                        },
+                        "customer_email": {
+                            "title": "Customer Email",
+                            "description": "Email address of customer.",
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "analysis": {
+            "title": "Analysis",
+            "description": "Analysis description goes here (placeholder).",
+            "type": "object",
+            "renderable": false,
+            "required": ["device"], 
+            "properties": {
+                "device": {
+                    "title": "Device",
+                    "description": "Device name and model",
+                    "type": "string"
+                },
+                "conditions": {
+                    "title": "Conditions",
+                    "description": "Condition description goes here (placeholder).",
+                    "type": "object",
+                    "properties": {
+                        "emitter": {
+                            "title": "Emitter",
+                            "description": "Last installation.",
+                            "type": "string"
+                        },
+                        "extraction_voltage": {
+                            "title": "Extraction Voltage [V]",
+                            "description": "Extraction voltage description goes here (placeholder).",
+                            "type": "number"
+                        },
+                        "sip_1_pressure": {
+                            "title": "SIP 1 Pressure [Pa]",
+                            "description": "SIP 1 Pressure description goes here (placeholder).",
+                            "type": "number"
+                        },
+                        "sip_2_pressure": {
+                            "title": "SIP 2 Pressure [Pa]",
+                            "description": "SIP 2 Pressure description goes here (placeholder).",
+                            "type": "number"
+                        },
+                        "chamber_pressure": {
+                            "title": "Chamber Pressure [Pa]",
+                            "description": "Chamber Pressure description goes here (placeholder).",
+                            "type": "number"
+                        }
+                    }
+                },
+                "procedure": {
+                    "title": "Procedure",
+                    "description": "Procedure description goes here (placeholder).",
+                    "type": "object",
+                    "properties": {
+                        "detectors": {
+                            "title": "Detectors",
+                            "description": "Insert applied detectors in the experiment: in-lens SE, lower SE, LABE, STEM, EDX.",
+                            "type": "string"
+                        },
+                        "color_coding": {
+                            "title": "Color Coding",
+                            "description": "Insert colors applied for the imaging if different images are mixed in one: red for A, green for B.",
+                            "type": "string"
+                        },
+                        "working_distance": {
+                            "title": "Working Distance [mm]",
+                            "description": "Range of WD in the experiment in mm",
+                            "type": "number"
+                        },
+                        "acceleration_voltage": {
+                            "title": "Acceleration Voltage [kV]",
+                            "description": "Acceleration Voltage description goes here (placeholder).",
+                            "type": "number"
+                        },
+                        "magnifications": {
+                            "title": "Magnifications",
+                            "description": "Maximum magnification applied",
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "sample": {
+            "title": "Samples",
+            "description": "Samples description goes here (placeholder).",
+            "anyOf": [
+                {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "required": ["id", "priority", "sample_safety_and_specification", "imaging"],
+                        "properties": {
+                            "id": {
+                                "title": "Sample ID",
+                                "description": "Sample ID [YYMMDD-XXXX].",
+                                "type": "string"
+                            },
+                            "priority": {
+                                "title": "Priority",
+                                "description": "Priority [1/2/3].",
+                                "type": "string",
+                                "enum": ["","1","2","3"]
+                            },
+                            "sample_safety_and_specification": {
+                                "title": "Sample Safety & Specification",
+                                "description": "Safety risks, chemical composition, geometry, material consistency (compact/powders), fixation.",
+                                "type": "string"
+                            },
+                            "imaging": {
+                                "title": "Imaging",
+                                "description": "Specification of desired imaging parameters, e.g., zoom, image size, magnification.",
+                                "type": "string"
+                            },
+                            "notices": {
+                                "title": "Notices",
+                                "description": "Manufacturing details, pervious analysis, other remarks.",
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "minItems": 1,
+                    "uniqueItems": true
+                },
+                {
+                    "type": "null"
+                }
+            ]
+        }
+    }
+}

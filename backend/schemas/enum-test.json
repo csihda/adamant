@@ -1,0 +1,22 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://currentlynotavailable",
+    "title": "Some title",
+    "description": "Some description.",
+    "type": "object",
+    "properties": {
+        "enum_field": {
+            "title": "String Field with Enumerate",
+            "description": "String Field with Enumerate",
+            "type": "string",
+            "default": "2",
+            "enum": ["1","2","3"]
+        },
+        "non_enum":{
+            "title": "Typical String Field",
+            "description": "Typical String Field",
+            "default": "2",
+            "type": "string"
+        }
+    }
+}

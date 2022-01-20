@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const ArrayType = ({ value, pathFormData, path, pathSchema, field_required, field_id, field_index, edit, field_label, field_description, field_items, field_prefixItems }) => {
+const ArrayType = ({ field_uri, value, pathFormData, path, pathSchema, field_required, field_id, field_index, edit, field_label, field_description, field_items, field_prefixItems }) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [expand, setExpand] = useState(true); // set to "true" for normally open accordion
     const { updateParent, convertedSchema, handleDataInput, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
@@ -128,6 +128,7 @@ const ArrayType = ({ value, pathFormData, path, pathSchema, field_required, fiel
         "title": field_label,
         "description": field_description,
         "items": field_items,
+        "$id": field_uri,
         "type": "array",
         "value": value
     }
@@ -251,7 +252,7 @@ const ArrayType = ({ value, pathFormData, path, pathSchema, field_required, fiel
                 </AccordionDetails>
             </Accordion>
         </div>
-        {openDialog ? <EditElement pathFormData={pathFormData} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
+        {openDialog ? <EditElement field_uri={field_uri} pathFormData={pathFormData} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
     </>
     );
 };

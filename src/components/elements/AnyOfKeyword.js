@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const AnyOfKeyword = ({ pathFormData, path, field_required, field_id, field_index, edit, field_label, field_description, field_prefixItems, anyOf_list }) => {
+const AnyOfKeyword = ({ pathFormData, path, field_required, field_uri, field_id, field_index, edit, field_label, field_description, field_prefixItems, anyOf_list }) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [expand, setExpand] = useState(true); // set to "true" for normally open accordion
     const { updateParent, convertedSchema, handleDataInput, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
@@ -170,6 +170,7 @@ const AnyOfKeyword = ({ pathFormData, path, field_required, field_id, field_inde
         "fieldId": field_id,
         "title": field_label,
         "description": field_description,
+        "$id": field_uri,
         "items": field_items,
         "type": "anyOf",
     }
@@ -331,7 +332,7 @@ const AnyOfKeyword = ({ pathFormData, path, field_required, field_id, field_inde
                         </div>}
             </Accordion>
         </div>
-        {openDialog ? <EditElement anyOf_list={anyOf_list} pathFormData={pathFormData} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
+        {openDialog ? <EditElement field_uri={field_uri} anyOf_list={anyOf_list} pathFormData={pathFormData} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
     </>
     );
 };

@@ -1,3 +1,4 @@
+from distutils import filelist
 from flask import Flask, request
 from flask_restful import Api
 import elabapy
@@ -5,6 +6,8 @@ import json
 import io
 import base64
 from PIL import Image
+from pathlib import Path
+from collections import OrderedDict
 
 app = Flask(__name__)
 api = Api(app)
@@ -18,6 +21,20 @@ def json_to_description_list(json_data):
 @app.route('/adamant/api/check_mode', methods=["GET"])
 def check_mode():
     return {"message": "connection is a success"}
+
+
+@app.route('/adamant/api/get_schemas', methods=["GET"])
+def get_schemas():
+    list_of_schemas = {"schemaName": [""], "schema": [None]}
+    filelist = list(Path('./schemas').glob('**/*.json'))
+    for i in range(0, len(filelist)):
+        file = filelist[i]
+        file = open(str(file), 'r')
+        filename = str(file.name).replace("schemas\\", "")
+        content = file.read()
+        list_of_schemas["schema"].append(content)
+        list_of_schemas["schemaName"].append(filename)
+    return list_of_schemas
 
 
 @app.route('/adamant/api/get_tags', methods=['POST'])
@@ -44,7 +61,6 @@ def create_experiment():
     body = request.form['body']
     tags = request.form['tags']
     tags = json.loads(tags)
-    print(tags)
     jsdata = json.loads(jsdata)
     jsschema = json.loads(jsschema)
 

@@ -35,11 +35,12 @@ const style = {
     paddingBottom: "10px",
 }
 
-const EditElement = ({ enumerated, field_enumerate, field_required, field_id, UISchema, path, pathFormData, openDialog, setOpenDialog, defaultValue }) => {
+const EditElement = ({ field_uri, enumerated, field_enumerate, field_required, field_id, UISchema, path, pathFormData, openDialog, setOpenDialog, defaultValue }) => {
 
     const [selectedType, setSelectedType] = useState(UISchema["type"])
     const [title, setTitle] = useState(UISchema["title"])
     const [fieldId, setFieldId] = useState(UISchema["fieldId"])
+    const [fieldUri, setFieldUri] = useState(UISchema["$id"])
     const [description, setDescription] = useState(UISchema["description"])
     const [defValue, setDefValue] = useState(defaultValue)
     const { updateParent, convertedSchema, updateFormDataId } = useContext(FormContext);
@@ -95,6 +96,9 @@ const EditElement = ({ enumerated, field_enumerate, field_required, field_id, UI
         }
 
         tempUISchema["fieldId"] = fieldId;
+        if (fieldUri !== undefined | fieldUri.toString().replace(/\s+/g, '') !== "") {
+            tempUISchema["$id"] = fieldUri
+        }
         tempUISchema["type"] = selectedType;
         if (title !== undefined) { tempUISchema["title"] = title }
         if (description !== undefined) { tempUISchema["description"] = description }
@@ -176,6 +180,8 @@ const EditElement = ({ enumerated, field_enumerate, field_required, field_id, UI
                 return setFieldId(event.target.value.replace(/ /g, "_"))
             case 'defaultValue':
                 return setDefValue(event.target.value)
+            case '$id':
+                return setFieldUri(event.target.value)
             default:
                 return null;
         }
@@ -251,7 +257,8 @@ const EditElement = ({ enumerated, field_enumerate, field_required, field_id, UI
                             <div>
                                 <FormControl component="widget-type">
                                     <FormLabel style={{ color: "#01579b" }} component="legend">Basic Descriptors:</FormLabel>
-                                    <TextField margin="normal" required onChange={event => handleChangeUISchema(event, "fieldId")} style={{ marginTop: "20px" }} defaultValue={field_id} variant="outlined" fullWidth={true} label={"Field ID or Key"} helperText='A unique json key or id for this field. Usually short and no spaces (use "_" instead). Spaces are replaced automatically with "_" upon saving.' />
+                                    <TextField margin="normal" required onChange={event => handleChangeUISchema(event, "fieldId")} style={{ marginTop: "20px" }} defaultValue={field_id} variant="outlined" fullWidth={true} label={"Field Key"} helperText='A unique json key for this field. Usually short and no spaces (use "_" instead). Spaces are replaced automatically with "_" upon saving.' />
+                                    <TextField margin="normal" onChange={event => handleChangeUISchema(event, "$id")} style={{ marginTop: "10px" }} defaultValue={field_uri} variant="outlined" fullWidth={true} label={"Field ID/URI"} helperText='ID or URI for this field if available.' />
                                     <TextField margin="normal" onChange={event => handleChangeUISchema(event, "title")} style={{ marginTop: "10px" }} defaultValue={tempUISchema["title"]} variant="outlined" fullWidth={true} label={"Field Title"} helperText='Label or title of the field. For a field that requires a unit, the unit can be placed within a square bracket, e,g., "Chamber Pressure [Pa]".' />
                                     <TextField margin="normal" onChange={event => handleChangeUISchema(event, "description")} style={{ marginTop: "10px" }} defaultValue={tempUISchema["description"]} variant="outlined" fullWidth={true} label={"Field Description"} multiline rows={3} helperText='A detailed description of the field, how the input should be formated, etc.' />
                                     <TextField

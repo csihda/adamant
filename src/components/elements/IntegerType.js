@@ -27,7 +27,7 @@ const style = {
 }
 
 
-const IntegerType = ({ value, dataInputItems, setDataInputItems, withinArray, defaultValue, path, pathFormData, field_required, field_index, edit, field_id, field_label, field_description, field_enumerate }) => {
+const IntegerType = ({ field_uri, value, dataInputItems, setDataInputItems, withinArray, defaultValue, path, pathFormData, field_required, field_index, edit, field_id, field_label, field_description, field_enumerate }) => {
     //const [descriptionText, setDescriptionText] = useState(field_description);
     const [openDialog, setOpenDialog] = useState(false);
     const { updateParent, convertedSchema, handleDataInput, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
@@ -64,6 +64,7 @@ const IntegerType = ({ value, dataInputItems, setDataInputItems, withinArray, de
         "fieldId": field_id,
         "title": field_label,
         "description": field_description,
+        "$id": field_uri,
         "type": "integer",
         "value": value
     }
@@ -217,7 +218,7 @@ const IntegerType = ({ value, dataInputItems, setDataInputItems, withinArray, de
                     {edit ? <><IconButton onClick={() => setOpenDialog(true)} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><EditIcon fontSize="small" color="primary" /></IconButton>
                         <IconButton onClick={() => handleDeleteElement()} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><DeleteIcon fontSize="small" color="secondary" /></IconButton></> : null}
                 </div>
-                {openDialog ? <EditElement pathFormData={pathFormData} field_enumerate={field_enumerate} enumerated={enumerated} defaultValue={defaultValue} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
+                {openDialog ? <EditElement field_uri={field_uri} pathFormData={pathFormData} field_enumerate={field_enumerate} enumerated={enumerated} defaultValue={defaultValue} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
             </>
         )
     } else {
@@ -253,7 +254,7 @@ const IntegerType = ({ value, dataInputItems, setDataInputItems, withinArray, de
                     {edit ? <><IconButton onClick={() => setOpenDialog(true)} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><EditIcon fontSize="small" color="primary" /></IconButton>
                         <IconButton onClick={() => handleDeleteElement()} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><DeleteIcon fontSize="small" color="secondary" /></IconButton></> : null}
                 </div>
-                {openDialog ? <EditElement pathFormData={pathFormData} field_enumerate={field_enumerate} enumerated={enumerated} defaultValue={defaultValue} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
+                {openDialog ? <EditElement field_uri={field_uri} pathFormData={pathFormData} field_enumerate={field_enumerate} enumerated={enumerated} defaultValue={defaultValue} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
             </>
         )
     }
