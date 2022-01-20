@@ -26,6 +26,10 @@ import convData2DescList from "../components/utils/convData2DescList";
 import preProcessB4DescList from "../components/utils/preProcessB4DescList";
 import nicelySort from "../components/utils/nicelySort";
 import array2objectAnyOf from "../components/utils/array2objectAnyOf";
+import SchemaOne from "../schemas/plasma-mds.json";
+import SchemaTwo from "../schemas/pak-schema.json";
+import SchemaThree from "../schemas/appj-schema.json";
+import SchemaFour from "../schemas/all-types.json";
 
 // function that receive the schema and convert it to Form/json data blueprint
 // also to already put the default value to this blueprint
@@ -94,7 +98,9 @@ const AdamantMain = () => {
   const [schemaIntermediate, setSchemaIntermediate] = useState(null);
   const [renderReady, setRenderReady] = useState(false);
   const [editMode, setEditMode] = useState(true);
-  const [schemaFile, setSchemaFile] = useState();
+  const [schemaList, setSchemaList] = useState([]);
+  const [schemaNameList, setSchemaNameList] = useState([]);
+  const [selectedSchemaName, setSelectedSchemaName] = useState("");
   const [originalSchema, setOriginalSchema] = useState();
   const [inputMode, setInputMode] = useState(false);
   const [convertedSchema, setConvertedSchema] = useState(null);
@@ -141,6 +147,17 @@ const AdamantMain = () => {
       error: function () {
         console.log("Unable to establish connection to server. Offline mode");
         setOnlineMode(false);
+
+        // use available schema as a place holder
+        setSchemaNameList([
+          "",
+          "plasma-mds.json",
+          "pak-schema.json",
+          "appj-schema.json",
+          "all-types.json",
+        ]);
+        setSchemaList([null, SchemaOne, SchemaTwo, SchemaThree, SchemaFour]);
+
         toast.warning(
           "Unable to establish connection to server. Offline mode.",
           {
@@ -157,13 +174,76 @@ const AdamantMain = () => {
     });
   }, []);
 
-  // place holders
-  let schemaList = [
-    "",
-    "SEM-request-form",
-    "Plasma-MDS",
-    "unreasonably long title lalalala...",
-  ]; //
+  // get schemas from server when onlinemode is true
+  useEffect(() => {
+    // if online mode then get available schemas from server
+    if (onlineMode === true) {
+      // use available schema as a place holder
+      setSchemaNameList([
+        "",
+        "plasma-mds.json",
+        "pak-schema.json",
+        "appj-schema.json",
+        "all-types.json",
+      ]);
+      setSchemaList([null, SchemaOne, SchemaTwo, SchemaThree, SchemaFour]);
+    }
+  }, [onlineMode]);
+
+  // handle select schema on change
+  const handleSelectSchemaOnChange = (event) => {
+    // first reset states
+    setRenderReady(false);
+    setDisable(true);
+    setCreateScratchMode(false);
+    setJsonData({});
+    //
+
+    console.log("selected schema:", event.target.value);
+    setSelectedSchemaName(event.target.value);
+
+    let selectedSchema = schemaList[schemaNameList.indexOf(event.target.value)];
+
+    // reset everything when selectedSchema is empty
+    if (selectedSchema === null) {
+      setDisable(true);
+      setRenderReady(false);
+      setSchema(null);
+      setSchemaValidity(false);
+      setSchemaMessage();
+      setCreateScratchMode(false);
+      setJsonData({});
+      return;
+    }
+
+    // convert selectedSchema schema to iterable array properties
+    let convertedSchema = JSON.parse(JSON.stringify(selectedSchema));
+    try {
+      convertedSchema["properties"] = object2array(
+        selectedSchema["properties"]
+      );
+
+      // update states
+      setSchemaValidity(true);
+      setSchemaMessage(`${event.target.value} is a valid schema`);
+      setSchema(selectedSchema);
+      let oriSchema = JSON.parse(JSON.stringify(selectedSchema));
+      setOriginalSchema(oriSchema);
+      setSchemaWithValues(JSON.parse(JSON.stringify(oriSchema)));
+      setConvertedSchema(convertedSchema);
+      setEditMode(true);
+
+      // create form data
+      let formData = createFormDataBlueprint(selectedSchema["properties"]);
+      setJsonData(formData);
+    } catch (error) {
+      console.log(error);
+      // update states
+      setSchemaValidity(false);
+      setSchemaMessage(`${event.target.value} is invalid`);
+      setSchema(null);
+    }
+  };
 
   // function to check if the file accepted is of json format and json schema valid
   const checkSchemaValidity = (schemaFile) => {
@@ -219,12 +299,12 @@ const AdamantMain = () => {
       checkSchemaValidity(acceptedFile);
 
       // store schema file in the state
-      setSchemaFile(acceptedFile);
       // update states
       setRenderReady(false);
       setDisable(true);
       setCreateScratchMode(false);
       setJsonData({});
+      setSelectedSchemaName("");
     },
     [setRenderReady]
   );
@@ -257,6 +337,7 @@ const AdamantMain = () => {
     setSchemaValidity(false);
     setSchemaMessage();
     setJsonData({});
+    setSelectedSchemaName("");
 
     let schemaBlueprint = {
       $schema: "http://json-schema.org/draft-04/schema#",
@@ -332,6 +413,7 @@ const AdamantMain = () => {
     setConvertedSchema(convertedSchema);
     setSchema(value);
     setSchemaWithValues(value);
+    setDescriptionList("");
 
     // create form data again
     let formData = createFormDataBlueprint(value["properties"]);
@@ -549,7 +631,28 @@ const AdamantMain = () => {
     // Create elab ftw description list and store it to the description list state
     let convSch = { ...convertedSchema };
     let cleaned = removeEmpty(convData2DescList(convSch["properties"]));
-    //console.log(cleaned);
+    if ((cleaned === undefined) | (cleaned === {})) {
+      toast.error(
+        <>
+          <div>
+            <strong>
+              Unable to download. Form data is not valid. Maybe empty?
+            </strong>
+          </div>
+          <div style={{ paddingBottom: "10px" }}>Check your inputs!</div>
+        </>,
+        {
+          position: "top-right",
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: false,
+          progress: undefined,
+        }
+      );
+      return;
+    }
     let preProcessed = preProcessB4DescList(cleaned, cleaned, schema, []);
     //console.log(preProcessed);
     let nicelySorted = nicelySort(preProcessed);
@@ -558,7 +661,7 @@ const AdamantMain = () => {
     descListHeading += descList;
     descListHeading += `<div> This experiment template was generated with <span><a title=https://github.com/csihda/adamant href=https://github.com/csihda/adamant>ADAMANT v0.0.1</a></span> </div>`;
     console.log("created description list:\n", descListHeading);
-    //setDescriptionList(descList);
+    setDescriptionList(descList);
 
     let sha256_hash = CryptoJS.SHA256(descListHeading);
     let a = document.createElement("a");
@@ -632,7 +735,10 @@ const AdamantMain = () => {
     //
     // validate jsonData against its schema before submission
     //
-    const [valid, validation] = validateAgainstSchema(content, contentSchema);
+    const [valid, validation] = validateAgainstSchema(
+      content,
+      JSON.parse(JSON.stringify(contentSchema))
+    );
     if (!valid) {
       let errorMessages = "";
       for (let i = 0; i < validation.errors.length; i++) {
@@ -741,6 +847,28 @@ const AdamantMain = () => {
     let convSch = { ...convertedSchema };
     let cleaned = removeEmpty(convData2DescList(convSch["properties"]));
     //console.log(cleaned);
+    if ((cleaned === undefined) | (cleaned === {})) {
+      toast.error(
+        <>
+          <div>
+            <strong>
+              Unable to proceed. Form data is not valid. Maybe empty?
+            </strong>
+          </div>
+          <div style={{ paddingBottom: "10px" }}>Check your inputs!</div>
+        </>,
+        {
+          position: "top-right",
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: false,
+          progress: undefined,
+        }
+      );
+      return;
+    }
     let preProcessed = preProcessB4DescList(cleaned, cleaned, schema, []);
     //console.log(preProcessed);
     let nicelySorted = nicelySort(preProcessed);
@@ -845,15 +973,17 @@ const AdamantMain = () => {
                 OR
               </div>
               <TextField
+                onChange={(event) => handleSelectSchemaOnChange(event)}
                 style={{ width: "220px", marginLeft: "10px" }}
                 fullWidth={false}
+                value={selectedSchemaName}
                 select
                 id={"select-schema"}
                 label={"Select existing schema"}
                 variant="outlined"
                 SelectProps={{ native: true }}
               >
-                {schemaList.map((content, index) => (
+                {schemaNameList.map((content, index) => (
                   <option key={index} value={content}>
                     {content}
                   </option>

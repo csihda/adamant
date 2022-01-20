@@ -46,6 +46,7 @@ def create_experiment():
     tags = json.loads(tags)
     print(tags)
     jsdata = json.loads(jsdata)
+    jsschema = json.loads(jsschema)
 
     # create experiment in eLabFtw
     elabURL = '{}/api/v1/'.format(elabURL)
@@ -62,15 +63,15 @@ def create_experiment():
 
     # upload the schema
     with open('temp-files//json_schema.json', 'w') as outfile:
-        outfile.write(jsschema)
-    with open('temp-files//json_schema.json', 'r+b') as file:
+        outfile.write(json.dumps(jsschema))
+    with open('temp-files//json_schema.json') as file:
         file_param = {'file': file}
         manager.upload_to_experiment(response['id'], file_param)
 
     # upload form data/jsdata
     with open('temp-files//json_data.json', 'w') as outfile:
         outfile.write(json.dumps(jsdata))
-    with open('temp-files//json_data.json', 'r+b') as file:
+    with open('temp-files//json_data.json') as file:
         file_param = {'file': file}
         manager.upload_to_experiment(response['id'], file_param)
 
