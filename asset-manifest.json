@@ -1,24 +1,24 @@
 {
   "files": {
     "main.css": "/adamant/static/css/main.f4fc0f31.chunk.css",
-    "main.js": "/adamant/static/js/main.de175ad9.chunk.js",
-    "main.js.map": "/adamant/static/js/main.de175ad9.chunk.js.map",
+    "main.js": "/adamant/static/js/main.ad8d9ce4.chunk.js",
+    "main.js.map": "/adamant/static/js/main.ad8d9ce4.chunk.js.map",
     "runtime-main.js": "/adamant/static/js/runtime-main.f1fe3efa.js",
     "runtime-main.js.map": "/adamant/static/js/runtime-main.f1fe3efa.js.map",
     "static/css/2.f4c56af9.chunk.css": "/adamant/static/css/2.f4c56af9.chunk.css",
-    "static/js/2.f57ba424.chunk.js": "/adamant/static/js/2.f57ba424.chunk.js",
-    "static/js/2.f57ba424.chunk.js.map": "/adamant/static/js/2.f57ba424.chunk.js.map",
+    "static/js/2.c73e8cde.chunk.js": "/adamant/static/js/2.c73e8cde.chunk.js",
+    "static/js/2.c73e8cde.chunk.js.map": "/adamant/static/js/2.c73e8cde.chunk.js.map",
     "index.html": "/adamant/index.html",
     "static/css/2.f4c56af9.chunk.css.map": "/adamant/static/css/2.f4c56af9.chunk.css.map",
     "static/css/main.f4fc0f31.chunk.css.map": "/adamant/static/css/main.f4fc0f31.chunk.css.map",
-    "static/js/2.f57ba424.chunk.js.LICENSE.txt": "/adamant/static/js/2.f57ba424.chunk.js.LICENSE.txt",
+    "static/js/2.c73e8cde.chunk.js.LICENSE.txt": "/adamant/static/js/2.c73e8cde.chunk.js.LICENSE.txt",
     "static/media/header-image.37bfe931.png": "/adamant/static/media/header-image.37bfe931.png"
   },
   "entrypoints": [
     "static/js/runtime-main.f1fe3efa.js",
     "static/css/2.f4c56af9.chunk.css",
-    "static/js/2.f57ba424.chunk.js",
+    "static/js/2.c73e8cde.chunk.js",
     "static/css/main.f4fc0f31.chunk.css",
-    "static/js/main.de175ad9.chunk.js"
+    "static/js/main.ad8d9ce4.chunk.js"
   ]
 }
