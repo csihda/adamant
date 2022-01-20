@@ -572,11 +572,13 @@ const AdamantMain = () => {
     // validate jsonData against its schema before download
     //
     const [valid, validation] = validateAgainstSchema(content, contentSchema);
-    if (!valid) {
+    if (!valid | (Object.keys(content).length === 0)) {
       let errorMessages = "";
-      for (let i = 0; i < validation.errors.length; i++) {
-        let currentMessage = validation.errors[i].message + ".";
-        errorMessages += currentMessage + "\n";
+      if (validation.errors !== null) {
+        for (let i = 0; i < validation.errors.length; i++) {
+          let currentMessage = validation.errors[i].message + ".";
+          errorMessages += currentMessage + "\n";
+        }
       }
       errorMessages = errorMessages.split("\n");
       toast.error(
@@ -585,8 +587,8 @@ const AdamantMain = () => {
             <strong>Form data is not valid.</strong>
           </div>
           <div style={{ paddingBottom: "10px" }}>Check your inputs!</div>
-          {errorMessages.map((item) => {
-            return <div>{item}</div>;
+          {errorMessages.map((item, index) => {
+            return <div key={index}>{item}</div>;
           })}
         </>,
         {
@@ -632,11 +634,13 @@ const AdamantMain = () => {
     // validate jsonData against its schema before download
     //
     const [valid, validation] = validateAgainstSchema(content, contentSchema);
-    if (!valid) {
+    if (!valid | (Object.keys(content).length === 0)) {
       let errorMessages = "";
-      for (let i = 0; i < validation.errors.length; i++) {
-        let currentMessage = validation.errors[i].message + ".";
-        errorMessages += currentMessage + "\n";
+      if (validation.errors !== null) {
+        for (let i = 0; i < validation.errors.length; i++) {
+          let currentMessage = validation.errors[i].message + ".";
+          errorMessages += currentMessage + "\n";
+        }
       }
       errorMessages = errorMessages.split("\n");
       toast.error(
@@ -645,8 +649,8 @@ const AdamantMain = () => {
             <strong>Form data is not valid.</strong>
           </div>
           <div style={{ paddingBottom: "10px" }}>Check your inputs!</div>
-          {errorMessages.map((item) => {
-            return <div>{item}</div>;
+          {errorMessages.map((item, index) => {
+            return <div key={index}>{item}</div>;
           })}
         </>,
         {
@@ -776,11 +780,13 @@ const AdamantMain = () => {
       content,
       JSON.parse(JSON.stringify(contentSchema))
     );
-    if (!valid) {
+    if (!valid | (Object.keys(content).length === 0)) {
       let errorMessages = "";
-      for (let i = 0; i < validation.errors.length; i++) {
-        let currentMessage = validation.errors[i].message + ".";
-        errorMessages += currentMessage + "\n";
+      if (validation.errors !== null) {
+        for (let i = 0; i < validation.errors.length; i++) {
+          let currentMessage = validation.errors[i].message + ".";
+          errorMessages += currentMessage + "\n";
+        }
       }
       errorMessages = errorMessages.split("\n");
       toast.error(
@@ -789,8 +795,8 @@ const AdamantMain = () => {
             <strong>Form data is not valid.</strong>
           </div>
           <div style={{ paddingBottom: "10px" }}>Check your inputs!</div>
-          {errorMessages.map((item) => {
-            return <div>{item}</div>;
+          {errorMessages.map((item, index) => {
+            return <div key={index}>{item}</div>;
           })}
         </>,
         {
@@ -934,11 +940,13 @@ const AdamantMain = () => {
     // validate jsonData against its schema before submission
     //
     const [valid, validation] = validateAgainstSchema(content, contentSchema);
-    if (!valid) {
+    if (!valid | (Object.keys(content).length === 0)) {
       let errorMessages = "";
-      for (let i = 0; i < validation.errors.length; i++) {
-        let currentMessage = validation.errors[i].message + ".";
-        errorMessages += currentMessage + "\n";
+      if (validation.errors !== null) {
+        for (let i = 0; i < validation.errors.length; i++) {
+          let currentMessage = validation.errors[i].message + ".";
+          errorMessages += currentMessage + "\n";
+        }
       }
       errorMessages = errorMessages.split("\n");
       toast.error(
@@ -947,8 +955,8 @@ const AdamantMain = () => {
             <strong>Form data is not valid.</strong>
           </div>
           <div style={{ paddingBottom: "10px" }}>Check your inputs!</div>
-          {errorMessages.map((item) => {
-            return <div>{item}</div>;
+          {errorMessages.map((item, index) => {
+            return <div key={index}>{item}</div>;
           })}
         </>,
         {
