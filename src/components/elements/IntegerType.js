@@ -35,6 +35,14 @@ const IntegerType = ({ field_uri, value, dataInputItems, setDataInputItems, with
     //const [required, setRequired] = useState(false)
     const classes = useStyles();
 
+    useEffect(() => {
+        if (value === undefined) {
+            setInputValue("")
+        } else {
+            setInputValue(value)
+        }
+    }, [value])
+
     // clean up empty strings in the paths
     path = path.split(".")
     path = path.filter(e => e)

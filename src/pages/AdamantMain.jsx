@@ -7,7 +7,6 @@ import Button from "@material-ui/core/Button";
 import { TextField } from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import { FormContext } from "../FormContext";
-import JSONSchemaViewer from "../components/JSONSchemaViewer";
 import array2object from "../components/utils/array2object";
 import object2array from "../components/utils/object2array";
 import { Menu, MenuItem } from "@material-ui/core";
@@ -31,6 +30,7 @@ import SchemaTwo from "../schemas/pak-schema.json";
 import SchemaThree from "../schemas/appj-schema.json";
 import SchemaFour from "../schemas/all-types.json";
 import fillValueWithEmptyString from "../components/utils/fillValueWithEmptyString";
+import fillForm from "../components/utils/fillForm";
 
 // function that receive the schema and convert it to Form/json data blueprint
 // also to already put the default value to this blueprint
@@ -486,6 +486,7 @@ const AdamantMain = () => {
       value = event;
     }
     set(convSchemaData, path, value);
+    console.log(convSchemaData);
     setConvertedSchema(convSchemaData);
     //console.log(convSchemaData);
 
@@ -506,6 +507,32 @@ const AdamantMain = () => {
     let value = deleteKeySchema(jData, path);
     setJsonData(value);
     console.log("Current form data:", value);
+  };
+
+  // handle received form data (json). Fill the form fields with the received data
+  const handleReceivedFormData = (data) => {
+    console.log(data);
+    // must look like updateParent
+
+    const newValue = { ...convertedSchema };
+
+    //fills this converted schema with the received data
+    fillForm(newValue["properties"], data);
+    console.log("filled form:\n", newValue);
+
+    // update original schema
+    const updatedSchema = JSON.parse(JSON.stringify(newValue));
+    const tempSchema = JSON.parse(JSON.stringify(newValue));
+    updatedSchema["properties"] = array2object(tempSchema["properties"]);
+
+    setConvertedSchema(newValue);
+    setSchema(updatedSchema);
+
+    // update intermediate schema
+    const updatedSchema2 = JSON.parse(JSON.stringify(newValue));
+    const tempSchema2 = JSON.parse(JSON.stringify(newValue));
+    updatedSchema2["properties"] = array2objectAnyOf(tempSchema2["properties"]);
+    setSchemaIntermediate(updatedSchema2);
   };
 
   // update form data id if a fieldId changes, simply delete key value pair of the oldfieldid from jsonData
@@ -697,7 +724,7 @@ const AdamantMain = () => {
     let preProcessed = preProcessB4DescList(cleaned, cleaned, schema, []);
     //console.log(preProcessed);
     let nicelySorted = nicelySort(preProcessed);
-    let descList = createDescriptionList(nicelySorted);
+    let descList = `<dl>\n${createDescriptionList(nicelySorted)}</dl>\n`;
     let descListHeading = `<h1><strong>${convSch["title"]}</strong></h1>\n`;
     descListHeading += descList;
     descListHeading += `<div> This experiment template was generated with <span><a title=https://github.com/csihda/adamant href=https://github.com/csihda/adamant>ADAMANT v0.0.1</a></span> </div>`;
@@ -918,7 +945,7 @@ const AdamantMain = () => {
     let preProcessed = preProcessB4DescList(cleaned, cleaned, schema, []);
     //console.log(preProcessed);
     let nicelySorted = nicelySort(preProcessed);
-    let descList = createDescriptionList(nicelySorted);
+    let descList = `<dl>\n${createDescriptionList(nicelySorted)}</dl>\n`;
     let descListHeading = `<h1><strong>${convSch["title"]}</strong></h1>\n`;
     descListHeading += descList;
     descListHeading += `<div> This experiment template was generated with <span ><a title=https://github.com/csihda/adamant href=https://github.com/csihda/adamant>ADAMANT v0.0.1</a></span> </div>`;
@@ -989,6 +1016,7 @@ const AdamantMain = () => {
           updateFormDataId,
           handleDataDelete,
           handleConvertedDataInput,
+          handleReceivedFormData,
         }}
       >
         <div style={{ paddingBottom: "5px" }}>
@@ -1145,10 +1173,13 @@ const AdamantMain = () => {
           <FormRenderer
             revertAllChanges={revertAllChanges}
             schema={convertedSchema}
+            originalSchema={schema}
             edit={editMode}
           />
         ) : null}
-        {renderReady === true ? <JSONSchemaViewer jsonschema={schema} /> : null}
+        <div style={{ padding: "10px" }}>
+          <Divider />
+        </div>
         <div
           style={{
             padding: "10px 10px",

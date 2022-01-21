@@ -30,9 +30,21 @@ const StringType = ({ field_uri, dataInputItems, setDataInputItems, withinArray,
     //const [descriptionText, setDescriptionText] = useState(field_description);
     const [openDialog, setOpenDialog] = useState(false);
     const { updateParent, convertedSchema, handleDataInput, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
-    const [fieldValue, setFieldValue] = useState(defaultValue !== undefined ? defaultValue : value)
+    const [fieldValue, setFieldValue] = useState(defaultValue !== undefined ? defaultValue : value !== undefined ? value : "")
     //const [required, setRequired] = useState(false)
     const classes = useStyles();
+
+    useEffect(() => {
+        if (value === undefined) {
+            setFieldValue("")
+        } else {
+            setFieldValue(value)
+        }
+    }, [value])
+
+    const handleOnChange = (event) => {
+        setFieldValue(event.target.value)
+    }
 
 
     // clean up empty strings in the paths
@@ -203,7 +215,7 @@ const StringType = ({ field_uri, dataInputItems, setDataInputItems, withinArray,
         return (
             <>
                 <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
-                    <TextField onBlur={(event) => handleOnBlur(event, pathFormData, "string")} required={required} helperText={field_description} defaultValue={fieldValue} fullWidth={true} className={classes.heading} id={field_id} label={field_label} variant="outlined" />
+                    <TextField onBlur={(event) => handleOnBlur(event, pathFormData, "string")} required={required} helperText={field_description} onChange={(event) => { handleOnChange(event) }} value={fieldValue} fullWidth={true} className={classes.heading} id={field_id} label={field_label} variant="outlined" />
                     {edit ? <><IconButton onClick={() => setOpenDialog(true)} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><EditIcon fontSize="small" color="primary" /></IconButton>
                         <IconButton onClick={() => handleDeleteElement()} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><DeleteIcon fontSize="small" color="secondary" /></IconButton></> : null}
                 </div>

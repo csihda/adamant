@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useCallback } from "react";
 //import { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import ElementRenderer from "./ElementRenderer";
@@ -10,9 +10,25 @@ import AddIcon from "@material-ui/icons/AddBox";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { FormContext } from '../FormContext';
 import DragHandleIcon from "@material-ui/icons/DragIndicator";
+import UploadDataIcon from '@mui/icons-material/UploadFile';
+import { ReactComponent as JsonIcon } from '../assets/json-file-svgrepo-com.svg'
 import RevertIvon from "@material-ui/icons/History";
 import AddElement from "./AddElement";
 import EditSchemaHeader from "./EditSchemaHeader";
+import JSONSchemaViewerDialog from "./JSONSchemaViewerDialog";
+import { Tooltip } from "@material-ui/core";
+import { useDropzone } from "react-dropzone";
+import { ToastContainer, toast } from "react-toastify";
+
+const checkFormDataValidity = (file) => {
+    let validity = false
+    let message = `INVALID TYPE!\n Form data must be of a json file type.`
+    if (file[0].type === "application/json") {
+        validity = true;
+        message = "Form data is of a valid file type."
+    }
+    return [validity, message]
+}
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -25,12 +41,52 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const FormRenderer = ({ revertAllChanges, schema, edit }) => {
-    const { updateParent, convertedSchema } = useContext(FormContext);
+const FormRenderer = ({ revertAllChanges, schema, edit, originalSchema }) => {
+    const { updateParent, convertedSchema, handleReceivedFormData } = useContext(FormContext);
     const [openDialogAddElement, setOpenDialogAddElement] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
+    const [openSchemaViewer, setOpenSchemaViewer] = useState(false);
 
     const classes = useStyles();
+
+    // browse or drag&drop schema file
+    const onDrop = useCallback(
+        (acceptedFile) => {
+            // process the schema, validation etc
+            let validity = checkFormDataValidity(acceptedFile);
+            if (validity[0] === false) {
+                toast.error(
+                    <div><strong>{validity[1]}</strong></div>,
+                    {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: false,
+                        progress: undefined,
+                    }
+                );
+            } else {
+                // read file and call handleReceivedForm data
+                const reader = new FileReader();
+                reader.onabort = () => console.log("file reading was aborted");
+                reader.onerror = () => console.log("file reading has failed");
+                reader.onload = () => {
+                    const binaryStr = reader.result;
+                    const obj = JSON.parse(binaryStr);
+                    handleReceivedFormData(obj)
+                }
+                reader.readAsText(acceptedFile[0]);
+            };
+        },
+        []
+    );
+    //
+    const { getRootProps, getInputProps } = useDropzone({
+        onDrop,
+        multiple: false,
+    });
 
     // deconstruct
     const { properties, title, description, required, $schema, id } = schema ?? {}
@@ -61,7 +117,27 @@ const FormRenderer = ({ revertAllChanges, schema, edit }) => {
         <div style={{ width: "100%", paddingLeft: "10px", paddingRight: "10px" }}>
             <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
                 <Typography className={classes.heading} style={{ width: "100%" }}>{title}</Typography>
-                {edit ? <> <Button onClick={() => setOpenDialog(true)} style={{ marginLeft: "5px" }}> <EditIcon color="primary" /></Button> <Button onClick={() => revertAllChanges()} style={{ marginLeft: "5px" }}> <RevertIvon color="primary" /></Button>  </> : null}
+                <Tooltip placement="top" title="View JSON Schema for this form">
+                    <Button onClick={() => setOpenSchemaViewer(true)} style={{ marginLeft: "5px" }}><JsonIcon style={{ height: "22px" }} /></Button>
+                </Tooltip>
+                <Tooltip placement="top" title="Upload input data for this form">
+                    <Button style={{ marginLeft: "5px" }}{...getRootProps()}>
+                        <input {...getInputProps()} />
+                        <UploadDataIcon />
+                    </Button>
+                </Tooltip>
+                {edit ? <>
+                    <Tooltip placement="top" title="Edit json schema header">
+                        <Button onClick={() => setOpenDialog(true)} style={{ marginLeft: "5px" }}>
+                            <EditIcon color="primary" />
+                        </Button>
+                    </Tooltip>
+                    <Tooltip placement="top" title="Revert all changes made to this form">
+                        <Button onClick={() => revertAllChanges()} style={{ marginLeft: "5px" }}>
+                            <RevertIvon color="primary" />
+                        </Button>
+                    </Tooltip>
+                </> : null}
             </div>
             <Divider />
             <Typography>{description}</Typography>
@@ -96,6 +172,12 @@ const FormRenderer = ({ revertAllChanges, schema, edit }) => {
         </div>
         {openDialogAddElement ? <AddElement openDialog={openDialogAddElement} setOpenDialog={setOpenDialogAddElement} defaultSchema={defaultSchema} schemaTitle={title} /> : null}
         {openDialog ? <EditSchemaHeader schemaID={id} title={title} description={description} schemaURI={$schema} openDialog={openDialog} setOpenDialog={setOpenDialog} /> : null}
+        {openSchemaViewer ? <JSONSchemaViewerDialog
+            openSchemaViewer={openSchemaViewer}
+            setOpenSchemaViewer={setOpenSchemaViewer}
+            jsonschema={originalSchema}
+        /> : null}
+        <ToastContainer />
     </>);
 };
 

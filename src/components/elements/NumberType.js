@@ -30,6 +30,15 @@ const NumberType = ({ field_uri, value, dataInputItems, setDataInputItems, withi
     //const [required, setRequired] = useState(false)
     const classes = useStyles();
 
+    useEffect(() => {
+        if (value === undefined) {
+            setInputValue("")
+        } else {
+            setInputValue(value)
+        }
+    }, [value])
+
+
     // clean up empty strings in the paths
     path = path.split(".")
     path = path.filter(e => e)

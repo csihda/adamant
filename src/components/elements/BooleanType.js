@@ -33,6 +33,14 @@ const BooleanType = ({ field_uri, withinArray, value, dataInputItems, setDataInp
     //const [required, setRequired] = useState(false)
     const classes = useStyles();
 
+    useEffect(() => {
+        if (value === undefined) {
+            setInputValue(false)
+        } else {
+            setInputValue(value)
+        }
+    }, [value])
+
     // clean up empty strings in the paths
     path = path.split(".")
     path = path.filter(e => e)
