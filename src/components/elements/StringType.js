@@ -228,6 +228,7 @@ const StringType = ({ field_uri, dataInputItems, setDataInputItems, withinArray,
                 <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
                     < TextField
                         onBlur={(event) => handleOnBlur(event, pathFormData, "string")}
+                        onChange={event => handleOnChange(event)}
                         required={required}
                         select
                         fullWidth={true}
@@ -240,7 +241,7 @@ const StringType = ({ field_uri, dataInputItems, setDataInputItems, withinArray,
                         }
                         }
                         helperText={field_description}
-                        defaultValue={fieldValue}
+                        value={fieldValue === undefined ? defaultValue : fieldValue}
                     >
                         {
                             field_enumerate.map((content, index) => (
