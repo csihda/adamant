@@ -9,6 +9,7 @@ import { FormContext } from '../../FormContext';
 import deleteKey from '../utils/deleteKey';
 import getUnit from '../utils/getUnit';
 import { InputAdornment } from '@material-ui/core';
+import { MathComponent } from 'mathjax-react'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -52,6 +53,9 @@ const IntegerType = ({ field_uri, value, dataInputItems, setDataInputItems, with
     pathFormData = pathFormData.join(".")
 
     let unit = getUnit(field_label)
+    if (unit[0] === '%') {
+        unit = "\\" + unit
+    }
 
     var required
     if (field_required === undefined) {
@@ -221,7 +225,7 @@ const IntegerType = ({ field_uri, value, dataInputItems, setDataInputItems, with
             <>
                 <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
                     <TextField onBlur={() => handleInputOnBlur()} onChange={e => handleInputOnChange(e)} value={inputValue === undefined ? defaultValue : inputValue} required={required} helperText={field_description} fullWidth={true} className={classes.heading} id={field_id} label={field_label} variant="outlined" InputProps={{
-                        endAdornment: <InputAdornment position="start">{unit}</InputAdornment>,
+                        endAdornment: <InputAdornment position="start">{<MathComponent tex={String.raw`\\${unit}`} />}</InputAdornment>,
                     }} />
                     {edit ? <><IconButton onClick={() => setOpenDialog(true)} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><EditIcon fontSize="small" color="primary" /></IconButton>
                         <IconButton onClick={() => handleDeleteElement()} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><DeleteIcon fontSize="small" color="secondary" /></IconButton></> : null}
@@ -246,7 +250,7 @@ const IntegerType = ({ field_uri, value, dataInputItems, setDataInputItems, with
                         label={field_label}
                         variant="outlined"
                         InputProps={{
-                            endAdornment: <InputAdornment position="start">{unit}</InputAdornment>,
+                            endAdornment: <InputAdornment position="start">{<MathComponent tex={String.raw`\\${unit}`} />}</InputAdornment>,
                         }}
                         SelectProps={{
                             native: true,

@@ -486,7 +486,6 @@ const AdamantMain = () => {
       value = event;
     }
     set(convSchemaData, path, value);
-    console.log(convSchemaData);
     setConvertedSchema(convSchemaData);
     //console.log(convSchemaData);
 

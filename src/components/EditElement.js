@@ -96,8 +96,10 @@ const EditElement = ({ field_uri, enumerated, field_enumerate, field_required, f
         }
 
         tempUISchema["fieldId"] = fieldId;
-        if (fieldUri !== undefined | fieldUri.toString().replace(/\s+/g, '') !== "") {
-            tempUISchema["$id"] = fieldUri
+        if (fieldUri !== undefined) {
+            if (fieldUri.toString().replace(/\s+/g, '') !== "") {
+                tempUISchema["$id"] = fieldUri
+            }
         }
         tempUISchema["type"] = selectedType;
         if (title !== undefined) { tempUISchema["title"] = title }
