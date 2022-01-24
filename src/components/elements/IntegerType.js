@@ -10,6 +10,7 @@ import deleteKey from '../utils/deleteKey';
 import getUnit from '../utils/getUnit';
 import { InputAdornment } from '@material-ui/core';
 import { MathComponent } from 'mathjax-react'
+import { Tooltip } from '@material-ui/core';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -28,7 +29,7 @@ const style = {
 }
 
 
-const IntegerType = ({ field_uri, value, dataInputItems, setDataInputItems, withinArray, defaultValue, path, pathFormData, field_required, field_index, edit, field_id, field_label, field_description, field_enumerate }) => {
+const IntegerType = ({ field_uri, value, dataInputItems, setDataInputItems, withinArray, defaultValue, path, pathFormData, field_required, field_index, edit, field_key, field_label, field_description, field_enumerate }) => {
     //const [descriptionText, setDescriptionText] = useState(field_description);
     const [openDialog, setOpenDialog] = useState(false);
     const { updateParent, convertedSchema, handleDataInput, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
@@ -60,7 +61,7 @@ const IntegerType = ({ field_uri, value, dataInputItems, setDataInputItems, with
     var required
     if (field_required === undefined) {
         required = false;
-    } else if (field_required.includes(field_id)) {
+    } else if (field_required.includes(field_key)) {
         required = true;
     };
 
@@ -73,7 +74,7 @@ const IntegerType = ({ field_uri, value, dataInputItems, setDataInputItems, with
 
     // construct UI schema
     let UISchema = {
-        "fieldId": field_id,
+        "fieldKey": field_key,
         "title": field_label,
         "description": field_description,
         "$id": field_uri,
@@ -130,7 +131,7 @@ const IntegerType = ({ field_uri, value, dataInputItems, setDataInputItems, with
 
                 let arr = dataInputItems;
                 const items = Array.from(arr);
-                items[field_index][field_id] = value;
+                items[field_index][field_key] = value;
                 setDataInputItems(items);
 
                 // store to the main form data
@@ -165,7 +166,7 @@ const IntegerType = ({ field_uri, value, dataInputItems, setDataInputItems, with
 
             let arr = dataInputItems;
             const items = Array.from(arr);
-            items[field_index][field_id] = (defaultValue === undefined ? field_enumerate[0] : defaultValue);
+            items[field_index][field_key] = (defaultValue === undefined ? field_enumerate[0] : defaultValue);
             setDataInputItems(items);
 
             // store to the main form data
@@ -201,7 +202,7 @@ const IntegerType = ({ field_uri, value, dataInputItems, setDataInputItems, with
 
             let arr = dataInputItems;
             const items = Array.from(arr);
-            items[field_index][field_id] = defaultValue;
+            items[field_index][field_key] = defaultValue;
             setDataInputItems(items);
 
             // store to the main form data
@@ -224,13 +225,23 @@ const IntegerType = ({ field_uri, value, dataInputItems, setDataInputItems, with
         return (
             <>
                 <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
-                    <TextField onBlur={() => handleInputOnBlur()} onChange={e => handleInputOnChange(e)} value={inputValue === undefined ? defaultValue : inputValue} required={required} helperText={field_description} fullWidth={true} className={classes.heading} id={field_id} label={field_label} variant="outlined" InputProps={{
+                    <TextField onBlur={() => handleInputOnBlur()} onChange={e => handleInputOnChange(e)} value={inputValue === undefined ? defaultValue : inputValue} required={required} helperText={field_description} fullWidth={true} className={classes.heading} id={field_key} label={field_label} variant="outlined" InputProps={{
                         endAdornment: <InputAdornment position="start">{<MathComponent tex={String.raw`\\${unit}`} />}</InputAdornment>,
                     }} />
-                    {edit ? <><IconButton onClick={() => setOpenDialog(true)} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><EditIcon fontSize="small" color="primary" /></IconButton>
-                        <IconButton onClick={() => handleDeleteElement()} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><DeleteIcon fontSize="small" color="secondary" /></IconButton></> : null}
+                    {edit ? <>
+                        <Tooltip placement="top" title={`Edit field "${field_label}"`}>
+                            <IconButton onClick={() => setOpenDialog(true)} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}>
+                                <EditIcon fontSize="small" color="primary" />
+                            </IconButton>
+                        </Tooltip>
+                        <Tooltip placement="top" title={`Remove field "${field_label}"`}>
+                            <IconButton onClick={() => handleDeleteElement()} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}>
+                                <DeleteIcon fontSize="small" color="secondary" />
+                            </IconButton>
+                        </Tooltip>
+                    </> : null}
                 </div>
-                {openDialog ? <EditElement field_uri={field_uri} pathFormData={pathFormData} field_enumerate={field_enumerate} enumerated={enumerated} defaultValue={defaultValue} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
+                {openDialog ? <EditElement field_uri={field_uri} pathFormData={pathFormData} field_enumerate={field_enumerate} enumerated={enumerated} defaultValue={defaultValue} field_key={field_key} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
             </>
         )
     } else {
@@ -246,7 +257,7 @@ const IntegerType = ({ field_uri, value, dataInputItems, setDataInputItems, with
                         helperText={field_description}
                         fullWidth={true}
                         className={classes.heading}
-                        id={field_id}
+                        id={field_key}
                         label={field_label}
                         variant="outlined"
                         InputProps={{
@@ -263,10 +274,20 @@ const IntegerType = ({ field_uri, value, dataInputItems, setDataInputItems, with
                             ))
                         }
                     </TextField>
-                    {edit ? <><IconButton onClick={() => setOpenDialog(true)} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><EditIcon fontSize="small" color="primary" /></IconButton>
-                        <IconButton onClick={() => handleDeleteElement()} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><DeleteIcon fontSize="small" color="secondary" /></IconButton></> : null}
+                    {edit ? <>
+                        <Tooltip placement="top" title={`Edit field "${field_label}"`}>
+                            <IconButton onClick={() => setOpenDialog(true)} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}>
+                                <EditIcon fontSize="small" color="primary" />
+                            </IconButton>
+                        </Tooltip>
+                        <Tooltip placement="top" title={`Remove field "${field_label}"`}>
+                            <IconButton onClick={() => handleDeleteElement()} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}>
+                                <DeleteIcon fontSize="small" color="secondary" />
+                            </IconButton>
+                        </Tooltip>
+                    </> : null}
                 </div>
-                {openDialog ? <EditElement field_uri={field_uri} pathFormData={pathFormData} field_enumerate={field_enumerate} enumerated={enumerated} defaultValue={defaultValue} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
+                {openDialog ? <EditElement field_uri={field_uri} pathFormData={pathFormData} field_enumerate={field_enumerate} enumerated={enumerated} defaultValue={defaultValue} field_key={field_key} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
             </>
         )
     }

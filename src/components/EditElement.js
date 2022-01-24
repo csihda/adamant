@@ -35,11 +35,11 @@ const style = {
     paddingBottom: "10px",
 }
 
-const EditElement = ({ field_uri, enumerated, field_enumerate, field_required, field_id, UISchema, path, pathFormData, openDialog, setOpenDialog, defaultValue }) => {
+const EditElement = ({ field_uri, enumerated, field_enumerate, field_required, field_key, UISchema, path, pathFormData, openDialog, setOpenDialog, defaultValue }) => {
 
     const [selectedType, setSelectedType] = useState(UISchema["type"])
     const [title, setTitle] = useState(UISchema["title"])
-    const [fieldId, setFieldId] = useState(UISchema["fieldId"])
+    const [fieldkey, setFieldKey] = useState(UISchema["fieldKey"])
     const [fieldUri, setFieldUri] = useState(UISchema["$id"])
     const [description, setDescription] = useState(UISchema["description"])
     const [defValue, setDefValue] = useState(defaultValue)
@@ -81,21 +81,21 @@ const EditElement = ({ field_uri, enumerated, field_enumerate, field_required, f
             tempUISchema["defaultValue"] = defValue
         };
 
-        // check if fieldId already exist
-        let existed = checkIfFieldIDExist(convertedSchema, path, fieldId)
-        if (UISchema["fieldId"] !== fieldId) {
+        // check if fieldkey already exist
+        let existed = checkIfFieldIDExist(convertedSchema, path, fieldkey)
+        if (UISchema["fieldKey"] !== fieldkey) {
             if (existed) {
                 alert("Field ID already exists!")
                 return
             }
         }
 
-        if (fieldId === undefined | fieldId.replace(/\s+/g, '') === "") {
+        if (fieldkey === undefined | fieldkey.replace(/\s+/g, '') === "") {
             alert("Field ID must be defined!")
             return
         }
 
-        tempUISchema["fieldId"] = fieldId;
+        tempUISchema["fieldKey"] = fieldkey;
         if (fieldUri !== undefined) {
             if (fieldUri.toString().replace(/\s+/g, '') !== "") {
                 tempUISchema["$id"] = fieldUri
@@ -117,7 +117,7 @@ const EditElement = ({ field_uri, enumerated, field_enumerate, field_required, f
         const set = require("set-value");
         set(convertedSchema, path, tempUISchema)
         // update the required value
-        const newConvertedSchema = updateRequired({ selectedType, path, requiredChecked, field_id, convertedSchema })
+        const newConvertedSchema = updateRequired({ selectedType, path, requiredChecked, field_key, convertedSchema })
         // update enum
         if (["string", "integer", "number"].includes(tempUISchema["type"]) & enumChecked) {
             let newList = enumList
@@ -162,9 +162,9 @@ const EditElement = ({ field_uri, enumerated, field_enumerate, field_required, f
         updateParent(newConvertedSchema)
         setOpenDialog(false)
 
-        //* update form data if fieldId change
-        // update pathFormData with new fieldId
-        updateFormDataId(field_id, fieldId, pathFormData, defaultValue)
+        //* update form data if fieldkey change
+        // update pathFormData with new fieldkey
+        updateFormDataId(field_key, fieldkey, pathFormData, defaultValue)
 
     }
 
@@ -178,8 +178,8 @@ const EditElement = ({ field_uri, enumerated, field_enumerate, field_required, f
                 return setTitle(event.target.value)
             case 'description':
                 return setDescription(event.target.value)
-            case 'fieldId':
-                return setFieldId(event.target.value.replace(/ /g, "_"))
+            case 'fieldkey':
+                return setFieldKey(event.target.value.replace(/ /g, "_"))
             case 'defaultValue':
                 return setDefValue(event.target.value)
             case '$id':
@@ -259,7 +259,7 @@ const EditElement = ({ field_uri, enumerated, field_enumerate, field_required, f
                             <div>
                                 <FormControl component="widget-type">
                                     <FormLabel style={{ color: "#01579b" }} component="legend">Basic Descriptors:</FormLabel>
-                                    <TextField margin="normal" required onChange={event => handleChangeUISchema(event, "fieldId")} style={{ marginTop: "20px" }} defaultValue={field_id} variant="outlined" fullWidth={true} label={"Field Key"} helperText='A unique json key for this field. Usually short and no spaces (use "_" instead). Spaces are replaced automatically with "_" upon saving.' />
+                                    <TextField margin="normal" required onChange={event => handleChangeUISchema(event, "fieldKey")} style={{ marginTop: "20px" }} defaultValue={field_key} variant="outlined" fullWidth={true} label={"Field Key"} helperText='A unique json key for this field. Usually short and no spaces (use "_" instead). Spaces are replaced automatically with "_" upon saving.' />
                                     <TextField margin="normal" onChange={event => handleChangeUISchema(event, "$id")} style={{ marginTop: "10px" }} defaultValue={field_uri} variant="outlined" fullWidth={true} label={"Field ID/URI"} helperText='ID or URI for this field if available.' />
                                     <TextField margin="normal" onChange={event => handleChangeUISchema(event, "title")} style={{ marginTop: "10px" }} defaultValue={tempUISchema["title"]} variant="outlined" fullWidth={true} label={"Field Title"} helperText='Label or title of the field. For a field that requires a unit, the unit can be placed within a square bracket, e,g., "Chamber Pressure [Pa]".' />
                                     <TextField margin="normal" onChange={event => handleChangeUISchema(event, "description")} style={{ marginTop: "10px" }} defaultValue={tempUISchema["description"]} variant="outlined" fullWidth={true} label={"Field Description"} multiline rows={3} helperText='A detailed description of the field, how the input should be formated, etc.' />
@@ -271,7 +271,7 @@ const EditElement = ({ field_uri, enumerated, field_enumerate, field_required, f
                                         defaultValue={tempUISchema["type"]}
                                         select
                                         fullWidth={true}
-                                        id={field_id}
+                                        id={field_key}
                                         label={"Field Data Type"}
                                         variant="outlined"
                                         SelectProps={{
@@ -315,7 +315,7 @@ const EditElement = ({ field_uri, enumerated, field_enumerate, field_required, f
                                                     defaultValue={defaultValue !== undefined ? defaultValue : ""}
                                                     select
                                                     fullWidth={true}
-                                                    id={field_id}
+                                                    id={field_key}
                                                     label={"Boolean Field Default Value"}
                                                     variant="outlined"
                                                     SelectProps={{

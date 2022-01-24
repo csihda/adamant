@@ -14,7 +14,7 @@ const getValue = (json, path) => {
     return tempValue
 }
 
-const updateRequired = ({ selectedType, path, requiredChecked, field_id, convertedSchema }) => {
+const updateRequired = ({ selectedType, path, requiredChecked, field_key, convertedSchema }) => {
 
     if (selectedType === "object") {
         requiredChecked = false
@@ -32,13 +32,13 @@ const updateRequired = ({ selectedType, path, requiredChecked, field_id, convert
         if (immediateValue["required"] !== undefined) {
             let requiredArray = immediateValue["required"]
             if (requiredChecked) {
-                requiredArray.push(field_id)
+                requiredArray.push(field_key)
                 requiredArray = [...new Set(requiredArray)]
                 set(convertedSchema, newPath + ".required", requiredArray)
             } else {
                 // check if the field id exists
-                if (requiredArray.includes(field_id)) {
-                    requiredArray = requiredArray.filter(item => item !== field_id)
+                if (requiredArray.includes(field_key)) {
+                    requiredArray = requiredArray.filter(item => item !== field_key)
                     set(convertedSchema, newPath + ".required", requiredArray)
 
                     if (requiredArray.length === 0) {
@@ -49,7 +49,7 @@ const updateRequired = ({ selectedType, path, requiredChecked, field_id, convert
             }
         } else {
             if (requiredChecked) {
-                let requiredArray = [`${field_id}`]
+                let requiredArray = [`${field_key}`]
                 set(convertedSchema, newPath + ".required", requiredArray)
             }
         }
@@ -58,13 +58,13 @@ const updateRequired = ({ selectedType, path, requiredChecked, field_id, convert
         if (convertedSchema["required"] !== undefined) {
             let requiredArray = convertedSchema["required"]
             if (requiredChecked) {
-                requiredArray.push(field_id)
+                requiredArray.push(field_key)
                 requiredArray = [...new Set(requiredArray)]
                 convertedSchema["required"] = requiredArray
             } else {
                 // check if the field id exists
-                if (requiredArray.includes(field_id)) {
-                    requiredArray = requiredArray.filter(item => item !== field_id)
+                if (requiredArray.includes(field_key)) {
+                    requiredArray = requiredArray.filter(item => item !== field_key)
                     convertedSchema["required"] = requiredArray
                     if (requiredArray.length === 0) {
                         delete convertedSchema["required"]
@@ -73,7 +73,7 @@ const updateRequired = ({ selectedType, path, requiredChecked, field_id, convert
             }
         } else {
             if (requiredChecked) {
-                let requiredArray = [`${field_id}`]
+                let requiredArray = [`${field_key}`]
                 convertedSchema["required"] = requiredArray
             }
         }

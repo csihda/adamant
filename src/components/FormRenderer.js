@@ -1,4 +1,4 @@
-import React, { useContext, useState, useCallback } from "react";
+import React, { useContext, useState, useCallback, useEffect } from "react";
 //import { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import ElementRenderer from "./ElementRenderer";
@@ -19,6 +19,7 @@ import JSONSchemaViewerDialog from "./JSONSchemaViewerDialog";
 import { Tooltip } from "@material-ui/core";
 import { useDropzone } from "react-dropzone";
 import { ToastContainer, toast } from "react-toastify";
+import fillForm from "./utils/fillForm";
 
 const checkFormDataValidity = (file) => {
     let validity = false
@@ -42,10 +43,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const FormRenderer = ({ revertAllChanges, schema, edit, originalSchema }) => {
-    const { updateParent, convertedSchema, handleReceivedFormData } = useContext(FormContext);
+    const { updateParent, convertedSchema } = useContext(FormContext);
     const [openDialogAddElement, setOpenDialogAddElement] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
     const [openSchemaViewer, setOpenSchemaViewer] = useState(false);
+    const [receivedData, setReceivedData] = useState()
 
     const classes = useStyles();
 
@@ -68,14 +70,14 @@ const FormRenderer = ({ revertAllChanges, schema, edit, originalSchema }) => {
                     }
                 );
             } else {
-                // read file and call handleReceivedForm data
+                // read file and update receivedData
                 const reader = new FileReader();
                 reader.onabort = () => console.log("file reading was aborted");
                 reader.onerror = () => console.log("file reading has failed");
                 reader.onload = () => {
                     const binaryStr = reader.result;
                     const obj = JSON.parse(binaryStr);
-                    handleReceivedFormData(obj)
+                    setReceivedData(obj)
                 }
                 reader.readAsText(acceptedFile[0]);
             };
@@ -83,6 +85,20 @@ const FormRenderer = ({ revertAllChanges, schema, edit, originalSchema }) => {
         []
     );
     //
+
+    // basically fill the form with the recieved data everytime we receive the data
+    useEffect(() => {
+        if (receivedData !== undefined) {
+            let newValue = { ...convertedSchema };
+
+            //fills this converted schema with the received data
+            fillForm(newValue["properties"], receivedData);
+            console.log("filled form:\n", newValue);
+
+            updateParent(newValue);
+        }
+    }, [receivedData])
+
     const { getRootProps, getInputProps } = useDropzone({
         onDrop,
         multiple: false,
@@ -147,14 +163,16 @@ const FormRenderer = ({ revertAllChanges, schema, edit, originalSchema }) => {
                         <form {...provided.droppableProps} ref={provided.innerRef}>
                             {Object.keys(properties).map((item, index) => {
                                 return (
-                                    <Draggable isDragDisabled={!edit} key={properties[item]["fieldId"]} draggableId={properties[item]["fieldId"]} index={index}>
+                                    <Draggable isDragDisabled={!edit} key={properties[item]["fieldKey"]} draggableId={properties[item]["fieldKey"]} index={index}>
                                         {(provided) => (
                                             <div {...provided.draggableProps} ref={provided.innerRef}>
                                                 <div style={{ display: "flex" }}>
                                                     {edit ? <div style={{ width: "20px", marginTop: "10px", height: "30px" }} {...provided.dragHandleProps}>
-                                                        <DragHandleIcon fontSize="small" />
+                                                        <Tooltip placement="top" title={`Drag & drop to adjust the order of this field`}>
+                                                            <DragHandleIcon fontSize="small" />
+                                                        </Tooltip>
                                                     </div> : null}
-                                                    <ElementRenderer schema={schema} path={"properties"} pathSchema={"properties"} fieldId={properties[item]["fieldId"]} fieldIndex={item} elementRequired={required} edit={edit} field={properties[item]} />
+                                                    <ElementRenderer schema={schema} path={"properties"} pathSchema={"properties"} fieldkey={properties[item]["fieldKey"]} fieldIndex={item} elementRequired={required} edit={edit} field={properties[item]} />
                                                 </div>
                                             </div>
                                         )}
@@ -163,7 +181,9 @@ const FormRenderer = ({ revertAllChanges, schema, edit, originalSchema }) => {
                             })}
                             {provided.placeholder}
                             {edit ? <div style={{ display: "flex", justifyContent: "right" }}>
-                                <Button onClick={() => setOpenDialogAddElement(true)} style={{ marginLeft: "5px" }}><AddIcon color="primary" /> ADD ELEMENT</Button>
+                                <Tooltip placement="top" title={`Add a new element/field to this schema`}>
+                                    <Button onClick={() => setOpenDialogAddElement(true)} style={{ marginLeft: "5px" }}><AddIcon color="primary" /> ADD ELEMENT</Button>
+                                </Tooltip>
                             </div> : null}
                         </form>
                     )}

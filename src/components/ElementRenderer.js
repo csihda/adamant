@@ -8,7 +8,7 @@ import ArrayType from './elements/ArrayType';
 import AnyOfKeyword from './elements/AnyOfKeyword';
 
 
-const ElementRenderer = ({ dataInputItems, setDataInputItems, withinArray, path, pathSchema, pathFormData, elementRequired, fieldId, fieldIndex, edit, field: { type, $id, title, description, properties, required, enumerate, items, defaultValue, value, anyOf } }) => {
+const ElementRenderer = ({ dataInputItems, setDataInputItems, withinArray, path, pathSchema, pathFormData, elementRequired, fieldkey, fieldIndex, edit, field: { type, $id, title, description, properties, required, enumerate, items, defaultValue, value, anyOf } }) => {
 
     switch (type) {
         case 'string':
@@ -18,9 +18,9 @@ const ElementRenderer = ({ dataInputItems, setDataInputItems, withinArray, path,
                 dataInputItems={dataInputItems}
                 setDataInputItems={setDataInputItems}
                 path={path + "." + fieldIndex}
-                pathSchema={pathSchema + "." + fieldId}
-                pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldId : fieldId}
-                field_id={fieldId}
+                pathSchema={pathSchema + "." + fieldkey}
+                pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldkey : fieldkey}
+                field_key={fieldkey}
                 field_index={fieldIndex}
                 field_label={title}
                 field_uri={$id}
@@ -37,9 +37,9 @@ const ElementRenderer = ({ dataInputItems, setDataInputItems, withinArray, path,
                 dataInputItems={dataInputItems}
                 setDataInputItems={setDataInputItems}
                 path={path + "." + fieldIndex}
-                pathSchema={pathSchema + "." + fieldId}
-                pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldId : fieldId}
-                field_id={fieldId}
+                pathSchema={pathSchema + "." + fieldkey}
+                pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldkey : fieldkey}
+                field_key={fieldkey}
                 field_uri={$id}
                 field_index={fieldIndex}
                 field_label={title}
@@ -56,9 +56,9 @@ const ElementRenderer = ({ dataInputItems, setDataInputItems, withinArray, path,
                 dataInputItems={dataInputItems}
                 setDataInputItems={setDataInputItems}
                 path={path + "." + fieldIndex}
-                pathSchema={pathSchema + "." + fieldId}
-                pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldId : fieldId}
-                field_id={fieldId}
+                pathSchema={pathSchema + "." + fieldkey}
+                pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldkey : fieldkey}
+                field_key={fieldkey}
                 field_uri={$id}
                 field_index={fieldIndex}
                 field_label={title}
@@ -75,9 +75,9 @@ const ElementRenderer = ({ dataInputItems, setDataInputItems, withinArray, path,
                 dataInputItems={dataInputItems}
                 setDataInputItems={setDataInputItems}
                 path={path + "." + fieldIndex}
-                pathSchema={pathSchema + "." + fieldId}
-                pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldId : fieldId}
-                field_id={fieldId}
+                pathSchema={pathSchema + "." + fieldkey}
+                pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldkey : fieldkey}
+                field_key={fieldkey}
                 field_uri={$id}
                 field_index={fieldIndex}
                 field_label={title}
@@ -91,9 +91,9 @@ const ElementRenderer = ({ dataInputItems, setDataInputItems, withinArray, path,
                 value={value}
                 withinArray={withinArray}
                 path={path + "." + fieldIndex}
-                pathSchema={pathSchema + "." + fieldId}
-                pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldId : fieldId}
-                field_id={fieldId}
+                pathSchema={pathSchema + "." + fieldkey}
+                pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldkey : fieldkey}
+                field_key={fieldkey}
                 field_uri={$id}
                 field_label={title}
                 field_description={description}
@@ -105,11 +105,11 @@ const ElementRenderer = ({ dataInputItems, setDataInputItems, withinArray, path,
             if (anyOf !== undefined) {
                 return (
                     <AnyOfKeyword
-                        pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldId : fieldId}
+                        pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldkey : fieldkey}
                         withinArray={withinArray}
                         path={path + "." + fieldIndex}
                         field_index={fieldIndex}
-                        field_id={fieldId}
+                        field_key={fieldkey}
                         field_uri={$id}
                         field_label={title}
                         field_description={description}
@@ -122,9 +122,9 @@ const ElementRenderer = ({ dataInputItems, setDataInputItems, withinArray, path,
                 return (<ObjectType
                     withinArray={withinArray}
                     path={path + "." + fieldIndex}
-                    pathSchema={pathSchema + "." + fieldId}
-                    pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldId : fieldId}
-                    field_id={fieldId}
+                    pathSchema={pathSchema + "." + fieldkey}
+                    pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldkey : fieldkey}
+                    field_key={fieldkey}
                     field_uri={$id}
                     field_label={title}
                     field_description={description}
@@ -137,11 +137,11 @@ const ElementRenderer = ({ dataInputItems, setDataInputItems, withinArray, path,
             if (anyOf) {
                 return (
                     <AnyOfKeyword
-                        pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldId : fieldId}
+                        pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldkey : fieldkey}
                         withinArray={withinArray}
                         path={path + "." + fieldIndex}
                         field_index={fieldIndex}
-                        field_id={fieldId}
+                        field_key={fieldkey}
                         field_uri={$id}
                         field_label={title}
                         field_description={description}

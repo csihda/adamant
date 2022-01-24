@@ -7,6 +7,7 @@ import { IconButton } from '@material-ui/core';
 import EditElement from '../EditElement';
 import { FormContext } from '../../FormContext';
 import deleteKey from '../utils/deleteKey';
+import { Tooltip } from '@material-ui/core';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -25,7 +26,7 @@ const style = {
 }
 
 
-const BooleanType = ({ field_uri, withinArray, value, dataInputItems, setDataInputItems, path, pathFormData, field_required, field_index, edit, field_id, field_label, field_description, defaultValue }) => {
+const BooleanType = ({ field_uri, withinArray, value, dataInputItems, setDataInputItems, path, pathFormData, field_required, field_index, edit, field_key, field_label, field_description, defaultValue }) => {
     //const [descriptionText, setDescriptionText] = useState(field_description);
     const [openDialog, setOpenDialog] = useState(false);
     const { updateParent, convertedSchema, handleDataInput, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
@@ -52,13 +53,13 @@ const BooleanType = ({ field_uri, withinArray, value, dataInputItems, setDataInp
     var required
     if (field_required === undefined) {
         required = false;
-    } else if (field_required.includes(field_id)) {
+    } else if (field_required.includes(field_key)) {
         required = true;
     };
 
     // construct UI schema
     let UISchema = {
-        "fieldId": field_id,
+        "fieldKey": field_key,
         "title": field_label,
         "description": field_description,
         "$id": field_uri,
@@ -88,7 +89,7 @@ const BooleanType = ({ field_uri, withinArray, value, dataInputItems, setDataInp
 
             let arr = dataInputItems;
             const items = Array.from(arr);
-            items[field_index][field_id] = !value;
+            items[field_index][field_key] = !value;
             setDataInputItems(items);
 
             setInputValue(!value)
@@ -116,7 +117,7 @@ const BooleanType = ({ field_uri, withinArray, value, dataInputItems, setDataInp
 
                 let arr = dataInputItems;
                 const items = Array.from(arr);
-                items[field_index][field_id] = false;
+                items[field_index][field_key] = false;
                 setDataInputItems(items);
 
                 handleDataInput(items, newPathFormData, "boolean")
@@ -138,7 +139,7 @@ const BooleanType = ({ field_uri, withinArray, value, dataInputItems, setDataInp
 
                 let arr = dataInputItems;
                 const items = Array.from(arr);
-                items[field_index][field_id] = defaultValue;
+                items[field_index][field_key] = defaultValue;
                 setDataInputItems(items);
 
                 handleDataInput(items, newPathFormData, "boolean")
@@ -164,10 +165,20 @@ const BooleanType = ({ field_uri, withinArray, value, dataInputItems, setDataInp
                         <FormHelperText>{field_description}</FormHelperText>
                     </FormControl>
                 </div>
-                {edit ? <><IconButton onClick={() => setOpenDialog(true)} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><EditIcon fontSize="small" color="primary" /></IconButton>
-                    <IconButton onClick={() => handleDeleteElement()} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><DeleteIcon fontSize="small" color="secondary" /></IconButton></> : null}
+                {edit ? <>
+                    <Tooltip placement="top" title={`Edit field "${field_label}"`}>
+                        <IconButton onClick={() => setOpenDialog(true)} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}>
+                            <EditIcon fontSize="small" color="primary" />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip placement="top" title={`Remove field "${field_label}"`}>
+                        <IconButton onClick={() => handleDeleteElement()} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}>
+                            <DeleteIcon fontSize="small" color="secondary" />
+                        </IconButton>
+                    </Tooltip>
+                </> : null}
             </div>
-            {openDialog ? <EditElement field_uri={field_uri} pathFormData={pathFormData} defaultValue={defaultValue} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
+            {openDialog ? <EditElement field_uri={field_uri} pathFormData={pathFormData} defaultValue={defaultValue} field_key={field_key} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
         </>
     )
 };

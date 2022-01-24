@@ -1,10 +1,10 @@
 import getValue from "./getValue";
-const checkIfFieldIDExist = (schema, path, fieldId) => {
+const checkIfFieldIDExist = (schema, path, fieldkey) => {
     let result
     if (path === undefined) {
         let value = schema["properties"]
         value.forEach(element => {
-            if (element["fieldId"] === fieldId) {
+            if (element["fieldKey"] === fieldkey) {
                 return result = true;
             }
         });
@@ -18,13 +18,13 @@ const checkIfFieldIDExist = (schema, path, fieldId) => {
             newPath = newPath.join(".")
             let value = getValue(schema, newPath)
             value.forEach(element => {
-                if (element["fieldId"] === fieldId) {
+                if (element["fieldKey"] === fieldkey) {
                     return result = true;
                 }
             });
         } else {
             value.forEach(element => {
-                if (element["fieldId"] === fieldId) {
+                if (element["fieldKey"] === fieldkey) {
                     return result = true;
                 }
             });

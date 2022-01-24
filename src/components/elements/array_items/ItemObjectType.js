@@ -27,7 +27,7 @@ const style = {
 }
 
 
-const ItemObjectType = ({ path, dataInputItems, setDataInputItems, field_label, pathFormData, field_required, field_items, field_type, edit, index, field_id, handleDeleteArrayItem }) => {
+const ItemObjectType = ({ path, dataInputItems, setDataInputItems, field_label, pathFormData, field_required, field_items, field_type, edit, index, field_key, handleDeleteArrayItem }) => {
     const [expand, setExpand] = useState(true); // set to "true" for normally open accordion
     let objectIndex = index;
     let field_properties = field_items["properties"]
@@ -74,7 +74,7 @@ const ItemObjectType = ({ path, dataInputItems, setDataInputItems, field_label, 
                             }
                             return (
                                 <div key={item} style={{ display: "flex" }}>
-                                    <ElementRenderer path={path} pathFormData={pathFormData} withinArray={withinArray} dataInputItems={dataInputItems} setDataInputItems={setDataInputItems} fieldId={item} fieldIndex={objectIndex} elementRequired={field_required} edit={false} field={tempField} />
+                                    <ElementRenderer path={path} pathFormData={pathFormData} withinArray={withinArray} dataInputItems={dataInputItems} setDataInputItems={setDataInputItems} fieldkey={item} fieldIndex={objectIndex} elementRequired={field_required} edit={false} field={tempField} />
                                 </div>
                             )
                         })

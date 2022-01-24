@@ -7,6 +7,7 @@ import { IconButton } from '@material-ui/core';
 import EditElement from '../EditElement';
 import { FormContext } from '../../FormContext';
 import deleteKey from '../utils/deleteKey';
+import { Tooltip } from '@material-ui/core';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -25,7 +26,7 @@ const style = {
 }
 
 
-const StringType = ({ field_uri, dataInputItems, setDataInputItems, withinArray, path, pathFormData, field_required, field_index, edit, field_id, field_label, field_description, field_enumerate, defaultValue, value }) => {
+const StringType = ({ field_uri, dataInputItems, setDataInputItems, withinArray, path, pathFormData, field_required, field_index, edit, field_key, field_label, field_description, field_enumerate, defaultValue, value }) => {
 
     //const [descriptionText, setDescriptionText] = useState(field_description);
     const [openDialog, setOpenDialog] = useState(false);
@@ -35,10 +36,10 @@ const StringType = ({ field_uri, dataInputItems, setDataInputItems, withinArray,
     const classes = useStyles();
 
     useEffect(() => {
-        if (value === undefined) {
-            setFieldValue("")
+        if (value === undefined & defaultValue === undefined) {
+            setFieldValue("");
         } else {
-            setFieldValue(value)
+            setFieldValue(value);
         }
     }, [value])
 
@@ -59,7 +60,7 @@ const StringType = ({ field_uri, dataInputItems, setDataInputItems, withinArray,
     var required
     if (field_required === undefined) {
         required = false;
-    } else if (field_required.includes(field_id)) {
+    } else if (field_required.includes(field_key)) {
         required = true;
     };
 
@@ -72,7 +73,7 @@ const StringType = ({ field_uri, dataInputItems, setDataInputItems, withinArray,
 
     // construct UI schema
     let UISchema = {
-        "fieldId": field_id,
+        "fieldKey": field_key,
         "title": field_label,
         "description": field_description,
         "$id": field_uri,
@@ -101,7 +102,7 @@ const StringType = ({ field_uri, dataInputItems, setDataInputItems, withinArray,
 
             let arr = dataInputItems;
             const items = Array.from(arr);
-            items[field_index][field_id] = event.target.value;
+            items[field_index][field_key] = event.target.value;
             setDataInputItems(items);
 
             // store to the main form data
@@ -141,7 +142,7 @@ const StringType = ({ field_uri, dataInputItems, setDataInputItems, withinArray,
 
             let arr = dataInputItems;
             const items = Array.from(arr);
-            items[field_index][field_id] = field_enumerate[0];
+            items[field_index][field_key] = field_enumerate[0];
             setDataInputItems(items);
 
             // store to the main form data
@@ -158,17 +159,18 @@ const StringType = ({ field_uri, dataInputItems, setDataInputItems, withinArray,
             setFieldValue(field_enumerate[0])
         } else if (field_enumerate !== undefined & withinArray === undefined) {
             // store to the main form data
+            let val = (value !== undefined ? value : defaultValue !== undefined ? defaultValue : field_enumerate[0])
             let event = {
                 "target": {
                     "value":
-                        field_enumerate[0]
+                        val
                 }
             }
             handleDataInput(event, pathFormData, "string")
             // conv. schema data
             handleConvertedDataInput(event, path + ".value", "string")
             // update field value
-            setFieldValue(field_enumerate[0])
+            setFieldValue(val)
         } else if (field_enumerate === undefined & withinArray === undefined & defaultValue !== undefined) {
             // store to the main form data
             let event = {
@@ -193,7 +195,7 @@ const StringType = ({ field_uri, dataInputItems, setDataInputItems, withinArray,
 
             let arr = dataInputItems;
             const items = Array.from(arr);
-            items[field_index][field_id] = defaultValue;
+            items[field_index][field_key] = defaultValue;
             setDataInputItems(items);
 
             // store to the main form data
@@ -209,17 +211,29 @@ const StringType = ({ field_uri, dataInputItems, setDataInputItems, withinArray,
             // update field value
             setFieldValue(defaultValue)
         }
-    }, [])
+    }, [value])
 
     if (field_enumerate === undefined) {
         return (
             <>
                 <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
-                    <TextField onBlur={(event) => handleOnBlur(event, pathFormData, "string")} required={required} helperText={field_description} onChange={(event) => { handleOnChange(event) }} value={fieldValue} fullWidth={true} className={classes.heading} id={field_id} label={field_label} variant="outlined" />
-                    {edit ? <><IconButton onClick={() => setOpenDialog(true)} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><EditIcon fontSize="small" color="primary" /></IconButton>
-                        <IconButton onClick={() => handleDeleteElement()} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><DeleteIcon fontSize="small" color="secondary" /></IconButton></> : null}
+                    <TextField
+                        multiline
+                        onBlur={(event) => handleOnBlur(event, pathFormData, "string")} required={required} helperText={field_description} onChange={(event) => { handleOnChange(event) }} value={fieldValue} fullWidth={true} className={classes.heading} id={field_key} label={field_label} variant="outlined" />
+                    {edit ? <>
+                        <Tooltip placement="top" title={`Edit field "${field_label}"`}>
+                            <IconButton onClick={() => setOpenDialog(true)} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}>
+                                <EditIcon fontSize="small" color="primary" />
+                            </IconButton>
+                        </Tooltip>
+                        <Tooltip placement="top" title={`Remove field "${field_label}"`}>
+                            <IconButton onClick={() => handleDeleteElement()} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}>
+                                <DeleteIcon fontSize="small" color="secondary" />
+                            </IconButton>
+                        </Tooltip>
+                    </> : null}
                 </div>
-                {openDialog ? <EditElement field_uri={field_uri} pathFormData={pathFormData} defaultValue={defaultValue} enumerated={enumerated} field_enumerate={field_enumerate} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
+                {openDialog ? <EditElement field_uri={field_uri} pathFormData={pathFormData} defaultValue={defaultValue} enumerated={enumerated} field_enumerate={field_enumerate} field_key={field_key} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
             </>
         )
     } else {
@@ -233,7 +247,7 @@ const StringType = ({ field_uri, dataInputItems, setDataInputItems, withinArray,
                         select
                         fullWidth={true}
                         className={classes.heading}
-                        id={field_id}
+                        id={field_key}
                         label={field_label}
                         variant="outlined"
                         SelectProps={{
@@ -251,10 +265,20 @@ const StringType = ({ field_uri, dataInputItems, setDataInputItems, withinArray,
                             ))
                         }
                     </TextField >
-                    {edit ? <><IconButton onClick={() => setOpenDialog(true)} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><EditIcon fontSize="small" color="primary" /></IconButton>
-                        <IconButton onClick={() => handleDeleteElement()} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><DeleteIcon fontSize="small" color="secondary" /></IconButton></> : null}
+                    {edit ? <>
+                        <Tooltip placement="top" title={`Edit field "${field_label}"`}>
+                            <IconButton onClick={() => setOpenDialog(true)} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}>
+                                <EditIcon fontSize="small" color="primary" />
+                            </IconButton>
+                        </Tooltip>
+                        <Tooltip placement="top" title={`Remove field "${field_label}"`}>
+                            <IconButton onClick={() => handleDeleteElement()} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}>
+                                <DeleteIcon fontSize="small" color="secondary" />
+                            </IconButton>
+                        </Tooltip>
+                    </> : null}
                 </div >
-                {openDialog ? <EditElement field_uri={field_uri} pathFormData={pathFormData} enumerated={enumerated} defaultValue={defaultValue} field_enumerate={field_enumerate} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
+                {openDialog ? <EditElement field_uri={field_uri} pathFormData={pathFormData} enumerated={enumerated} defaultValue={defaultValue} field_enumerate={field_enumerate} field_key={field_key} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
             </>
         )
     }

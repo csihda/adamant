@@ -30,7 +30,6 @@ import SchemaTwo from "../schemas/pak-schema.json";
 import SchemaThree from "../schemas/appj-schema.json";
 import SchemaFour from "../schemas/all-types.json";
 import fillValueWithEmptyString from "../components/utils/fillValueWithEmptyString";
-import fillForm from "../components/utils/fillForm";
 
 // function that receive the schema and convert it to Form/json data blueprint
 // also to already put the default value to this blueprint
@@ -362,6 +361,7 @@ const AdamantMain = () => {
     setSchemaValidity(false);
     setSchemaMessage();
     setCreateScratchMode(false);
+    setSelectedSchemaName("");
   };
 
   // create new schema from scratch
@@ -402,7 +402,7 @@ const AdamantMain = () => {
 
   // compile on-click handle
   const compileOnClick = () => {
-    const value = schema;
+    let value = schema;
     setInputMode(true);
     setSchema(value);
     setEditMode(false);
@@ -411,7 +411,7 @@ const AdamantMain = () => {
 
   // return to edit mode handle
   const toEditMode = () => {
-    const value = schema;
+    let value = schema;
     setInputMode(false);
     setSchema(value);
     setEditMode(true);
@@ -420,29 +420,30 @@ const AdamantMain = () => {
 
   // update parent (re-render everything)
   const updateParent = (value) => {
-    const newValue = { ...value };
+    let newValue = { ...value };
 
     // update original schema
-    const updatedSchema = JSON.parse(JSON.stringify(newValue));
-    const tempSchema = JSON.parse(JSON.stringify(newValue));
+    let updatedSchema = JSON.parse(JSON.stringify(newValue));
+    let tempSchema = JSON.parse(JSON.stringify(newValue));
     updatedSchema["properties"] = array2object(tempSchema["properties"]);
 
     setConvertedSchema(newValue);
     setSchema(updatedSchema);
 
     // update intermediate schema
-    const updatedSchema2 = JSON.parse(JSON.stringify(newValue));
-    const tempSchema2 = JSON.parse(JSON.stringify(newValue));
+    let updatedSchema2 = JSON.parse(JSON.stringify(newValue));
+    let tempSchema2 = JSON.parse(JSON.stringify(newValue));
     updatedSchema2["properties"] = array2objectAnyOf(tempSchema2["properties"]);
     setSchemaIntermediate(updatedSchema2);
   };
 
   // revert all changes to the schema
   const revertAllChanges = () => {
-    const value = { ...originalSchema };
+    let value = { ...originalSchema };
     // convert obj schema to iterable array properties
     let convertedSchema = JSON.parse(JSON.stringify(value));
     convertedSchema["properties"] = object2array(value["properties"]);
+    console.log(convertedSchema);
     setConvertedSchema(convertedSchema);
     setSchema(value);
     setSchemaWithValues(value);
@@ -508,33 +509,7 @@ const AdamantMain = () => {
     console.log("Current form data:", value);
   };
 
-  // handle received form data (json). Fill the form fields with the received data
-  const handleReceivedFormData = (data) => {
-    console.log(data);
-    // must look like updateParent
-
-    const newValue = { ...convertedSchema };
-
-    //fills this converted schema with the received data
-    fillForm(newValue["properties"], data);
-    console.log("filled form:\n", newValue);
-
-    // update original schema
-    const updatedSchema = JSON.parse(JSON.stringify(newValue));
-    const tempSchema = JSON.parse(JSON.stringify(newValue));
-    updatedSchema["properties"] = array2object(tempSchema["properties"]);
-
-    setConvertedSchema(newValue);
-    setSchema(updatedSchema);
-
-    // update intermediate schema
-    const updatedSchema2 = JSON.parse(JSON.stringify(newValue));
-    const tempSchema2 = JSON.parse(JSON.stringify(newValue));
-    updatedSchema2["properties"] = array2objectAnyOf(tempSchema2["properties"]);
-    setSchemaIntermediate(updatedSchema2);
-  };
-
-  // update form data id if a fieldId changes, simply delete key value pair of the oldfieldid from jsonData
+  // update form data id if a fieldkey changes, simply delete key value pair of the oldfieldid from jsonData
   const updateFormDataId = (
     oldFieldId,
     newFieldId,
@@ -1015,7 +990,6 @@ const AdamantMain = () => {
           updateFormDataId,
           handleDataDelete,
           handleConvertedDataInput,
-          handleReceivedFormData,
         }}
       >
         <div style={{ paddingBottom: "5px" }}>

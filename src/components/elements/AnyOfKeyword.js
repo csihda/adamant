@@ -23,6 +23,7 @@ import ObjectType from "./ObjectType";
 import object2array from "../utils/object2array";
 import getValue from "../utils/getValue";
 import set from "set-value";
+import { Tooltip } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -35,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const AnyOfKeyword = ({ pathFormData, path, field_required, field_uri, field_id, field_index, edit, field_label, field_description, field_prefixItems, anyOf_list }) => {
+const AnyOfKeyword = ({ pathFormData, path, field_required, field_uri, field_key, field_index, edit, field_label, field_description, field_prefixItems, anyOf_list }) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [expand, setExpand] = useState(true); // set to "true" for normally open accordion
     const { updateParent, convertedSchema, handleDataInput, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
@@ -117,7 +118,7 @@ const AnyOfKeyword = ({ pathFormData, path, field_required, field_uri, field_id,
     var required;
     if (field_required === undefined) {
         required = false;
-    } else if (field_required.includes(field_id)) {
+    } else if (field_required.includes(field_key)) {
         required = true;
     };
 
@@ -159,7 +160,7 @@ const AnyOfKeyword = ({ pathFormData, path, field_required, field_uri, field_id,
     /*
     // construct UI schema
     let UISchema = {
-        "fieldId": field_id,
+        "fieldKey": field_key,
         "title": field_label,
         "description": field_description,
         "items": field_items,
@@ -167,7 +168,7 @@ const AnyOfKeyword = ({ pathFormData, path, field_required, field_uri, field_id,
     }*/
 
     let UISchema = {
-        "fieldId": field_id,
+        "fieldKey": field_key,
         "title": field_label,
         "description": field_description,
         "$id": field_uri,
@@ -180,7 +181,7 @@ const AnyOfKeyword = ({ pathFormData, path, field_required, field_uri, field_id,
         if (field_prefixItems === undefined & field_items !== undefined) {
             if (Object.keys(field_items).length === 0) {
                 // create field_items if items is empty
-                field_items = { type: "string", field_id: `${generateUniqueID()}` }
+                field_items = { type: "string", field_key: `${generateUniqueID()}` }
                 let arr = inputItems;
                 const items = Array.from(arr);
                 items.push(field_items);
@@ -194,7 +195,7 @@ const AnyOfKeyword = ({ pathFormData, path, field_required, field_uri, field_id,
             } else {
                 // use existing schema if items is not empty
                 let newFieldItems = JSON.parse(JSON.stringify(field_items))
-                newFieldItems["field_id"] = generateUniqueID();
+                newFieldItems["field_key"] = generateUniqueID();
                 let arr = inputItems;
                 const items = Array.from(arr);
                 items.push(newFieldItems);
@@ -240,7 +241,10 @@ const AnyOfKeyword = ({ pathFormData, path, field_required, field_uri, field_id,
         <div style={{ width: "100%", padding: "10px 0px 10px 0px" }}>
             <Accordion expanded={expand} >
                 <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
+                    expandIcon={
+                        <Tooltip placement="top" title={`Collapse/Expand this container"`}>
+                            <ExpandMoreIcon />
+                        </Tooltip>}
                     aria-controls="panel1a-content"
                     id="panel1a-header"
                     IconButtonProps={{
@@ -257,8 +261,14 @@ const AnyOfKeyword = ({ pathFormData, path, field_required, field_uri, field_id,
                         <div>
 
                         </div>
-                        {edit ? <><Button onClick={() => setOpenDialog(true)} style={{ marginLeft: "5px" }}><EditIcon color="primary" /></Button>
-                            <Button onClick={() => handleDeleteElement()} style={{ marginLeft: "5px" }}><DeleteIcon color="secondary" /></Button></> : null}
+                        {edit ? <>
+                            <Tooltip placement="top" title={`Edit "${field_label}"`}>
+                                <Button onClick={() => setOpenDialog(true)} style={{ marginLeft: "5px" }}><EditIcon color="primary" /></Button>
+                            </Tooltip>
+                            <Tooltip placement="top" title={`Remove "${field_label}"`}>
+                                <Button onClick={() => handleDeleteElement()} style={{ marginLeft: "5px" }}><DeleteIcon color="secondary" /></Button>
+                            </Tooltip>
+                        </> : null}
                     </div>
                 </AccordionSummary>
                 <Divider />
@@ -285,7 +295,7 @@ const AnyOfKeyword = ({ pathFormData, path, field_required, field_uri, field_id,
                                     <div style={{ width: "100%" }}  {...provided.droppableProps} ref={provided.innerRef}>
                                         {Object.keys(inputItems).map((item, index) => {
                                             return (
-                                                <Draggable key={inputItems[index]["field_id"]} draggableId={inputItems[index]["field_id"]} index={index}>
+                                                <Draggable key={inputItems[index]["field_key"]} draggableId={inputItems[index]["field_key"]} index={index}>
                                                     {(provided) => (
                                                         <div {...provided.draggableProps} ref={provided.innerRef}>
                                                             <div style={{ display: "flex" }}>
@@ -293,10 +303,10 @@ const AnyOfKeyword = ({ pathFormData, path, field_required, field_uri, field_id,
                                                                     <DragHandleIcon fontSize="small" />
                                                                 </div>
                                                                 {/*
-                                                                <ArrayItemRenderer field_label={field_label} field_items={inputItems[index]} edit={true} handleDeleteArrayItem={handleDeleteArrayItem} path={path + ".properties"} fieldIndex={index} fieldId={inputItems[index]["field_id"]} type={inputItems[index]["type"]} />
+                                                                <ArrayItemRenderer field_label={field_label} field_items={inputItems[index]} edit={true} handleDeleteArrayItem={handleDeleteArrayItem} path={path + ".properties"} fieldIndex={index} fieldkey={inputItems[index]["field_key"]} type={inputItems[index]["type"]} />
                                                                 */}
 
-                                                                <ArrayItemRenderer pathFormData={pathFormData} dataInputItems={dataInputItems} setDataInputItems={setDataInputItems} field_label={field_label} field_items={field_items} edit={true} handleDeleteArrayItem={handleDeleteArrayItem} path={path} fieldIndex={index} fieldId={inputItems[index]["field_id"]} type={inputItems[index]["type"]} />
+                                                                <ArrayItemRenderer pathFormData={pathFormData} dataInputItems={dataInputItems} setDataInputItems={setDataInputItems} field_label={field_label} field_items={field_items} edit={true} handleDeleteArrayItem={handleDeleteArrayItem} path={path} fieldIndex={index} fieldkey={inputItems[index]["field_key"]} type={inputItems[index]["type"]} />
                                                             </div>
                                                         </div>
                                                     )}
@@ -305,7 +315,7 @@ const AnyOfKeyword = ({ pathFormData, path, field_required, field_uri, field_id,
                                         })}
                                         {provided.placeholder}
                                         <div style={{ display: "flex", justifyContent: "right" }}>
-                                            <IconButton onClick={() => { handleAddArrayItem() }} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><AddIcon fontSize="small" color="primary" /></IconButton>
+                                            <Button onClick={() => { handleAddArrayItem() }} style={{ fontSize: "12px", marginLeft: "5px", marginTop: "5px", height: "45px" }}><AddIcon style={{ paddingRight: "5px" }} fontSize="small" color="primary" /> Add Item</Button>
                                         </div>
                                     </div>
                                 )}
@@ -317,8 +327,8 @@ const AnyOfKeyword = ({ pathFormData, path, field_required, field_uri, field_id,
                         <div style={{ padding: "10px" }}>
                             <ObjectType
                                 path={path}
-                                pathFormData={pathFormData !== undefined ? pathFormData : field_id}
-                                field_id={field_id}
+                                pathFormData={pathFormData !== undefined ? pathFormData : field_key}
+                                field_key={field_key}
                                 field_label={undefined}
                                 field_description={undefined}
                                 field_required={field_required}
@@ -328,11 +338,11 @@ const AnyOfKeyword = ({ pathFormData, path, field_required, field_uri, field_id,
                         </div>
                         :
                         <div style={{ padding: "10px" }}>
-                            <ElementRenderer pathFormData={newPathFormData} path={newPath} fieldId={field_id} fieldIndex={field_index} elementRequired={field_required} edit={false} field={field_items} />
+                            <ElementRenderer pathFormData={newPathFormData} path={newPath} fieldkey={field_key} fieldIndex={field_index} elementRequired={field_required} edit={false} field={field_items} />
                         </div>}
             </Accordion>
         </div>
-        {openDialog ? <EditElement field_uri={field_uri} anyOf_list={anyOf_list} pathFormData={pathFormData} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
+        {openDialog ? <EditElement field_uri={field_uri} anyOf_list={anyOf_list} pathFormData={pathFormData} field_key={field_key} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
     </>
     );
 };

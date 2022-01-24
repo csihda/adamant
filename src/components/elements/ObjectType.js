@@ -16,6 +16,7 @@ import DragHandleIcon from "@material-ui/icons/DragIndicator";
 import deleteKey from "../utils/deleteKey";
 import EditElement from "../EditElement";
 import AddElement from "../AddElement";
+import { Tooltip } from "@material-ui/core";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -29,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const ObjectType = ({ field_uri, path, pathSchema, pathFormData, field_required, field_id, field_index, edit, field_label, field_description, field_properties }) => {
+const ObjectType = ({ field_uri, path, pathSchema, pathFormData, field_required, field_key, field_index, edit, field_label, field_description, field_properties }) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [openDialogAddElement, setOpenDialogAddElement] = useState(false);
     const [expand, setExpand] = useState(true); // set to "true" for normally open accordion
@@ -72,7 +73,7 @@ const ObjectType = ({ field_uri, path, pathSchema, pathFormData, field_required,
 
     // construct UI schema
     let UISchema = {
-        "fieldId": field_id,
+        "fieldKey": field_key,
         "title": field_label,
         "description": field_description,
         "properties": field_properties,
@@ -89,7 +90,10 @@ const ObjectType = ({ field_uri, path, pathSchema, pathFormData, field_required,
         <div style={{ width: "100%", padding: "10px 0px 10px 0px" }}>
             <Accordion expanded={expand} >
                 <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
+                    expandIcon={
+                        <Tooltip placement="top" title={`Collapse/Expand this container"`}>
+                            <ExpandMoreIcon />
+                        </Tooltip>}
                     style={{ height: "auto" }}
                     IconButtonProps={{
                         onClick: expandOnChange
@@ -107,8 +111,14 @@ const ObjectType = ({ field_uri, path, pathSchema, pathFormData, field_required,
                         <div>
 
                         </div>
-                        {edit ? <><Button onClick={() => setOpenDialog(true)} style={{ marginLeft: "5px" }}><EditIcon color="primary" /></Button>
-                            <Button onClick={() => handleDeleteElement()} style={{ marginLeft: "5px" }}><DeleteIcon color="secondary" /></Button></> : null}
+                        {edit ? <>
+                            <Tooltip placement="top" title={`Edit "${field_label}"`}>
+                                <Button onClick={() => setOpenDialog(true)} style={{ marginLeft: "5px" }}><EditIcon color="primary" /></Button>
+                            </Tooltip>
+                            <Tooltip placement="top" title={`Remove "${field_label}"`}>
+                                <Button onClick={() => handleDeleteElement()} style={{ marginLeft: "5px" }}><DeleteIcon color="secondary" /></Button>
+                            </Tooltip>
+                        </> : null}
                     </div>
                 </AccordionSummary>
                 <Divider />
@@ -119,14 +129,16 @@ const ObjectType = ({ field_uri, path, pathSchema, pathFormData, field_required,
                                 <div style={{ width: "100%" }}  {...provided.droppableProps} ref={provided.innerRef}>
                                     {Object.keys(field_properties).map((item, index) => {
                                         return (
-                                            <Draggable isDragDisabled={!edit} key={field_properties[item]["fieldId"]} draggableId={field_properties[item]["fieldId"]} index={index}>
+                                            <Draggable isDragDisabled={!edit} key={field_properties[item]["fieldKey"]} draggableId={field_properties[item]["fieldKey"]} index={index}>
                                                 {(provided) => (
                                                     <div {...provided.draggableProps} ref={provided.innerRef}>
                                                         <div style={{ display: "flex" }}>
                                                             {edit ? <div style={{ width: "20px", marginTop: "10px", height: "30px" }} {...provided.dragHandleProps}>
-                                                                <DragHandleIcon fontSize="small" />
+                                                                <Tooltip placement="top" title={`Drag & drop to adjust the order of this field`}>
+                                                                    <DragHandleIcon fontSize="small" />
+                                                                </Tooltip>
                                                             </div> : null}
-                                                            <ElementRenderer path={path + ".properties"} pathSchema={pathSchema + ".properties"} pathFormData={pathFormData} fieldId={field_properties[item]["fieldId"]} fieldIndex={item} elementRequired={field_required} edit={edit} field={field_properties[item]} />
+                                                            <ElementRenderer path={path + ".properties"} pathSchema={pathSchema + ".properties"} pathFormData={pathFormData} fieldkey={field_properties[item]["fieldKey"]} fieldIndex={item} elementRequired={field_required} edit={edit} field={field_properties[item]} />
                                                         </div>
                                                     </div>
                                                 )}
@@ -135,7 +147,9 @@ const ObjectType = ({ field_uri, path, pathSchema, pathFormData, field_required,
                                     })}
                                     {provided.placeholder}
                                     {edit ? <div style={{ display: "flex", justifyContent: "right" }}>
-                                        <Button onClick={() => setOpenDialogAddElement(true)} style={{ marginLeft: "5px" }}><AddIcon color="primary" /> ADD ELEMENT</Button>
+                                        <Tooltip placement="top" title={`Add a new field to "${field_label}"`}>
+                                            <Button onClick={() => setOpenDialogAddElement(true)} style={{ marginLeft: "5px" }}><AddIcon color="primary" /> ADD ELEMENT</Button>
+                                        </Tooltip>
                                     </div> : null}
                                 </div>
                             )}
@@ -144,7 +158,7 @@ const ObjectType = ({ field_uri, path, pathSchema, pathFormData, field_required,
                 </AccordionDetails>
             </Accordion>
         </div>
-        {openDialog ? <EditElement field_uri={field_uri} pathFormData={pathFormData} field_id={field_id} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} /> : null}
+        {openDialog ? <EditElement field_uri={field_uri} pathFormData={pathFormData} field_key={field_key} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} /> : null}
         {openDialogAddElement ? <AddElement openDialog={openDialogAddElement} setOpenDialog={setOpenDialogAddElement} path={path} defaultSchema={defaultSchema} UISchema={UISchema} /> : null}
     </>);
 };

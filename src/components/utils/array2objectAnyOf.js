@@ -2,8 +2,8 @@
 const array2objectAnyOf = (propert) => {
     var someObject = {};
     propert.forEach((item) => {
-        const tempKey = item["fieldId"];
-        delete item["fieldId"];
+        const tempKey = item["fieldKey"];
+        delete item["fieldKey"];
         const tempElements = item;
         someObject[tempKey] = tempElements;
         Object.keys(tempElements).forEach((item) => {

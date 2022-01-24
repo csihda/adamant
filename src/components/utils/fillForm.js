@@ -5,14 +5,14 @@ const fillForm = (schemaProp, data) => {
             if (data === undefined) {
                 return
             } //
-            fillForm(element["properties"], data[element["fieldId"]])
+            fillForm(element["properties"], data[element["fieldKey"]])
         } else {
             // early exist
             if (data === undefined) {
                 return
             } //
-            if (data[element["fieldId"]] !== undefined) {
-                element["value"] = data[element["fieldId"]]
+            if (data[element["fieldKey"]] !== undefined) {
+                element["value"] = data[element["fieldKey"]]
             }
         }
     })

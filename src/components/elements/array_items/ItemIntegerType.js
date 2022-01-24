@@ -23,7 +23,7 @@ const style = {
 }
 
 
-const ItemIntegerType = ({ value, path, pathFormData, dataInputItems, setDataInputItems, edit, index, field_id, handleDeleteArrayItem }) => {
+const ItemIntegerType = ({ value, path, pathFormData, dataInputItems, setDataInputItems, edit, index, field_key, handleDeleteArrayItem }) => {
     const classes = useStyles();
     const [inputValue, setInputValue] = useState(value === undefined ? "" : value[index] === undefined ? "" : value[index]);
     const { handleDataInput, handleConvertedDataInput } = useContext(FormContext);
@@ -72,7 +72,7 @@ const ItemIntegerType = ({ value, path, pathFormData, dataInputItems, setDataInp
                 <Typography className={classes.heading}>{index + 1}.</Typography>
             </div> : null}
             <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
-                <TextField onBlur={() => handleInputOnBlur()} onChange={e => handleInputOnChange(e)} value={inputValue} fullWidth={true} className={classes.heading} id={field_id} variant="outlined" />
+                <TextField onBlur={() => handleInputOnBlur()} onChange={e => handleInputOnChange(e)} value={inputValue} fullWidth={true} className={classes.heading} id={field_key} variant="outlined" />
                 {edit ? <>
                     <IconButton onClick={() => handleDeleteArrayItem(index)} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><DeleteIcon fontSize="small" color="secondary" /></IconButton></> : null}
             </div>

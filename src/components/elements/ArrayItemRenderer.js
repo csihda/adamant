@@ -5,7 +5,7 @@ import ItemStringType from "./array_items/ItemStringType";
 import ItemObjectType from "./array_items/ItemObjectType";
 
 
-const ArrayItemRenderer = ({ value, pathSchema, pathFormData, dataInputItems, setDataInputItems, field_label, field_items, path, type, edit, fieldIndex, fieldId, enumerate, handleDeleteArrayItem, properties }) => {
+const ArrayItemRenderer = ({ value, pathSchema, pathFormData, dataInputItems, setDataInputItems, field_label, field_items, path, type, edit, fieldIndex, fieldkey, enumerate, handleDeleteArrayItem, properties }) => {
 
     switch (type) {
         case 'string':
@@ -17,7 +17,7 @@ const ArrayItemRenderer = ({ value, pathSchema, pathFormData, dataInputItems, se
                 dataInputItems={dataInputItems}
                 path={path}
                 index={fieldIndex}
-                field_id={fieldId}
+                field_key={fieldkey}
                 handleDeleteArrayItem={handleDeleteArrayItem}
                 edit={edit}
                 field_type={type}
@@ -31,7 +31,7 @@ const ArrayItemRenderer = ({ value, pathSchema, pathFormData, dataInputItems, se
                 setDataInputItems={setDataInputItems}
                 dataInputItems={dataInputItems}
                 index={fieldIndex}
-                field_id={fieldId}
+                field_key={fieldkey}
                 handleDeleteArrayItem={handleDeleteArrayItem}
                 edit={edit}
                 field_type={type}
@@ -45,7 +45,7 @@ const ArrayItemRenderer = ({ value, pathSchema, pathFormData, dataInputItems, se
                 setDataInputItems={setDataInputItems}
                 dataInputItems={dataInputItems}
                 index={fieldIndex}
-                field_id={fieldId}
+                field_key={fieldkey}
                 handleDeleteArrayItem={handleDeleteArrayItem}
                 edit={edit}
                 field_type={type}
@@ -59,7 +59,7 @@ const ArrayItemRenderer = ({ value, pathSchema, pathFormData, dataInputItems, se
                 pathSchema={pathSchema + ".value"}
                 path={path}
                 index={fieldIndex}
-                field_id={fieldId}
+                field_key={fieldkey}
                 handleDeleteArrayItem={handleDeleteArrayItem}
                 edit={edit}
                 field_type={type}

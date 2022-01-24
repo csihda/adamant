@@ -5,7 +5,7 @@ const object2array = (propert) => {
         var tempVariable = {};
         var tempVariable2;
         tempVariable2 = propert[item];
-        tempVariable["fieldId"] = item;
+        tempVariable["fieldKey"] = item;
         Object.keys(tempVariable2).forEach((item_) => {
             // make enum indexable by changing the key to "enumerate"
             if (item_ === "enum") {

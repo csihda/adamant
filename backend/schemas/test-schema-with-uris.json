@@ -6,70 +6,89 @@
     "properties": {
         "id": {
             "title": "UUID",
-            "$id": "https://www.plasma-mds.org/schema/plasma-mds.json#uuid",
+            "id": "https://www.plasma-mds.org/schema/plasma-mds.json#uuid",
             "type": "string"
         },
         "url": {
             "title": "URL",
-            "$id": "https://www.plasma-mds.org/schema/plasma-mds.json#url",
+            "id": "https://www.plasma-mds.org/schema/plasma-mds.json#url",
             "type": "string"
         },
         "source": {
             "title": "Source",
-            "$id": "https://www.plasma-mds.org/schema/plasma-mds.json#source",
+            "id": "https://www.plasma-mds.org/schema/plasma-mds.json#source",
             "type": "object",
             "properties": { 
                 "sourceName": {
                     "title": "Source Name",
-                    "$id": "https://www.plasma-mds.org/schema/plasma-mds.json#sourceName",
+                    "id": "https://www.plasma-mds.org/schema/plasma-mds.json#sourceName",
                     "type": "string"
                 }
             }
         },
         "power":{
             "title": "Power Related",
-            "$id": "https://www.plasma-mds.org/schema/plasma-mds.json#power",
+            "id": "https://www.plasma-mds.org/schema/plasma-mds.json#power",
             "type": "object",
             "properties": {
                 "voltageFeed":{
                     "title": "Voltage Feed",
-                    "$id": "https://www.plasma-mds.org/schema/plasma-mds.json#voltageFeed",
+                    "id": "https://www.plasma-mds.org/schema/plasma-mds.json#voltageFeed",
                     "type": "object",
                     "properties": {
                         "waveForm" : {
                             "title": "Wave Form",
-                            "$id": "https://www.plasma-mds.org/schema/plasma-mds.json#waveForm",
+                            "id": "https://www.plasma-mds.org/schema/plasma-mds.json#waveForm",
                             "type": "string",
                             "enum": ["Sine", "Square", "Triangle", "Sawtooth"]
                         },
                         "amplitudeVpp": {
                             "title": "Amplitude peak-to-peak [Volt]",
-                            "$id": "https://www.plasma-mds.org/schema/plasma-mds.json#amplitudeVpp",
+                            "id": "https://www.plasma-mds.org/schema/plasma-mds.json#amplitudeVpp",
                             "type": "number"
                         },
                         "sourceFrequency": {
                             "title": "Source Frequency [Hertz]",
-                            "$id": "https://www.plasma-mds.org/schema/plasma-mds.json#sourceFrequency",
+                            "id": "https://www.plasma-mds.org/schema/plasma-mds.json#sourceFrequency",
                             "type": "number"
                         } 
                     }
                 },
                 "inputPower": {
                     "title": "Input Power [Watt]",
-                    "$id": "https://www.plasma-mds.org/schema/plasma-mds.json#inputPower",
+                    "id": "https://www.plasma-mds.org/schema/plasma-mds.json#inputPower",
                     "type": "number"
                 },
                 "gasTemperature": {
                     "title": "Gas Temperature [Kelvin]",
-                    "$id": "https://www.plasma-mds.org/schema/plasma-mds.json#gasTemperature",
+                    "id": "https://www.plasma-mds.org/schema/plasma-mds.json#gasTemperature",
                     "type": "number"
                 }
             }
         },
         "commercial": {
             "title": "Commercial Availability",
-            "$id": "https://www.plasma-mds.org/schema/plasma-mds.json#commercial",
+            "id": "https://www.plasma-mds.org/schema/plasma-mds.json#commercial",
             "type": "boolean"
+        },
+        "otherFields":{
+            "title": "Other Fields",
+            "id": "https://www.plasma-mds.org/schema/plasma-mds.json#otherFields",
+            "type": "object",
+            "properties": {
+                "integerType":{
+                    "title": "Integer Type Field",
+                    "id": "https://www.plasma-mds.org/schema/plasma-mds.json#integerType",
+                    "type": "integer",
+                    "default": 10
+                },
+                "arrayType":{
+                    "title": "Array Type Field",
+                    "id": "https://www.plasma-mds.org/schema/plasma-mds.json#arrayType",
+                    "type": "array",
+                    "items": {}
+                }
+            }
         }
     }
 }

@@ -24,7 +24,7 @@ const AddElement = ({ enumerated, field_enumerate, field_required, defaultSchema
 
     const [selectedType, setSelectedType] = useState("string")
     const [fieldUri, setFieldUri] = useState(undefined)
-    const [fieldId, setFieldId] = useState(undefined)
+    const [fieldkey, setFieldKey] = useState(undefined)
     const [title, setTitle] = useState(undefined)
     const [description, setDescription] = useState(undefined)
     const { updateParent, convertedSchema } = useContext(FormContext);
@@ -44,13 +44,13 @@ const AddElement = ({ enumerated, field_enumerate, field_required, defaultSchema
 
     // save the change and update the UI
     const handleUpdateSchemaOnClick = () => {
-        // check if fieldId already exist
-        if (checkIfFieldIDExist(convertedSchema, path, fieldId)) {
+        // check if fieldkey already exist
+        if (checkIfFieldIDExist(convertedSchema, path, fieldkey)) {
             alert("Field ID already exists!")
             return
         }
 
-        tempUISchema["fieldId"] = fieldId;
+        tempUISchema["fieldKey"] = fieldkey;
         if (fieldUri !== undefined) {
             if (fieldUri.toString().replace(/\s+/g, '') !== "") {
                 tempUISchema["$id"] = fieldUri
@@ -60,12 +60,12 @@ const AddElement = ({ enumerated, field_enumerate, field_required, defaultSchema
         if (title !== undefined) { tempUISchema["title"] = title }
         if (description !== undefined) { tempUISchema["description"] = description }
 
-        if (fieldId === undefined) {
+        if (fieldkey === undefined) {
             alert("Field ID must be defined!")
             return
         }
 
-        if (typeof (fieldId) === "string" & fieldId.replace(/\s+/g, '') === "") {
+        if (typeof (fieldkey) === "string" & fieldkey.replace(/\s+/g, '') === "") {
             alert("Field ID must be defined!")
             return
         }
@@ -89,9 +89,9 @@ const AddElement = ({ enumerated, field_enumerate, field_required, defaultSchema
 
             // create a new path to the new element
             path = path + ".properties." + (properties.length - 1).toString()
-            let field_id = fieldId
+            let field_key = fieldkey
             // update the required value
-            const newConvertedSchema = updateRequired({ selectedType, path, requiredChecked, field_id, convertedSchema })
+            const newConvertedSchema = updateRequired({ selectedType, path, requiredChecked, field_key, convertedSchema })
             // update enum
             if (tempUISchema["type"] === "string" & enumChecked) {
                 let newList = enumList
@@ -114,9 +114,9 @@ const AddElement = ({ enumerated, field_enumerate, field_required, defaultSchema
 
             // create a new path to the new element
             path = "properties." + (properties.length - 1).toString()
-            let field_id = fieldId
+            let field_key = fieldkey
             // update the required value
-            const newConvertedSchema = updateRequired({ selectedType, path, requiredChecked, field_id, convertedSchema })
+            const newConvertedSchema = updateRequired({ selectedType, path, requiredChecked, field_key, convertedSchema })
             // update enum
             if (tempUISchema["type"] === "string" & enumChecked) {
                 let newList = enumList
@@ -144,8 +144,8 @@ const AddElement = ({ enumerated, field_enumerate, field_required, defaultSchema
                 return setTitle(event.target.value)
             case 'description':
                 return setDescription(event.target.value)
-            case 'fieldId':
-                return setFieldId(event.target.value)
+            case 'fieldkey':
+                return setFieldKey(event.target.value)
             case '$id':
                 return setFieldUri(event.target.value)
             default:
@@ -163,8 +163,8 @@ const AddElement = ({ enumerated, field_enumerate, field_required, defaultSchema
 
     // handle field id on change
     const handleOnBlurFieldId = (event) => {
-        setFieldId(event.target.value)
-        tempUISchema["fieldId"] = event.target.value
+        setFieldKey(event.target.value)
+        tempUISchema["fieldKey"] = event.target.value
     }
 
     // handle change required check box
@@ -198,7 +198,7 @@ const AddElement = ({ enumerated, field_enumerate, field_required, defaultSchema
                     <div>
                         <FormControl component="widget-type">
                             <FormLabel style={{ color: "#01579b" }} component="legend">Basic Descriptors:</FormLabel>
-                            <TextField inputProps={{ maxLength: 12 }} required onBlur={event => handleOnBlurFieldId(event)} onChange={event => handleChangeUISchema(event, "fieldId")} style={{ marginTop: "20px" }} defaultValue={tempUISchema["fieldId"]} variant="outlined" fullWidth={true} label={"Field Key"} helperText='A unique json key for this field. Usually short and no spaces (use "_" instead). Spaces are replaced automatically with "_" upon saving.' />
+                            <TextField inputProps={{ maxLength: 12 }} required onBlur={event => handleOnBlurFieldId(event)} onChange={event => handleChangeUISchema(event, "fieldKey")} style={{ marginTop: "20px" }} defaultValue={tempUISchema["fieldKey"]} variant="outlined" fullWidth={true} label={"Field Key"} helperText='A unique json key for this field. Usually short and no spaces (use "_" instead). Spaces are replaced automatically with "_" upon saving.' />
                             <TextField margin="normal" onChange={event => handleChangeUISchema(event, "$id")} style={{ marginTop: "10px" }} variant="outlined" fullWidth={true} label={"Field ID/URI"} helperText='ID or URI for this field if available.' />
                             <TextField onChange={event => handleChangeUISchema(event, "title")} style={{ marginTop: "10px" }} defaultValue={tempUISchema["title"]} variant="outlined" fullWidth={true} label={"Field Title"} helperText='Label or title of the field. For a field that requires a unit, the unit can be placed within a square bracket, e,g., "Chamber Pressure [Pa]".' />
                             <TextField onChange={event => handleChangeUISchema(event, "description")} style={{ marginTop: "10px" }} defaultValue={tempUISchema["description"]} variant="outlined" fullWidth={true} label={"Field Description"} multiline rows={3} helperText='A detailed description of the field, how the input should be formated, etc.' />

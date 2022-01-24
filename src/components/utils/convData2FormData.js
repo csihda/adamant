@@ -1,8 +1,8 @@
 const convData2FormData = (convDataProp) => {
     var someObject = {};
     convDataProp.forEach((item) => {
-        const tempKey = item["fieldId"];
-        delete item["fieldId"];
+        const tempKey = item["fieldKey"];
+        delete item["fieldKey"];
         const tempElements = item;
         someObject[tempKey] = tempElements;
         if (someObject[tempKey]["value"] === undefined & someObject[tempKey]["type"] !== "object") {
