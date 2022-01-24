@@ -148,9 +148,35 @@ const AnyOfKeyword = ({ pathFormData, path, field_required, field_uri, field_key
 
     // handle delete object UI
     const handleDeleteElement = () => {
-        const value = deleteKey(convertedSchema, path)
-        updateParent(value)
+        let value = deleteKey(convertedSchema, path)
+        // delete the field key in required array if applicable        
+        let pathArr = path.split(".")
+        if (pathArr.length <= 2) {
+            if (value["required"] !== undefined) {
+                let index = value["required"].indexOf(field_key)
+                if (index !== -1) {
+                    value["required"].splice(index, 1)
+                }
+            }
+        } else {
+            pathArr.pop()
+            pathArr.pop()
+            let val = getValue(value, pathArr.join("."))
+            if (val["required"] !== undefined) {
+                let index = val["required"].indexOf(field_key)
+                if (index !== -1) {
+                    let newPath = pathArr.join(".") + ".required"
+                    val["required"].splice(index, 1)
+                    if (val["required"].length === 0) {
+                        value = deleteKey(value, newPath)
+                    } else {
+                        set(value, newPath, val["required"])
+                    }
+                }
+            }
+        }
 
+        updateParent(value)
         handleDataDelete(pathFormData);
     }
 

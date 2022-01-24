@@ -22,7 +22,6 @@ const useStyles = makeStyles((theme) => ({
 
 
 const JSONSchemaViewerDialog = ({ openSchemaViewer, setOpenSchemaViewer, jsonschema }) => {
-    console.log(openSchemaViewer)
 
     return (<>
         <Dialog

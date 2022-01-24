@@ -8,6 +8,8 @@ import EditElement from '../EditElement';
 import { FormContext } from '../../FormContext';
 import deleteKey from '../utils/deleteKey';
 import { Tooltip } from '@material-ui/core';
+import getValue from '../utils/getValue';
+import set from 'set-value';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -83,9 +85,36 @@ const StringType = ({ field_uri, dataInputItems, setDataInputItems, withinArray,
 
     // handle delete field UI
     const handleDeleteElement = () => {
-        const value = deleteKey(convertedSchema, path)
-        updateParent(value)
+        let value = deleteKey(convertedSchema, path)
 
+        // delete the field key in required array if applicable        
+        let pathArr = path.split(".")
+        if (pathArr.length <= 2) {
+            if (value["required"] !== undefined) {
+                let index = value["required"].indexOf(field_key)
+                if (index !== -1) {
+                    value["required"].splice(index, 1)
+                }
+            }
+        } else {
+            pathArr.pop()
+            pathArr.pop()
+            let val = getValue(value, pathArr.join("."))
+            if (val["required"] !== undefined) {
+                let index = val["required"].indexOf(field_key)
+                if (index !== -1) {
+                    let newPath = pathArr.join(".") + ".required"
+                    val["required"].splice(index, 1)
+                    if (val["required"].length === 0) {
+                        value = deleteKey(value, newPath)
+                    } else {
+                        set(value, newPath, val["required"])
+                    }
+                }
+            }
+        }
+
+        updateParent(value)
         handleDataDelete(pathFormData);
     }
 
@@ -219,6 +248,12 @@ const StringType = ({ field_uri, dataInputItems, setDataInputItems, withinArray,
                 <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
                     <TextField
                         multiline
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter" && !(e.shiftKey)) {
+                                e.preventDefault();
+                                //setFieldValue(e.target.value);
+                            }
+                        }}
                         onBlur={(event) => handleOnBlur(event, pathFormData, "string")} required={required} helperText={field_description} onChange={(event) => { handleOnChange(event) }} value={fieldValue} fullWidth={true} className={classes.heading} id={field_key} label={field_label} variant="outlined" />
                     {edit ? <>
                         <Tooltip placement="top" title={`Edit field "${field_label}"`}>
