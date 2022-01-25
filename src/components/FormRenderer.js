@@ -92,6 +92,7 @@ const FormRenderer = ({ revertAllChanges, schema, edit, originalSchema }) => {
             let newValue = { ...convertedSchema };
 
             //fills this converted schema with the received data
+            console.log("before filling:\n", JSON.parse(JSON.stringify(newValue)))
             fillForm(newValue["properties"], receivedData);
             console.log("filled form:\n", newValue);
 

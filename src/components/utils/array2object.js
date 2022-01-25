@@ -31,6 +31,9 @@ const array2object = (propert) => {
             if (item === "value") {
                 delete someObject[tempKey]["value"]
             }
+            if (item === "prevValue") {
+                delete someObject[tempKey][item]
+            }
         });
     });
     return someObject;

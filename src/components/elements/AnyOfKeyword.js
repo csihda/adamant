@@ -1,9 +1,9 @@
 import React, { useState, useContext } from "react";
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
-import Accordion from "@material-ui/core/Accordion";
-import { AccordionDetails, AccordionSummary } from '@material-ui/core';
+//import Accordion from "@material-ui/core/Accordion";
+import { AccordionDetails } from '@material-ui/core';
 import { Button } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import AddIcon from "@material-ui/icons/AddBox";
@@ -24,6 +24,8 @@ import object2array from "../utils/object2array";
 import getValue from "../utils/getValue";
 import set from "set-value";
 import { Tooltip } from "@material-ui/core";
+import MuiAccordion from '@material-ui/core/Accordion';
+import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -35,6 +37,41 @@ const useStyles = makeStyles((theme) => ({
         fontWeight: theme.typography.fontWeightRegular,
     },
 }));
+
+const Accordion = withStyles({
+    root: {
+        border: '1px solid rgba(232, 244, 253, 1)',
+        '&:not(:last-child)': {
+            borderBottom: 0,
+        },
+        boxShadow: "none",
+        '&:before': {
+            display: 'none',
+        },
+        '&$expanded': {
+            margin: 'auto',
+        },
+    },
+    expanded: {},
+})(MuiAccordion);
+
+const AccordionSummary = withStyles({
+    root: {
+        backgroundColor: 'rgba(232, 244, 253, 1)',
+        borderBottom: '1px solid rgba(0, 0, 0, .0)',
+        marginBottom: -1,
+        minHeight: 56,
+        '&$expanded': {
+            minHeight: 56,
+        },
+    },
+    content: {
+        '&$expanded': {
+            margin: '12px 0',
+        },
+    },
+    expanded: {},
+})(MuiAccordionSummary);
 
 const AnyOfKeyword = ({ pathFormData, path, field_required, field_uri, field_key, field_index, edit, field_label, field_description, field_prefixItems, anyOf_list }) => {
     const [openDialog, setOpenDialog] = useState(false);
@@ -144,6 +181,7 @@ const AnyOfKeyword = ({ pathFormData, path, field_required, field_uri, field_key
         handleDataInput(items2, pathFormData, "array");
         // conv. schema data
         handleConvertedDataInput(items2, path + ".value", "array")
+        handleConvertedDataInput(items2, path + ".prevValue", "array")
     }
 
     // handle delete object UI
@@ -156,6 +194,9 @@ const AnyOfKeyword = ({ pathFormData, path, field_required, field_uri, field_key
                 let index = value["required"].indexOf(field_key)
                 if (index !== -1) {
                     value["required"].splice(index, 1)
+                    if (value["required"].length === 0) {
+                        delete value["required"]
+                    }
                 }
             }
         } else {
@@ -261,6 +302,7 @@ const AnyOfKeyword = ({ pathFormData, path, field_required, field_uri, field_key
         handleDataInput(items2, pathFormData, "array");
         // conv. schema data
         handleConvertedDataInput(items2, path + ".value", "array")
+        handleConvertedDataInput(items2, path + ".prevValue", "array")
     }
 
     return (<>

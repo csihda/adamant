@@ -37,14 +37,26 @@ const StringType = ({ field_uri, dataInputItems, setDataInputItems, withinArray,
     //const [required, setRequired] = useState(false)
     const classes = useStyles();
 
+    /*
     useEffect(() => {
         if (value === undefined & defaultValue === undefined) {
             setFieldValue("");
         } else {
             setFieldValue(value);
+
+            let event = {
+                target: {
+                    value: value
+                }
+            }
+
+            handleDataInput(event, pathFormData, "string")
+            // conv. schema data
+            handleConvertedDataInput(event, path + ".value", "string")
+            handleConvertedDataInput(event, path + ".prevValue", "string")
         }
     }, [value])
-
+*/
     const handleOnChange = (event) => {
         setFieldValue(event.target.value)
     }
@@ -94,6 +106,9 @@ const StringType = ({ field_uri, dataInputItems, setDataInputItems, withinArray,
                 let index = value["required"].indexOf(field_key)
                 if (index !== -1) {
                     value["required"].splice(index, 1)
+                    if (value["required"].length === 0) {
+                        delete value["required"]
+                    }
                 }
             }
         } else {
@@ -144,6 +159,7 @@ const StringType = ({ field_uri, dataInputItems, setDataInputItems, withinArray,
             handleDataInput(value, newPathFormData, "string")
             // conv. schema data
             handleConvertedDataInput(value, newPath + ".value", "string")
+            handleConvertedDataInput(event, newPath + ".prevValue", "string")
 
             // update field value
             setFieldValue(event.target.value)
@@ -151,6 +167,7 @@ const StringType = ({ field_uri, dataInputItems, setDataInputItems, withinArray,
             handleDataInput(event, pathFormData, type)
             // conv. schema data
             handleConvertedDataInput(event, path + ".value", "string")
+            handleConvertedDataInput(event, path + ".prevValue", "string")
             // update field value
             setFieldValue(event.target.value)
         }
@@ -159,6 +176,62 @@ const StringType = ({ field_uri, dataInputItems, setDataInputItems, withinArray,
 
     // if enumerate and no defaultValue then already store the first enumerate value to form data
     // this is for any enumerate in a subschema (e.g., in anyOf), for the rest of enumerate is taken care of in AdamantMain.jsx
+    useEffect(() => {
+        if (withinArray !== undefined & withinArray === true) {
+            let newPathFormData = pathFormData.split(".");
+            newPathFormData.pop()
+            newPathFormData = newPathFormData.join(".")
+
+            let newPath = path.split(".")
+            newPath.pop()
+            newPath = newPath.join(".")
+
+            let arr = dataInputItems;
+            const items = Array.from(arr);
+            let latestVal = getValue(convertedSchema, newPath + ".prevValue")
+            if (Array.isArray(latestVal)) { latestVal = latestVal[field_key] }
+            console.log(latestVal, "and", newPath)
+            let val = (value !== undefined ? value : defaultValue !== undefined ? defaultValue : field_enumerate !== undefined ? field_enumerate[0] : latestVal !== undefined ? latestVal : "")
+
+            if (val === "") {
+                setFieldValue("")
+            } else {
+                items[field_index][field_key] = val;
+                setDataInputItems(items);
+
+                // store to the main form data
+                let event = {
+                    "target": {
+                        "value":
+                            items
+                    }
+                }
+                handleDataInput(event, newPathFormData, "string")
+                // conv. schema data
+                handleConvertedDataInput(event, newPath + ".value", "string")
+                handleConvertedDataInput(event, newPath + ".prevValue", "string")
+                // update field value
+                setFieldValue(val)
+            }
+        } else {
+            let latestVal = getValue(convertedSchema, path + ".prevValue")
+            let val = (value !== undefined ? value : defaultValue !== undefined ? defaultValue : field_enumerate !== undefined ? field_enumerate[0] : latestVal !== undefined ? latestVal : "")
+            let event = {
+                "target": {
+                    "value":
+                        val
+                }
+            }
+            handleDataInput(event, pathFormData, "string")
+            // conv. schema data
+            handleConvertedDataInput(event, path + ".value", "string")
+            handleConvertedDataInput(event, path + ".prevValue", "string")
+            // update field value
+            setFieldValue(val)
+        }
+
+    }, [value])
+    /*
     useEffect(() => {
         if (field_enumerate !== undefined & withinArray !== undefined & withinArray === true) {
             let newPathFormData = pathFormData.split(".");
@@ -171,7 +244,8 @@ const StringType = ({ field_uri, dataInputItems, setDataInputItems, withinArray,
 
             let arr = dataInputItems;
             const items = Array.from(arr);
-            items[field_index][field_key] = field_enumerate[0];
+            let val = (defaultValue !== undefined ? defaultValue : field_enumerate[0])
+            items[field_index][field_key] = val;
             setDataInputItems(items);
 
             // store to the main form data
@@ -184,8 +258,9 @@ const StringType = ({ field_uri, dataInputItems, setDataInputItems, withinArray,
             handleDataInput(event, newPathFormData, "string")
             // conv. schema data
             handleConvertedDataInput(event, newPath + ".value", "string")
+            handleConvertedDataInput(event, newPath + ".prevValue", "string")
             // update field value
-            setFieldValue(field_enumerate[0])
+            setFieldValue(val)
         } else if (field_enumerate !== undefined & withinArray === undefined) {
             // store to the main form data
             let val = (value !== undefined ? value : defaultValue !== undefined ? defaultValue : field_enumerate[0])
@@ -198,6 +273,7 @@ const StringType = ({ field_uri, dataInputItems, setDataInputItems, withinArray,
             handleDataInput(event, pathFormData, "string")
             // conv. schema data
             handleConvertedDataInput(event, path + ".value", "string")
+            handleConvertedDataInput(event, path + ".prevValue", "string")
             // update field value
             setFieldValue(val)
         } else if (field_enumerate === undefined & withinArray === undefined & defaultValue !== undefined) {
@@ -211,6 +287,7 @@ const StringType = ({ field_uri, dataInputItems, setDataInputItems, withinArray,
             handleDataInput(event, pathFormData, "string")
             // conv. schema data
             handleConvertedDataInput(event, path + ".value", "string")
+            handleConvertedDataInput(event, path + ".prevValue", "string")
             // update field value
             setFieldValue(defaultValue)
         } else if (field_enumerate === undefined & withinArray !== undefined & defaultValue !== undefined) {
@@ -237,10 +314,12 @@ const StringType = ({ field_uri, dataInputItems, setDataInputItems, withinArray,
             handleDataInput(event, newPathFormData, "string")
             // conv. schema data
             handleConvertedDataInput(event, newPath + ".value", "string")
+            handleConvertedDataInput(event, newPath + ".prevValue", "string")
             // update field value
             setFieldValue(defaultValue)
         }
     }, [value])
+    */
 
     if (field_enumerate === undefined) {
         return (

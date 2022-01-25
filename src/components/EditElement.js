@@ -135,26 +135,26 @@ const EditElement = ({ field_uri, enumerated, field_enumerate, field_required, f
                         let parsed = newList.map(function (item) {
                             return parseInt(item, 10);
                         })
-                        set(newConvertedSchema, path + ".enumerate", parsed)
+                        set(newConvertedSchema, path + ".enumerate", parsed.filter(x => x.toString() !== "NaN"))
                     } else {
                         newList = newList.replace(/\s*,\s*/g, ",")
                         let parsed = newList.split(",").map(function (item) {
                             return parseInt(item, 10);
                         })
-                        set(newConvertedSchema, path + ".enumerate", parsed)
+                        set(newConvertedSchema, path + ".enumerate", parsed.filter(x => x.toString() !== "NaN"))
                     }
                 case 'number':
                     if (Array.isArray(newList)) {
                         let parsed = newList.map(function (item) {
                             return parseFloat(item, 10);
                         })
-                        set(newConvertedSchema, path + ".enumerate", parsed)
+                        set(newConvertedSchema, path + ".enumerate", parsed.filter(x => x.toString() !== "NaN"))
                     } else {
                         newList = newList.replace(/\s*,\s*/g, ",")
                         let parsed = newList.split(",").map(function (item) {
                             return parseFloat(item, 10);
                         })
-                        set(newConvertedSchema, path + ".enumerate", parsed)
+                        set(newConvertedSchema, path + ".enumerate", parsed.filter(x => x.toString() !== "NaN"))
                     }
             }
         }
@@ -288,7 +288,7 @@ const EditElement = ({ field_uri, enumerated, field_enumerate, field_required, f
                                         <>
                                             <FormControlLabel control={<Checkbox onChange={() => handleEnumBoxOnChange()} checked={enumChecked} />} label="Enumerated. Choose from an available list of inputs." />
                                             <div style={{ marginTop: "10px", marginBottom: "10px" }}>
-                                                {enumChecked ? <TextField defaultValue={enumList !== undefined ? enumList : ""} onChange={handleOnChangeListField} variant="outlined" fullWidth={true} label="Enumerate List" multiline rows={4} helperText="A list of inputs separated by commas, e,g.: item 1, item 2, item 3. Make sure that the item data type matches the field input data type. Invalid items will be replaced with NaN upon saving." /> : null}
+                                                {enumChecked ? <TextField defaultValue={enumList !== undefined ? enumList : ""} onChange={handleOnChangeListField} variant="outlined" fullWidth={true} label="Enumerate List" multiline rows={4} helperText="A list of inputs separated by commas, e,g.: item 1, item 2, item 3. Make sure that the item data type matches the field input data type. Invalid items will be not saved." /> : null}
                                             </div>
                                         </> : null}
                                 </FormControl>
