@@ -30,6 +30,7 @@ import SchemaTwo from "../schemas/pak-schema.json";
 import SchemaThree from "../schemas/appj-schema.json";
 import SchemaFour from "../schemas/all-types.json";
 import fillValueWithEmptyString from "../components/utils/fillValueWithEmptyString";
+import convData2FormData from "../components/utils/convData2FormData";
 
 // function that receive the schema and convert it to Form/json data blueprint
 // also to already put the default value to this blueprint
@@ -468,7 +469,7 @@ const AdamantMain = () => {
       value = event;
     }
     set(jData, path, value);
-    console.log("Current form data    (jData):", jData);
+    //console.log("Current form data    (jData):", jData);
     setJsonData(jData);
   };
   //
@@ -491,14 +492,12 @@ const AdamantMain = () => {
     //console.log(convSchemaData);
 
     // convert to form data
-    /*
     console.log(
       "Current form data (convData):",
       convData2FormData(
         JSON.parse(JSON.stringify(convSchemaData["properties"]))
       )
     );
-    */
   };
 
   // delete data in jsonData when the field in schema is deleted

@@ -38,33 +38,6 @@ const IntegerType = ({ field_uri, value, dataInputItems, setDataInputItems, with
     const [inputError, setInputError] = useState(false)
     const classes = useStyles();
 
-    /*
-    useEffect(() => {
-        if (value === undefined) {
-            setInputValue(defaultValue !== undefined ? defaultValue : "")
-            setInputError(false)
-            setDescriptionText(field_description !== undefined ? field_description : "")
-        } else {
-            // check if input is of type number and integer
-            if (!Number.isInteger(value)) {
-                let latestVal = getValue(convertedSchema, path + ".prevValue")
-                setInputValue(latestVal !== undefined ? latestVal : defaultValue !== undefined ? defaultValue : "")
-                setInputError(true)
-                setDescriptionText("Invalid input type. This field only accepts input of an integer type.")
-            } else {
-                setInputValue(value)
-                setInputError(false)
-                setDescriptionText(field_description !== undefined ? field_description : "")
-
-                handleDataInput(value, pathFormData, "integer")
-                // conv. schema data
-                handleConvertedDataInput(value, path + ".value", "integer")
-                handleConvertedDataInput(value, path + ".prevValue", "integer")
-            }
-        }
-    }, [value])
-    */
-
     // clean up empty strings in the paths
     path = path.split(".")
     path = path.filter(e => e)
@@ -223,8 +196,7 @@ const IntegerType = ({ field_uri, value, dataInputItems, setDataInputItems, with
         }
     }
 
-    // if enumerate and no defaultValue then already store the first enumerate value to form data
-    // this is for any enumerate in a subschema (e.g., in anyOf), for the rest of enumerate is taken care of in AdamantMain.jsx
+    // update this field input value everytime the value changes. E.g., when autofilling or first render of the field when defaultvalue exists 
     useEffect(() => {
         if (withinArray !== undefined & withinArray === true) {
             let newPathFormData = pathFormData.split(".");
@@ -238,16 +210,16 @@ const IntegerType = ({ field_uri, value, dataInputItems, setDataInputItems, with
             let arr = dataInputItems;
             const items = Array.from(arr);
 
-            let latestVal = getValue(convertedSchema, newPath + ".prevValue")
-            if (Array.isArray(latestVal)) { latestVal = latestVal[field_key] }
-            let val = (value !== undefined ? value : defaultValue !== undefined ? defaultValue : field_enumerate !== undefined ? field_enumerate[0] : latestVal !== undefined ? latestVal : "")
+            //let latestVal = getValue(convertedSchema, newPath + ".prevValue")
+            //if (Array.isArray(latestVal)) { latestVal = latestVal[field_key] }
+            let val = (value !== undefined ? value : defaultValue !== undefined ? defaultValue : field_enumerate !== undefined ? field_enumerate[0] : "")
             if (val === "") {
                 setInputValue("")
                 setInputError(false)
                 setDescriptionText(field_description !== undefined ? field_description : "")
             }
-            if (!Number.isInteger(val)) {
-                setInputValue(latestVal)
+            else if (!Number.isInteger(val)) {
+                setInputValue(val)
                 setInputError(true)
                 setDescriptionText("Invalid input type. This field only accepts input of an integer type.")
             }
@@ -271,8 +243,8 @@ const IntegerType = ({ field_uri, value, dataInputItems, setDataInputItems, with
             }
         }
         else {
-            let latestVal = getValue(convertedSchema, path + ".prevValue")
-            let val = (value !== undefined ? value : defaultValue !== undefined ? defaultValue : field_enumerate !== undefined ? field_enumerate[0] : latestVal !== undefined ? latestVal : "")
+            //let latestVal = getValue(convertedSchema, path + ".prevValue")
+            let val = (value !== undefined ? value : defaultValue !== undefined ? defaultValue : field_enumerate !== undefined ? field_enumerate[0] : "")
 
             // check if input is of type number
             if (val === "") {
@@ -280,8 +252,8 @@ const IntegerType = ({ field_uri, value, dataInputItems, setDataInputItems, with
                 setInputError(false)
                 setDescriptionText(field_description !== undefined ? field_description : "")
             }
-            if (!Number.isInteger(val)) {
-                setInputValue(latestVal)
+            else if (!Number.isInteger(val)) {
+                setInputValue(val)
                 setInputError(true)
                 setDescriptionText("Invalid input type. This field only accepts input of an integer type.")
             } else {
@@ -296,126 +268,29 @@ const IntegerType = ({ field_uri, value, dataInputItems, setDataInputItems, with
             }
         }
     }, [value])
-    /*
-    useEffect(() => {
-        if (field_enumerate !== undefined & withinArray !== undefined & withinArray === true) {
-            let newPathFormData = pathFormData.split(".");
-            newPathFormData.pop()
-            newPathFormData = newPathFormData.join(".")
-
-            let newPath = path.split(".")
-            newPath.pop()
-            newPath = newPath.join(".")
-
-            let arr = dataInputItems;
-            const items = Array.from(arr);
-
-            let val = (value !== undefined ? value : defaultValue !== undefined ? defaultValue : field_enumerate[0])
-            if (!Number.isInteger(val)) {
-                let latestVal = getValue(convertedSchema, newPath + ".prevValue")
-                val = (latestVal !== undefined ? latestVal : defaultValue !== undefined ? defaultValue : "")
-            }
-
-            items[field_index][field_key] = val;
-            setDataInputItems(items);
-
-            // store to the main form data
-            let event = {
-                "target": {
-                    "value":
-                        items
-                }
-            }
-            handleDataInput(event, newPathFormData, "integer")
-            // conv. schema data
-            handleConvertedDataInput(val, newPath + ".value", "integer")
-            handleConvertedDataInput(val, newPath + ".prevValue", "integer")
-            // update field value
-            setInputValue(val)
-        } else if (field_enumerate !== undefined & withinArray === undefined) {
-            let val = (value !== undefined ? value : defaultValue !== undefined ? defaultValue : field_enumerate[0])
-            // check if val is of good type
-            if (!Number.isInteger(val)) {
-                let latestVal = getValue(convertedSchema, path + ".prevValue")
-                setInputValue(latestVal !== undefined ? latestVal : defaultValue !== undefined ? defaultValue : "")
-                setInputError(true)
-                setDescriptionText("Invalid input type. This field only accepts input of an integer type.")
-            } else {
-                // conv. schema data
-                handleConvertedDataInput(val, path + ".value", "integer")
-                handleConvertedDataInput(val, path + ".prevValue", "integer")
-                // update field value
-                setInputValue(val)
-                setInputError(false)
-                setDescriptionText(field_description !== undefined ? field_description : "")
-            }
-        } else if (field_enumerate === undefined & withinArray === undefined & defaultValue !== undefined) {
-            let val = (value !== undefined ? value : defaultValue !== undefined ? defaultValue : "")
-            // check if val is of good type
-            if (!Number.isInteger(val)) {
-                if (!Number.isInteger(defaultValue)) { defaultValue = undefined }
-                // get latest value from convertedSchema if exists
-                let latestVal = getValue(convertedSchema, path + ".prevValue")
-                setInputValue(latestVal !== undefined ? latestVal : defaultValue !== undefined ? defaultValue : "")
-                setInputError(true)
-                setDescriptionText("Invalid input type. This field only accepts input of an integer type.")
-            } else {
-                // conv. schema data
-                handleConvertedDataInput(val, path + ".value", "integer")
-                handleConvertedDataInput(val, path + ".prevValue", "integer")
-                // update field value
-                setInputValue(val)
-                setInputError(false)
-                setDescriptionText(field_description !== undefined ? field_description : "")
-            }
-        } else if (field_enumerate === undefined & withinArray !== undefined & defaultValue !== undefined) {
-            let newPathFormData = pathFormData.split(".");
-            newPathFormData.pop()
-            newPathFormData = newPathFormData.join(".")
-
-            let newPath = path.split(".")
-            newPath.pop()
-            newPath = newPath.join(".")
-
-            let arr = dataInputItems;
-            const items = Array.from(arr);
-            let val = (value !== undefined ? value : defaultValue !== undefined ? defaultValue : "")
-            if (!Number.isInteger(val)) {
-                let latestVal = getValue(convertedSchema, newPath + ".prevValue")
-                val = (latestVal !== undefined ? latestVal : defaultValue !== undefined ? defaultValue : "")
-            }
-
-            items[field_index][field_key] = val;
-            setDataInputItems(items);
-
-            // store to the main form data
-            let event = {
-                "target": {
-                    "value":
-                        items
-                }
-            }
-            handleDataInput(event, newPathFormData, "integer")
-            // conv. schema data
-            handleConvertedDataInput(val, newPath + ".value", "integer")
-            handleConvertedDataInput(val, newPath + ".prevValue", "integer")
-            // update field value
-            setInputValue(val)
-        }
-    }, [value])
-    */
 
     if (field_enumerate === undefined) {
 
         return (
             <>
-                <div onMouseEnter={() => {
-                    if (inputValue !== undefined & inputValue !== "") {
-                        setInputError(false)
-                        setDescriptionText(field_description !== undefined ? field_description : "")
-                    }
-                }} style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
-                    <TextField error={inputError} onBlur={() => handleInputOnBlur()} onChange={e => handleInputOnChange(e)} value={inputValue === undefined ? defaultValue : inputValue} required={required} helperText={field_description} fullWidth={true} className={classes.heading} id={field_key} label={field_label} variant="outlined" InputProps={{
+                <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
+                    <TextField onFocus={() => {
+                        if (inputError === true) {
+                            setInputValue("")
+                            // then delete the value the convertedSchema
+                            let value = { ...convertedSchema }
+                            if (withinArray === undefined | (withinArray !== undefined & withinArray === true)) {
+                                value = deleteKey(value, path + ".value")
+                                updateParent(value)
+                            } else {
+                                let newPath = path.split(".")
+                                newPath.pop()
+                                newPath = newPath.join(".")
+                                value = deleteKey(value, newPath + ".value")
+                                updateParent(value)
+                            }
+                        }
+                    }} error={inputError} onBlur={() => handleInputOnBlur()} onChange={e => handleInputOnChange(e)} value={inputValue === undefined ? defaultValue : inputValue} required={required} helperText={field_description} fullWidth={true} className={classes.heading} id={field_key} label={field_label} variant="outlined" InputProps={{
                         endAdornment: <InputAdornment position="start">{<MathComponent tex={String.raw`\\${unit}`} />}</InputAdornment>,
                     }} helperText={descriptionText} />
                     {edit ? <>
@@ -437,13 +312,25 @@ const IntegerType = ({ field_uri, value, dataInputItems, setDataInputItems, with
     } else {
         return (
             <>
-                <div onMouseEnter={() => {
-                    if (inputValue !== undefined & inputValue !== "") {
-                        setInputError(false)
-                        setDescriptionText(field_description !== undefined ? field_description : "")
-                    }
-                }} style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
+                <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
                     <TextField
+                        onFocus={() => {
+                            if (inputError === true) {
+                                setInputValue("")
+                                // then delete the value the convertedSchema
+                                let value = { ...convertedSchema }
+                                if (withinArray === undefined | (withinArray !== undefined & withinArray === true)) {
+                                    value = deleteKey(value, path + ".value")
+                                    updateParent(value)
+                                } else {
+                                    let newPath = path.split(".")
+                                    newPath.pop()
+                                    newPath = newPath.join(".")
+                                    value = deleteKey(value, newPath + ".value")
+                                    updateParent(value)
+                                }
+                            }
+                        }}
                         error={inputError}
                         helperText={descriptionText}
                         select

@@ -35,25 +35,6 @@ const BooleanType = ({ field_uri, withinArray, value, dataInputItems, setDataInp
     const [inputError, setInputError] = useState(false)
     const classes = useStyles();
 
-    //alert(typeof (value))
-    /*
-    useEffect(() => {
-        if (value === undefined) {
-            setInputValue(false)
-        } else {
-            if (typeof (value) !== "boolean") {
-                setInputValue(false)
-                setInputError(true)
-                setDescriptionText("Invalid input type. This field only accepts input of a boolean type.")
-            } else {
-                setInputValue(value)
-                setInputError(false)
-                setDescriptionText(field_description !== undefined ? field_description : "")
-            }
-        }
-    }, [value])
-    */
-
     // clean up empty strings in the paths
     path = path.split(".")
     path = path.filter(e => e)
@@ -146,7 +127,7 @@ const BooleanType = ({ field_uri, withinArray, value, dataInputItems, setDataInp
         }
     }
 
-    // if boolean field is newly created then store a false input data already to the form data
+    // update this field input value everytime the value changes. E.g., when autofilling or first render of the field when defaultvalue exists 
     useEffect(() => {
         if (withinArray !== undefined & withinArray === true) {
             let newPathFormData = pathFormData.split(".");
@@ -160,16 +141,16 @@ const BooleanType = ({ field_uri, withinArray, value, dataInputItems, setDataInp
             let arr = dataInputItems;
             const items = Array.from(arr);
 
-            let latestVal = getValue(convertedSchema, newPath + ".prevValue")
-            if (Array.isArray(latestVal)) { latestVal = latestVal[field_key] }
-            let val = (value !== undefined ? value : defaultValue !== undefined ? defaultValue : latestVal !== undefined ? latestVal : "")
+            //let latestVal = getValue(convertedSchema, newPath + ".prevValue")
+            //if (Array.isArray(latestVal)) { latestVal = latestVal[field_key] }
+            let val = (value !== undefined ? value : defaultValue !== undefined ? defaultValue : "")
             if (val === "") {
                 setInputValue(false)
                 setInputError(false)
                 setDescriptionText(field_description !== undefined ? field_description : "")
             }
             else if (typeof (val) !== "boolean") {
-                setInputValue(latestVal)
+                setInputValue(false)
                 setInputError(true)
                 setDescriptionText("Invalid input type. This field only accepts input of a boolean type.")
             }
@@ -187,15 +168,15 @@ const BooleanType = ({ field_uri, withinArray, value, dataInputItems, setDataInp
             }
         }
         else {
-            let latestVal = getValue(convertedSchema, path + ".prevValue")
-            let val = (value !== undefined ? value : defaultValue !== undefined ? defaultValue : latestVal !== undefined ? latestVal : "")
+            //let latestVal = getValue(convertedSchema, path + ".prevValue")
+            let val = (value !== undefined ? value : defaultValue !== undefined ? defaultValue : "")
             if (val === "") {
                 setInputValue(false)
                 setInputError(false)
                 setDescriptionText(field_description !== undefined ? field_description : "")
             }
             else if (typeof (val) !== "boolean") {
-                setInputValue(latestVal)
+                setInputValue(false)
                 setInputError(true)
                 setDescriptionText("Invalid input type. This field only accepts input of a boolean type.")
             }
@@ -211,72 +192,27 @@ const BooleanType = ({ field_uri, withinArray, value, dataInputItems, setDataInp
         }
     }, [value])
 
-    /*
-    useEffect(() => {
-        if (defaultValue === undefined) {
-            if (withinArray !== undefined & withinArray === true) {
-                let val = (value !== undefined ? value : defaultValue !== undefined ? defaultValue : false)
-
-                let newPathFormData = pathFormData.split(".");
-                newPathFormData.pop()
-                newPathFormData = newPathFormData.join(".")
-
-                let newPath = path.split(".")
-                newPath.pop()
-                newPath = newPath.join(".")
-
-                let arr = dataInputItems;
-                const items = Array.from(arr);
-                items[field_index][field_key] = val;
-                setDataInputItems(items);
-
-                handleDataInput(items, newPathFormData, "boolean")
-                handleConvertedDataInput(items, newPath + ".value", "boolean")
-                handleConvertedDataInput(items, newPath + ".prevValue", "boolean")
-
-            }
-            else {
-                let val = (value !== undefined ? value : defaultValue !== undefined ? defaultValue : false)
-                handleDataInput(val, pathFormData, "boolean")
-                handleConvertedDataInput(val, path + ".value", "boolean")
-                handleConvertedDataInput(val, path + ".prevValue", "boolean")
-            }
-        } else {
-            if (withinArray !== undefined & withinArray === true) {
-                let val = (value !== undefined ? value : defaultValue !== undefined ? defaultValue : false)
-                let newPathFormData = pathFormData.split(".");
-                newPathFormData.pop()
-                newPathFormData = newPathFormData.join(".")
-
-                let newPath = path.split(".")
-                newPath.pop()
-                newPath = newPath.join(".")
-
-                let arr = dataInputItems;
-                const items = Array.from(arr);
-                items[field_index][field_key] = val;
-                setDataInputItems(items);
-
-                handleDataInput(items, newPathFormData, "boolean")
-                handleConvertedDataInput(items, newPath + ".value", "boolean")
-                handleConvertedDataInput(items, newPath + ".prevValue", "boolean")
-            }
-            else {
-                let val = (value !== undefined ? value : defaultValue !== undefined ? defaultValue : false)
-                handleDataInput(val, pathFormData, "boolean")
-                handleConvertedDataInput(val, path + ".value", "boolean")
-                handleConvertedDataInput(val, path + ".prevValue", "boolean")
-            }
-        }
-    }, [value])
-    */
-
 
     return (
         <>
-            <div onMouseEnter={() => {
-                setInputError(false)
-                setDescriptionText(field_description !== undefined ? field_description : "")
+            <div onMouseLeave={() => {
+                if (inputError === true) {
+                    setInputError(false)
+                    setDescriptionText(field_description !== undefined ? field_description : "")
+
+                    // then delete the value the convertedSchema
+                    let value = { ...convertedSchema }
+                    if (withinArray === undefined | (withinArray !== undefined & withinArray === true)) {
+                        value = deleteKey(value, path + ".value")
+                        updateParent(value)
+                    } else {
+                        let newPath = path.split(".")
+                        newPath.pop()
+                        newPath = newPath.join(".")
+                        value = deleteKey(value, newPath + ".value")
+                        updateParent(value)
+                    }
+                }
             }} style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', alignItems: "center", width: '100%' }}>
                 <div style={{ paddingLeft: "15px", width: "100%" }}>
                     <FormControl >
