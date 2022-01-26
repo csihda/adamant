@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import ElementRenderer from "../../ElementRenderer";
 import Divider from '@material-ui/core/Divider';
@@ -27,18 +27,24 @@ const style = {
 }
 
 
-const ItemObjectType = ({ path, dataInputItems, setDataInputItems, field_label, pathFormData, field_required, field_items, field_type, edit, index, field_key, handleDeleteArrayItem }) => {
-    const [expand, setExpand] = useState(true); // set to "true" for normally open accordion
+const ItemObjectType = ({ value, path, dataInputItems, setDataInputItems, field_label, pathFormData, field_required, field_items, field_type, edit, index, field_key, handleDeleteArrayItem }) => {
+    const [expand, setExpand] = useState(dataInputItems[index]["expand"] === undefined ? true : dataInputItems[index]["expand"]); // set to "true" for normally open accordion
     let objectIndex = index;
     let field_properties = field_items["properties"]
     let withinArray = true;
+    let withinObject = true;
+
 
     // This is to expand or contract the accordion, because normally open is used 
     const expandOnChange = () => {
         const value = expand
         setExpand(!value)
-    };
 
+        let newVal = [...dataInputItems]
+        newVal[index]["expand"] = !value
+
+        setDataInputItems(newVal)
+    };
 
     //const classes = useStyles();
 
@@ -74,7 +80,7 @@ const ItemObjectType = ({ path, dataInputItems, setDataInputItems, field_label, 
                             }
                             return (
                                 <div key={item} style={{ display: "flex" }}>
-                                    <ElementRenderer path={path} pathFormData={pathFormData} withinArray={withinArray} dataInputItems={dataInputItems} setDataInputItems={setDataInputItems} fieldkey={item} fieldIndex={objectIndex} elementRequired={field_required} edit={false} field={tempField} />
+                                    <ElementRenderer withinObject={withinObject} path={path} pathFormData={pathFormData} withinArray={withinArray} dataInputItems={dataInputItems} setDataInputItems={setDataInputItems} fieldkey={item} fieldIndex={objectIndex} elementRequired={field_items["required"]} edit={false} field={tempField} />
                                 </div>
                             )
                         })

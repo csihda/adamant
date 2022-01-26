@@ -67,7 +67,7 @@ const AccordionSummary = withStyles({
     expanded: {},
 })(MuiAccordionSummary);
 
-const ArrayType = ({ field_uri, value, pathFormData, path, pathSchema, field_required, field_key, field_index, edit, field_label, field_description, field_items, field_prefixItems }) => {
+const ArrayType = ({ withinArray, field_uri, value, pathFormData, path, pathSchema, field_required, field_key, field_index, edit, field_label, field_description, field_items, field_prefixItems }) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [expand, setExpand] = useState(true); // set to "true" for normally open accordion
     const { updateParent, convertedSchema, handleDataInput, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
@@ -87,35 +87,38 @@ const ArrayType = ({ field_uri, value, pathFormData, path, pathSchema, field_req
         setExpand(!value)
     };
 
-
+    // update this field input value everytime the value changes. E.g., when autofilling or first render of the field when defaultvalue exists
+    /*
     useEffect(() => {
-        if (value !== undefined) {
-            if (field_prefixItems === undefined & field_items !== undefined) {
-                if (Object.keys(field_items).length === 0) {
-                    // create field_items if items is empty
-                    let items = [];
-                    for (let i = 0; i < value.length; i++) {
-                        field_items = { type: "string", field_key: `${generateUniqueID()}` }
-                        items.push(field_items);
-                    }
-                    setInputItems(items);
-                    setDataInputItems(value);
+        if (field_prefixItems === undefined & field_items !== undefined) {
+            if (value === undefined) {
+                console.log("do nothing")
+            } else {
+                // use existing schema if items is not empty
+                let newFieldItems = JSON.parse(JSON.stringify(field_items))
+                newFieldItems["field_key"] = generateUniqueID();
+                let arr = inputItems;
+                const items = Array.from(arr);
+                items.push(newFieldItems);
+                setInputItems(items);
+
+                if (["string", "number", "integer", "boolean"].includes(newFieldItems["type"])) {
+                    // push a new item for the data
+                    let arr2 = dataInputItems;
+                    const items2 = Array.from(arr2);
+                    items2.push("");
+                    setDataInputItems(items2)
 
                     // for form data
                     handleDataInput(value, pathFormData, "array");
                     // conv. schema data
                     handleConvertedDataInput(value, path + ".value", "array")
                     handleConvertedDataInput(value, path + ".prevValue", "array")
-                } else {
-                    // use existing schema if items is not empty
-                    let items = [];
-                    for (let i = 0; i < value.length; i++) {
-                        let newFieldItems = JSON.parse(JSON.stringify(field_items))
-                        newFieldItems["field_key"] = generateUniqueID();
-                        items.push(newFieldItems);
-                    }
-                    setInputItems(items);
-                    setDataInputItems(value);
+                } else if (newFieldItems["type"] === "object") {
+                    let arr2 = dataInputItems;
+                    const items2 = Array.from(arr2);
+                    items2.push({});
+                    setDataInputItems(items2)
 
                     // for form data
                     handleDataInput(value, pathFormData, "array");
@@ -124,9 +127,95 @@ const ArrayType = ({ field_uri, value, pathFormData, path, pathSchema, field_req
                     handleConvertedDataInput(value, path + ".prevValue", "array")
                 }
             }
-        } else {
-            setInputItems([]);
-            setDataInputItems([])
+        }
+    }, [value])
+    */
+    useEffect(() => {
+        if (withinArray !== undefined & withinArray === true) {
+            console.log("for now do nothing")
+        }
+        else {
+            if (value !== undefined) {
+                if (field_prefixItems === undefined & field_items !== undefined) {
+                    if (field_items["type"] !== "object") {
+                        if (Object.keys(field_items).length === 0) {
+                            // create field_items if items is empty
+                            let items = [];
+                            for (let i = 0; i < value.length; i++) {
+                                field_items = { type: "string", field_key: `${generateUniqueID()}` }
+                                items.push(field_items);
+                            }
+                            setInputItems(items);
+                            setDataInputItems(value);
+
+                            // for form data
+                            handleDataInput(value, pathFormData, "array");
+                            // conv. schema data
+                            handleConvertedDataInput(value, path + ".value", "array")
+                            handleConvertedDataInput(value, path + ".prevValue", "array")
+                        } else {
+                            // use existing schema if items is not empty
+                            let items = [];
+                            for (let i = 0; i < value.length; i++) {
+                                let newFieldItems = JSON.parse(JSON.stringify(field_items))
+                                newFieldItems["field_key"] = generateUniqueID();
+                                items.push(newFieldItems);
+                            }
+                            setInputItems(items);
+                            setDataInputItems(value);
+
+                            // for form data
+                            handleDataInput(value, pathFormData, "array");
+                            // conv. schema data
+                            handleConvertedDataInput(value, path + ".value", "array")
+                            handleConvertedDataInput(value, path + ".prevValue", "array")
+                        }
+                    }
+                    else {
+                        // use existing schema if items is not empty
+                        let items = [];
+                        if (dataInputItems.length === 0) {
+                            let arr = value;
+                            arr = Array.from(arr);
+                            let currentInputItems = [...inputItems]
+                            for (let i = 0; i < value.length; i++) {
+                                let newFieldItems = (currentInputItems[i] !== undefined & currentInputItems.length !== 0 ? currentInputItems[i] : {})
+                                if (Object.keys(newFieldItems).length === 0) {
+                                    newFieldItems["field_key"] = generateUniqueID();
+                                    newFieldItems["type"] = "object"
+                                    newFieldItems["properties"] = JSON.parse(JSON.stringify(field_items["properties"]))
+                                    newFieldItems["required"] = field_items["required"]
+                                    Object.keys(newFieldItems["properties"]).forEach((element) => {
+                                        newFieldItems["properties"][element]["value"] = arr[i][element]
+                                    })
+                                }
+                                items.push(newFieldItems);
+                            }
+                            setInputItems(items);
+                            setDataInputItems(value);
+                        } else {
+                            let arr = value;
+                            arr = Array.from(arr);
+                            for (let i = 0; i < value.length; i++) {
+                                let newFieldItems = {}
+                                newFieldItems["field_key"] = generateUniqueID();
+                                newFieldItems["type"] = "object"
+                                newFieldItems["properties"] = JSON.parse(JSON.stringify(field_items["properties"]))
+                                newFieldItems["required"] = field_items["required"]
+                                Object.keys(newFieldItems["properties"]).forEach((element) => {
+                                    newFieldItems["properties"][element]["value"] = arr[i][element]
+                                })
+                                items.push(newFieldItems);
+                            }
+                            setInputItems(items);
+                            setDataInputItems(value);
+                        }
+                    }
+                }
+            } else {
+                setInputItems([]);
+                setDataInputItems([])
+            }
         }
     }, [value])
 
@@ -327,7 +416,7 @@ const ArrayType = ({ field_uri, value, pathFormData, path, pathSchema, field_req
                                                                     <DragHandleIcon fontSize="small" />
                                                                 </Tooltip>
                                                             </div>
-                                                            <ArrayItemRenderer value={value} pathSchema={pathSchema} pathFormData={pathFormData} dataInputItems={dataInputItems} setDataInputItems={setDataInputItems} field_label={field_label} field_items={field_items} edit={true} handleDeleteArrayItem={handleDeleteArrayItem} path={path} fieldIndex={index} fieldkey={inputItems[index]["field_key"]} type={inputItems[index]["type"]} />
+                                                            <ArrayItemRenderer value={value} pathSchema={pathSchema} pathFormData={pathFormData} dataInputItems={dataInputItems} setDataInputItems={setDataInputItems} field_label={field_label} field_items={inputItems.length !== 0 ? inputItems[index] : field_items} edit={true} handleDeleteArrayItem={handleDeleteArrayItem} path={path} fieldIndex={index} fieldkey={inputItems[index]["field_key"]} type={inputItems[index]["type"]} />
                                                         </div>
                                                     </div>
                                                 )}

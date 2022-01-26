@@ -68,10 +68,10 @@ const AccordionSummary = withStyles({
     expanded: {},
 })(MuiAccordionSummary);
 
-const ObjectType = ({ field_uri, path, pathSchema, pathFormData, field_required, field_key, field_index, edit, field_label, field_description, field_properties }) => {
+const ObjectType = ({ dataInputItems, setDataInputItems, withinArray, withinObject, field_uri, path, pathSchema, pathFormData, field_required, field_key, field_index, edit, field_label, field_description, field_properties }) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [openDialogAddElement, setOpenDialogAddElement] = useState(false);
-    const [expand, setExpand] = useState(true); // set to "true" for normally open accordion
+    const [expand, setExpand] = useState(true)// set to "true" for normally open accordion
     const { updateParent, convertedSchema, handleDataDelete } = useContext(FormContext);
 
     // clean up empty strings in the paths
@@ -205,7 +205,7 @@ const ObjectType = ({ field_uri, path, pathSchema, pathFormData, field_required,
                                                                     <DragHandleIcon fontSize="small" />
                                                                 </Tooltip>
                                                             </div> : null}
-                                                            <ElementRenderer path={path + ".properties"} pathSchema={pathSchema + ".properties"} pathFormData={pathFormData} fieldkey={field_properties[item]["fieldKey"]} fieldIndex={item} elementRequired={field_required} edit={edit} field={field_properties[item]} />
+                                                            <ElementRenderer withinArray={withinArray} withinObject={withinObject} path={path + ".properties"} pathSchema={pathSchema + ".properties"} pathFormData={pathFormData} fieldkey={field_properties[item]["fieldKey"]} fieldIndex={item} elementRequired={field_required} edit={edit} field={field_properties[item]} />
                                                         </div>
                                                     </div>
                                                 )}

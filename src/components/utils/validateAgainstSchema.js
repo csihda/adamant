@@ -20,14 +20,15 @@ const validateAgainstSchema = (formData, schema) => {
 
             return [valid, validate];
         } else {
-
             const ajv = new Ajv({ allErrors: true });
+            /*
             if (schema["$schema"] !== undefined) {
                 schema = deleteKeySchema(schema, "$schema")
             }
             if (schema["id"] !== undefined) {
                 schema = deleteKeySchema(schema, "id")
             }
+            */
 
 
             const validate = ajv.compile(schema);

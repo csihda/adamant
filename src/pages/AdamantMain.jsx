@@ -558,7 +558,11 @@ const AdamantMain = () => {
 
   // handle download json schema
   const handleDownloadFormData = () => {
-    let content = { ...jsonData };
+    //let content = { ...jsonData };
+    let convSchemaData = { ...convertedSchema };
+    let content = convData2FormData(
+      JSON.parse(JSON.stringify(convSchemaData["properties"]))
+    );
     let contentSchema = { ...schema };
 
     // get rid of empty values in content

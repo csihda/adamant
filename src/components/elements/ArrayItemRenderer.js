@@ -52,6 +52,7 @@ const ArrayItemRenderer = ({ value, pathSchema, pathFormData, dataInputItems, se
             />)
         case 'object':
             return (<ItemObjectType
+                value={value}
                 setDataInputItems={setDataInputItems}
                 dataInputItems={dataInputItems}
                 field_label={field_label}

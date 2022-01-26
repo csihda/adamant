@@ -8,13 +8,14 @@ import ArrayType from './elements/ArrayType';
 import AnyOfKeyword from './elements/AnyOfKeyword';
 
 
-const ElementRenderer = ({ dataInputItems, setDataInputItems, withinArray, path, pathSchema, pathFormData, elementRequired, fieldkey, fieldIndex, edit, field: { type, $id, title, description, properties, required, enumerate, items, defaultValue, value, anyOf } }) => {
+const ElementRenderer = ({ withinObject, dataInputItems, setDataInputItems, withinArray, path, pathSchema, pathFormData, elementRequired, fieldkey, fieldIndex, edit, field: { type, $id, title, description, properties, required, enumerate, items, defaultValue, value, anyOf } }) => {
 
     switch (type) {
         case 'string':
             return (<StringType
                 value={value}
                 withinArray={withinArray}
+                withinObject={withinObject}
                 dataInputItems={dataInputItems}
                 setDataInputItems={setDataInputItems}
                 path={path + "." + fieldIndex}
@@ -34,6 +35,7 @@ const ElementRenderer = ({ dataInputItems, setDataInputItems, withinArray, path,
             return (<NumberType
                 value={value}
                 withinArray={withinArray}
+                withinObject={withinObject}
                 dataInputItems={dataInputItems}
                 setDataInputItems={setDataInputItems}
                 path={path + "." + fieldIndex}
@@ -53,6 +55,7 @@ const ElementRenderer = ({ dataInputItems, setDataInputItems, withinArray, path,
             return (<IntegerType
                 value={value}
                 withinArray={withinArray}
+                withinObject={withinObject}
                 dataInputItems={dataInputItems}
                 setDataInputItems={setDataInputItems}
                 path={path + "." + fieldIndex}
@@ -72,6 +75,7 @@ const ElementRenderer = ({ dataInputItems, setDataInputItems, withinArray, path,
             return (<BooleanType
                 value={value}
                 withinArray={withinArray}
+                withinObject={withinObject}
                 dataInputItems={dataInputItems}
                 setDataInputItems={setDataInputItems}
                 path={path + "." + fieldIndex}
@@ -90,6 +94,7 @@ const ElementRenderer = ({ dataInputItems, setDataInputItems, withinArray, path,
             return (<ArrayType
                 value={value}
                 withinArray={withinArray}
+                withinObject={withinObject}
                 path={path + "." + fieldIndex}
                 pathSchema={pathSchema + "." + fieldkey}
                 pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldkey : fieldkey}
@@ -107,6 +112,9 @@ const ElementRenderer = ({ dataInputItems, setDataInputItems, withinArray, path,
                     <AnyOfKeyword
                         pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldkey : fieldkey}
                         withinArray={withinArray}
+                        withinObject={withinObject}
+                        dataInputItems={dataInputItems}
+                        setDataInputItems={setDataInputItems}
                         path={path + "." + fieldIndex}
                         field_index={fieldIndex}
                         field_key={fieldkey}
@@ -121,6 +129,7 @@ const ElementRenderer = ({ dataInputItems, setDataInputItems, withinArray, path,
             } else {
                 return (<ObjectType
                     withinArray={withinArray}
+                    withinObject={withinObject}
                     path={path + "." + fieldIndex}
                     pathSchema={pathSchema + "." + fieldkey}
                     pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldkey : fieldkey}
@@ -139,6 +148,7 @@ const ElementRenderer = ({ dataInputItems, setDataInputItems, withinArray, path,
                     <AnyOfKeyword
                         pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldkey : fieldkey}
                         withinArray={withinArray}
+                        withinObject={withinObject}
                         path={path + "." + fieldIndex}
                         field_index={fieldIndex}
                         field_key={fieldkey}
