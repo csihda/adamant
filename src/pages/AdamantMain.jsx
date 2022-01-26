@@ -1224,7 +1224,7 @@ const AdamantMain = () => {
             </Button>
           )}
         </div>
-        <div style={{ padding: "5px" }}>ADAMANT v0.0.1</div>
+        <div style={{ padding: "10px", color: "grey" }}>ADAMANT v0.0.1</div>
       </FormContext.Provider>
       <CreateELabFTWExperimentDialog
         setTags={setTags}
