@@ -1081,9 +1081,10 @@ const AdamantMain = () => {
               <>
                 <div
                   style={{
+                    width: "498px",
                     paddingRight: "10px",
                     display: "flex",
-                    justifyContent: "center",
+                    justifyContent: "left",
                     alignItems: "center",
                     color: "green",
                   }}
