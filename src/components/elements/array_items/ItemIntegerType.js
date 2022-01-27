@@ -23,7 +23,7 @@ const style = {
 }
 
 
-const ItemIntegerType = ({ value, path, pathFormData, dataInputItems, setDataInputItems, edit, index, field_key, handleDeleteArrayItem }) => {
+const ItemIntegerType = ({ oDataInputItems, oSetDataInputItems, arrayFieldKey, withinObject, value, path, pathFormData, dataInputItems, setDataInputItems, edit, index, field_key, handleDeleteArrayItem }) => {
     const classes = useStyles();
     const [inputValue, setInputValue] = useState(value === undefined ? "" : value[index] === undefined ? "" : value[index]);
     const { handleDataInput, handleConvertedDataInput } = useContext(FormContext);
@@ -47,22 +47,52 @@ const ItemIntegerType = ({ value, path, pathFormData, dataInputItems, setDataInp
 
     // handle input on blur for signed integer
     const handleInputOnBlur = () => {
-        let value = inputValue;
-        value = parseInt(value)
-        if (!isNaN(value)) {
-            setInputValue(value)
+        if (withinObject !== undefined & withinObject === true) {
+            let value = inputValue;
+            value = parseInt(value)
+            if (!isNaN(value)) {
 
-            // store it to input data array
-            let arr = dataInputItems;
-            const items = Array.from(arr);
-            items[index] = value;
-            setDataInputItems(items);
+                let arr = dataInputItems;
+                let arr2 = oDataInputItems
+                let items = Array.from(arr);
+                let items2 = Array.from(arr2);
 
-            // store to form data
-            handleDataInput(items, pathFormData, "array")
+                let prevIndex = parseInt(path.split(".").pop())
+                items[index] = value;
+                items2[prevIndex][arrayFieldKey] = items
+                oSetDataInputItems(items2);
 
-            // conv. schema data
-            handleConvertedDataInput(items, path + ".value", "array")
+                setInputValue(value)
+
+                let newPath = path.split(".")
+                newPath.pop()
+                newPath = newPath.join(".")
+
+                // store to form data
+                //handleDataInput(items, pathFormData, "array")
+
+                // conv. schema data
+                handleConvertedDataInput(items2, newPath + ".value", "array")
+            }
+
+        } else {
+            let value = inputValue;
+            value = parseInt(value)
+            if (!isNaN(value)) {
+                setInputValue(value)
+
+                // store it to input data array
+                let arr = dataInputItems;
+                const items = Array.from(arr);
+                items[index] = value;
+                setDataInputItems(items);
+
+                // store to the main form data
+                handleDataInput(items, pathFormData, "array")
+
+                // conv. schema data
+                handleConvertedDataInput(items, path + ".value", "array")
+            }
         }
     }
 

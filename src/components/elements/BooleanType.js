@@ -27,7 +27,7 @@ const style = {
 }
 
 
-const BooleanType = ({ field_uri, withinArray, value, dataInputItems, setDataInputItems, path, pathFormData, field_required, field_index, edit, field_key, field_label, field_description, defaultValue }) => {
+const BooleanType = ({ field_uri, withinArray, withinObject, value, dataInputItems, setDataInputItems, path, pathFormData, field_required, field_index, edit, field_key, field_label, field_description, defaultValue }) => {
     const [descriptionText, setDescriptionText] = useState(field_description !== undefined ? field_description : "");
     const [openDialog, setOpenDialog] = useState(false);
     const { updateParent, convertedSchema, handleDataInput, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
@@ -143,7 +143,13 @@ const BooleanType = ({ field_uri, withinArray, value, dataInputItems, setDataInp
 
             //let latestVal = getValue(convertedSchema, newPath + ".prevValue")
             //if (Array.isArray(latestVal)) { latestVal = latestVal[field_key] }
-            let val = (value !== undefined ? value : defaultValue !== undefined ? defaultValue : "")
+            let dataInputItemVal = "";
+            if (items.length !== 0) {
+                if (typeof (items[0]) === "object") {
+                    dataInputItemVal = items[field_index][field_key]
+                }
+            }
+            let val = (value !== undefined ? value : defaultValue !== undefined ? defaultValue : dataInputItemVal !== undefined ? dataInputItemVal : "")
             if (val === "") {
                 setInputValue(false)
                 setInputError(false)
@@ -155,16 +161,21 @@ const BooleanType = ({ field_uri, withinArray, value, dataInputItems, setDataInp
                 setDescriptionText("Invalid input type. This field only accepts input of a boolean type.")
             }
             else {
-                items[field_index][field_key] = val;
-                setDataInputItems(items);
+                if (withinObject) {
+                    // if withinArray and withinObject skip setDataInputItems etc
+                    setInputValue(val)
+                } else {
+                    items[field_index][field_key] = val;
+                    setDataInputItems(items);
 
-                setInputValue(val)
-                setInputError(false)
-                setDescriptionText(field_description !== undefined ? field_description : "")
+                    setInputValue(val)
+                    setInputError(false)
+                    setDescriptionText(field_description !== undefined ? field_description : "")
 
-                handleDataInput(items, newPathFormData, "boolean")
-                handleConvertedDataInput(items, newPath + ".value", "boolean")
-                handleConvertedDataInput(items, newPath + ".prevValue", "boolean")
+                    handleDataInput(items, newPathFormData, "boolean")
+                    handleConvertedDataInput(items, newPath + ".value", "boolean")
+                    handleConvertedDataInput(items, newPath + ".prevValue", "boolean")
+                }
             }
         }
         else {

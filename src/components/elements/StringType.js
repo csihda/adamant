@@ -30,6 +30,7 @@ const style = {
 
 const StringType = ({ withinObject, field_uri, dataInputItems, setDataInputItems, withinArray, path, pathFormData, field_required, field_index, edit, field_key, field_label, field_description, field_enumerate, defaultValue, value }) => {
 
+
     //const [descriptionText, setDescriptionText] = useState(field_description);
     const [openDialog, setOpenDialog] = useState(false);
     const { updateParent, convertedSchema, handleDataInput, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
@@ -173,8 +174,6 @@ const StringType = ({ withinObject, field_uri, dataInputItems, setDataInputItems
                     dataInputItemVal = items[field_index][field_key]
                 }
             }
-            //let latestVal = getValue(convertedSchema, newPath + ".prevValue")
-            //if (Array.isArray(latestVal)) { latestVal = latestVal[field_key] }
             let val = (value !== undefined ? value : defaultValue !== undefined ? defaultValue : dataInputItemVal !== undefined ? dataInputItemVal : field_enumerate !== undefined ? field_enumerate[0] : "")
             if (val === "") {
                 setFieldValue("")

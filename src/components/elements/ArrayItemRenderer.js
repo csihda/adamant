@@ -5,12 +5,15 @@ import ItemStringType from "./array_items/ItemStringType";
 import ItemObjectType from "./array_items/ItemObjectType";
 
 
-const ArrayItemRenderer = ({ value, pathSchema, pathFormData, dataInputItems, setDataInputItems, field_label, field_items, path, type, edit, fieldIndex, fieldkey, enumerate, handleDeleteArrayItem, properties }) => {
-
+const ArrayItemRenderer = ({ oSetDataInputItems, oDataInputItems, arrayFieldKey, withinObject, value, pathSchema, pathFormData, dataInputItems, setDataInputItems, field_label, field_items, path, type, edit, fieldIndex, fieldkey, enumerate, handleDeleteArrayItem, properties }) => {
     switch (type) {
         case 'string':
             return (<ItemStringType
                 value={value}
+                withinObject={withinObject}
+                arrayFieldKey={arrayFieldKey}
+                oSetDataInputItems={oSetDataInputItems}
+                oDataInputItems={oDataInputItems}
                 setDataInputItems={setDataInputItems}
                 pathFormData={pathFormData}
                 pathSchema={pathSchema + ".value"}
@@ -28,6 +31,10 @@ const ArrayItemRenderer = ({ value, pathSchema, pathFormData, dataInputItems, se
                 path={path}
                 pathFormData={pathFormData}
                 pathSchema={pathSchema + ".value"}
+                withinObject={withinObject}
+                arrayFieldKey={arrayFieldKey}
+                oSetDataInputItems={oSetDataInputItems}
+                oDataInputItems={oDataInputItems}
                 setDataInputItems={setDataInputItems}
                 dataInputItems={dataInputItems}
                 index={fieldIndex}
@@ -41,6 +48,10 @@ const ArrayItemRenderer = ({ value, pathSchema, pathFormData, dataInputItems, se
                 value={value}
                 path={path}
                 pathFormData={pathFormData}
+                withinObject={withinObject}
+                arrayFieldKey={arrayFieldKey}
+                oSetDataInputItems={oSetDataInputItems}
+                oDataInputItems={oDataInputItems}
                 pathSchema={pathSchema + ".value"}
                 setDataInputItems={setDataInputItems}
                 dataInputItems={dataInputItems}

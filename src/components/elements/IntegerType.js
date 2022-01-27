@@ -30,7 +30,7 @@ const style = {
 }
 
 
-const IntegerType = ({ field_uri, value, dataInputItems, setDataInputItems, withinArray, defaultValue, path, pathFormData, field_required, field_index, edit, field_key, field_label, field_description, field_enumerate }) => {
+const IntegerType = ({ field_uri, value, dataInputItems, setDataInputItems, withinArray, withinObject, defaultValue, path, pathFormData, field_required, field_index, edit, field_key, field_label, field_description, field_enumerate }) => {
     const [descriptionText, setDescriptionText] = useState(field_description !== undefined ? field_description : "");
     const [openDialog, setOpenDialog] = useState(false);
     const { updateParent, convertedSchema, handleDataInput, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
@@ -210,9 +210,13 @@ const IntegerType = ({ field_uri, value, dataInputItems, setDataInputItems, with
             let arr = dataInputItems;
             const items = Array.from(arr);
 
-            //let latestVal = getValue(convertedSchema, newPath + ".prevValue")
-            //if (Array.isArray(latestVal)) { latestVal = latestVal[field_key] }
-            let val = (value !== undefined ? value : defaultValue !== undefined ? defaultValue : field_enumerate !== undefined ? field_enumerate[0] : "")
+            let dataInputItemVal = "";
+            if (items.length !== 0) {
+                if (typeof (items[0]) === "object") {
+                    dataInputItemVal = items[field_index][field_key]
+                }
+            }
+            let val = (value !== undefined ? value : defaultValue !== undefined ? defaultValue : dataInputItemVal !== undefined ? dataInputItemVal : field_enumerate !== undefined ? field_enumerate[0] : "")
             if (val === "") {
                 setInputValue("")
                 setInputError(false)
@@ -224,22 +228,27 @@ const IntegerType = ({ field_uri, value, dataInputItems, setDataInputItems, with
                 setDescriptionText("Invalid input type. This field only accepts input of an integer type.")
             }
             else {
-                items[field_index][field_key] = val;
-                setDataInputItems(items);
+                if (withinObject) {
+                    // if withinArray and withinObject skip setDataInputItems etc
+                    setInputValue(val)
+                } else {
+                    items[field_index][field_key] = val;
+                    setDataInputItems(items);
 
-                // store to the main form data
-                let event = {
-                    "target": {
-                        "value":
-                            items
+                    // store to the main form data
+                    let event = {
+                        "target": {
+                            "value":
+                                items
+                        }
                     }
+                    handleDataInput(event, newPathFormData, "integer")
+                    // conv. schema data
+                    handleConvertedDataInput(val, newPath + ".value", "integer")
+                    handleConvertedDataInput(val, newPath + ".prevValue", "integer")
+                    // update field value
+                    setInputValue(val)
                 }
-                handleDataInput(event, newPathFormData, "integer")
-                // conv. schema data
-                handleConvertedDataInput(val, newPath + ".value", "integer")
-                handleConvertedDataInput(val, newPath + ".prevValue", "integer")
-                // update field value
-                setInputValue(val)
             }
         }
         else {

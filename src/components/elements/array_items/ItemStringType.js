@@ -23,24 +23,51 @@ const style = {
 }
 
 
-const ItemStringType = ({ value, pathFormData, dataInputItems, setDataInputItems, path, edit, index, field_key, handleDeleteArrayItem }) => {
+const ItemStringType = ({ oDataInputItems, oSetDataInputItems, arrayFieldKey, withinObject, value, pathFormData, dataInputItems, setDataInputItems, path, edit, index, field_key, handleDeleteArrayItem }) => {
     const classes = useStyles();
     const { handleDataInput, handleConvertedDataInput } = useContext(FormContext)
     const [fieldValue, setFieldValue] = useState(value === undefined ? undefined : value[index])
 
+
     // handle input field on blur
     const handleOnBlur = (event, index) => {
-        let arr = dataInputItems;
-        const items = Array.from(arr);
-        items[index] = event.target.value;
-        setDataInputItems(items);
-        setFieldValue(event.target.value)
+        if (withinObject !== undefined & withinObject === true) {
+            let arr = dataInputItems;
+            let arr2 = oDataInputItems
+            let items = Array.from(arr);
+            let items2 = Array.from(arr2);
 
-        // store to form data
-        handleDataInput(items, pathFormData, "array")
+            let prevIndex = parseInt(path.split(".").pop())
+            items[index] = event.target.value;
+            items2[prevIndex][arrayFieldKey] = items
+            console.log(items2)
+            oSetDataInputItems(items2);
 
-        // conv. schema data
-        handleConvertedDataInput(items, path + ".value", "array")
+            setFieldValue(event.target.value)
+
+            let newPath = path.split(".")
+            newPath.pop()
+            newPath = newPath.join(".")
+
+            // store to form data
+            //handleDataInput(items, pathFormData, "array")
+
+            // conv. schema data
+            handleConvertedDataInput(items2, newPath + ".value", "array")
+
+        } else {
+            let arr = dataInputItems;
+            const items = Array.from(arr);
+            items[index] = event.target.value;
+            setDataInputItems(items);
+            setFieldValue(event.target.value)
+
+            // store to form data
+            handleDataInput(items, pathFormData, "array")
+
+            // conv. schema data
+            handleConvertedDataInput(items, path + ".value", "array")
+        }
 
     }
 

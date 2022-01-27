@@ -498,6 +498,9 @@ const AdamantMain = () => {
         JSON.parse(JSON.stringify(convSchemaData["properties"]))
       )
     );
+
+    // unconverted
+    //console.log("Current form data (unconverted convData):", convSchemaData);
   };
 
   // delete data in jsonData when the field in schema is deleted

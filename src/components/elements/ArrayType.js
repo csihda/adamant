@@ -20,6 +20,7 @@ import getValue from "../utils/getValue";
 import set from "set-value";
 import MuiAccordion from '@material-ui/core/Accordion';
 import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
+import { ToastContainer, toast } from "react-toastify";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -67,9 +68,9 @@ const AccordionSummary = withStyles({
     expanded: {},
 })(MuiAccordionSummary);
 
-const ArrayType = ({ withinArray, field_uri, value, pathFormData, path, pathSchema, field_required, field_key, field_index, edit, field_label, field_description, field_items, field_prefixItems }) => {
+const ArrayType = ({ maxItems, oSetDataInputItems, oDataInputItems, withinObject, withinArray, field_uri, value, pathFormData, path, pathSchema, field_required, field_key, field_index, edit, field_label, field_description, field_items, field_prefixItems }) => {
     const [openDialog, setOpenDialog] = useState(false);
-    const [expand, setExpand] = useState(true); // set to "true" for normally open accordion
+    const [expand, setExpand] = useState(true);
     const { updateParent, convertedSchema, handleDataInput, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
     const [inputItems, setInputItems] = useState([]);
     const [dataInputItems, setDataInputItems] = useState([]);
@@ -132,7 +133,34 @@ const ArrayType = ({ withinArray, field_uri, value, pathFormData, path, pathSche
     */
     useEffect(() => {
         if (withinArray !== undefined & withinArray === true) {
-            console.log("for now do nothing")
+            value = oDataInputItems[field_index][field_key]
+
+            if (value !== undefined) {
+                if (field_prefixItems === undefined & field_items !== undefined) {
+                    if (field_items["type"] !== "object") {
+                        if (Object.keys(field_items).length === 0) {
+                            // create field_items if items is empty
+                            let items = [];
+                            for (let i = 0; i < value.length; i++) {
+                                field_items = { type: "string", field_key: `${generateUniqueID()}` }
+                                items.push(field_items);
+                            }
+                            setInputItems(items);
+                            setDataInputItems(value);
+                        } else {
+                            // use existing schema if items is not empty
+                            let items = [];
+                            for (let i = 0; i < value.length; i++) {
+                                let newFieldItems = JSON.parse(JSON.stringify(field_items))
+                                newFieldItems["field_key"] = generateUniqueID();
+                                items.push(newFieldItems);
+                            }
+                            setInputItems(items);
+                            setDataInputItems(value);
+                        }
+                    }
+                }
+            }
         }
         else {
             if (value !== undefined) {
@@ -231,26 +259,55 @@ const ArrayType = ({ withinArray, field_uri, value, pathFormData, path, pathSche
     const handleOnDragEnd = (result) => {
         if (!result.destination) return;
 
-        // for schema
-        let arr = inputItems
-        const items = Array.from(arr);
-        const [reorderedItem] = items.splice(result.source.index, 1);
-        items.splice(result.destination.index, 0, reorderedItem);
-        setInputItems(items)
+        if (withinObject & withinArray) {
+            // for schema
+            let arr = inputItems
+            const items = Array.from(arr);
+            const [reorderedItem] = items.splice(result.source.index, 1);
+            items.splice(result.destination.index, 0, reorderedItem);
+            setInputItems(items)
 
-        // for data
-        let arr2 = dataInputItems
-        const items2 = Array.from(arr2);
-        const [reorderedItem2] = items2.splice(result.source.index, 1);
-        items2.splice(result.destination.index, 0, reorderedItem2);
-        setDataInputItems(items2)
+            // for data
+            let arr2 = dataInputItems
+            const items2 = Array.from(arr2);
+            const [reorderedItem2] = items2.splice(result.source.index, 1);
+            items2.splice(result.destination.index, 0, reorderedItem2);
+            setDataInputItems(items2)
 
-        // for form data
-        handleDataInput(items2, pathFormData, "array");
+            /*
 
-        // conv. schema data
-        handleConvertedDataInput(items2, path + ".value", "array")
-        handleConvertedDataInput(items2, path + ".prevValue", "array")
+            let newPath = path.split(".")
+            newPath.pop()
+            newPath = newPath.join(".")
+
+            // conv. schema data
+            handleConvertedDataInput(items2, newPath + ".value", "array")
+            handleConvertedDataInput(items2, newPath + ".prevValue", "array")
+            */
+        }
+        else {
+            // for schema
+            let arr = inputItems
+            const items = Array.from(arr);
+            const [reorderedItem] = items.splice(result.source.index, 1);
+            items.splice(result.destination.index, 0, reorderedItem);
+            setInputItems(items)
+
+            // for data
+            let arr2 = dataInputItems
+            const items2 = Array.from(arr2);
+            const [reorderedItem2] = items2.splice(result.source.index, 1);
+            items2.splice(result.destination.index, 0, reorderedItem2);
+            setDataInputItems(items2)
+
+            // for form data
+            handleDataInput(items2, pathFormData, "array");
+
+            // conv. schema data
+            handleConvertedDataInput(items2, path + ".value", "array")
+            handleConvertedDataInput(items2, path + ".prevValue", "array")
+
+        }
     }
 
     // handle delete object UI
@@ -305,6 +362,25 @@ const ArrayType = ({ withinArray, field_uri, value, pathFormData, path, pathSche
 
     // handle add array item
     const handleAddArrayItem = () => {
+        // check if current array still has not reached maximum item
+        if (maxItems !== undefined) {
+            if (maxItems === (dataInputItems.length)) {
+                toast.warning(
+                    `Can not add more item. Maximum number (${maxItems}) of items has been reached.`,
+                    {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: false,
+                        progress: undefined,
+                    }
+                );
+
+                return
+            }
+        }
         if (field_prefixItems === undefined & field_items !== undefined) {
             if (Object.keys(field_items).length === 0) {
                 // create field_items if items is empty
@@ -333,6 +409,7 @@ const ArrayType = ({ withinArray, field_uri, value, pathFormData, path, pathSche
                     let arr2 = dataInputItems;
                     const items2 = Array.from(arr2);
                     items2.push("");
+                    console.log(items2)
                     setDataInputItems(items2)
                 } else if (newFieldItems["type"] === "object") {
                     let arr2 = dataInputItems;
@@ -346,30 +423,45 @@ const ArrayType = ({ withinArray, field_uri, value, pathFormData, path, pathSche
 
     // handle delete item
     const handleDeleteArrayItem = (index) => {
-        // for schema
-        let arr = inputItems
-        const items = Array.from(arr);
-        items.splice(index, 1);
-        setInputItems(items)
 
-        // for data
-        let arr2 = dataInputItems;
-        const items2 = Array.from(arr2);
-        items2.splice(index, 1);
-        setDataInputItems(items2)
+        if (withinArray !== undefined & withinArray === true) {
+            // for schema
+            let arr = inputItems
+            const items = Array.from(arr);
+            items.splice(index, 1);
+            setInputItems(items)
 
-        // for form data
-        handleDataInput(items2, pathFormData, "array");
-        // conv. schema data
-        handleConvertedDataInput(items2, path + ".value", "array")
-        handleConvertedDataInput(items2, path + ".prevValue", "array")
+            // for data
+            let arr2 = dataInputItems;
+            const items2 = Array.from(arr2);
+            items2.splice(index, 1);
+            setDataInputItems(items2)
+        } else {
+            // for schema
+            let arr = inputItems
+            const items = Array.from(arr);
+            items.splice(index, 1);
+            setInputItems(items)
+
+            // for data
+            let arr2 = dataInputItems;
+            const items2 = Array.from(arr2);
+            items2.splice(index, 1);
+            setDataInputItems(items2)
+
+            // for form data
+            handleDataInput(items2, pathFormData, "array");
+            // conv. schema data
+            handleConvertedDataInput(items2, path + ".value", "array")
+            handleConvertedDataInput(items2, path + ".prevValue", "array")
+        }
     }
 
     return (<>
         <div style={{ width: "100%", padding: "10px 0px 10px 0px" }}>
             <Accordion expanded={expand} >
                 <AccordionSummary
-                    expandIcon={
+                    expandIcon={withinObject ? null :
                         <Tooltip placement="top" title={`Collapse/Expand this container"`}>
                             <ExpandMoreIcon />
                         </Tooltip>}
@@ -416,7 +508,7 @@ const ArrayType = ({ withinArray, field_uri, value, pathFormData, path, pathSche
                                                                     <DragHandleIcon fontSize="small" />
                                                                 </Tooltip>
                                                             </div>
-                                                            <ArrayItemRenderer value={value} pathSchema={pathSchema} pathFormData={pathFormData} dataInputItems={dataInputItems} setDataInputItems={setDataInputItems} field_label={field_label} field_items={inputItems.length !== 0 ? inputItems[index] : field_items} edit={true} handleDeleteArrayItem={handleDeleteArrayItem} path={path} fieldIndex={index} fieldkey={inputItems[index]["field_key"]} type={inputItems[index]["type"]} />
+                                                            <ArrayItemRenderer arrayFieldKey={field_key} withinObject={withinObject} value={value} pathSchema={pathSchema} pathFormData={pathFormData} dataInputItems={dataInputItems} oDataInputItems={oDataInputItems} oSetDataInputItems={oSetDataInputItems} setDataInputItems={setDataInputItems} field_label={field_label} field_items={inputItems.length !== 0 ? inputItems[index] : field_items} edit={true} handleDeleteArrayItem={handleDeleteArrayItem} path={path} fieldIndex={index} fieldkey={inputItems[index]["field_key"]} type={inputItems[index]["type"]} />
                                                         </div>
                                                     </div>
                                                 )}
@@ -435,6 +527,7 @@ const ArrayType = ({ withinArray, field_uri, value, pathFormData, path, pathSche
             </Accordion>
         </div>
         {openDialog ? <EditElement field_uri={field_uri} pathFormData={pathFormData} field_key={field_key} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
+        <ToastContainer />
     </>
     );
 };
