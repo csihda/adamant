@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 //import { makeStyles } from "@material-ui/core/styles";
 import { useDropzone } from "react-dropzone";
-import HeaderImage from "../assets/header-image.png";
+import QPTDATLogo from "../assets/header-image.png";
 import FormRenderer from "../components/FormRenderer";
 import Button from "@material-ui/core/Button";
 import { TextField } from "@material-ui/core";
@@ -115,6 +115,8 @@ const AdamantMain = () => {
   const [onlineMode, setOnlineMode] = useState(false);
   const [tags, setTags] = useState([]);
   const [retrievedTags, setRetrievedTags] = useState([]);
+  const [SEMSelectedDevice, setSEMSelectedDevice] = useState("");
+  const [HeaderImage, setHeaderImage] = useState(QPTDATLogo);
   // for dropdown buttons
   const [anchorEl, setAnchorEl] = useState(null);
   const [openSubmitDialog, setOpenSubmitDialog] = useState(false);
@@ -251,6 +253,12 @@ const AdamantMain = () => {
 
     // convert selectedSchema schema to iterable array properties
     let convertedSchema = JSON.parse(JSON.stringify(selectedSchema));
+    if (convertedSchema["title"] === "SEM Request Form") {
+      let SEMlogo = require("../assets/sem-header-picture.png");
+      setHeaderImage(SEMlogo["default"]);
+    } else {
+      setHeaderImage(QPTDATLogo);
+    }
     try {
       convertedSchema["properties"] = object2array(
         selectedSchema["properties"]
@@ -289,6 +297,13 @@ const AdamantMain = () => {
       reader.onload = () => {
         const binaryStr = reader.result;
         const obj = JSON.parse(binaryStr);
+
+        if (obj["title"] === "SEM Request Form") {
+          let SEMlogo = require("../assets/sem-header-picture.png");
+          setHeaderImage(SEMlogo["default"]);
+        } else {
+          setHeaderImage(QPTDATLogo);
+        }
 
         // convert obj schema to iterable array properties
         let convertedSchema = JSON.parse(JSON.stringify(obj));
@@ -350,6 +365,7 @@ const AdamantMain = () => {
 
   // render on-click handle
   const renderOnClick = () => {
+    //setFormRenderInProgress(true);
     setDisable(false);
     setRenderReady(true);
   };
@@ -379,6 +395,12 @@ const AdamantMain = () => {
       type: "object",
     };
     const obj = JSON.parse(JSON.stringify(schemaBlueprint));
+    if (obj["title"] === "SEM Request Form") {
+      let SEMlogo = require("../assets/sem-header-picture.png");
+      setHeaderImage(SEMlogo["default"]);
+    } else {
+      setHeaderImage(QPTDATLogo);
+    }
 
     // create form data again
     let formData = createFormDataBlueprint(obj["properties"]);
@@ -996,6 +1018,8 @@ const AdamantMain = () => {
           updateFormDataId,
           handleDataDelete,
           handleConvertedDataInput,
+          SEMSelectedDevice,
+          setSEMSelectedDevice,
         }}
       >
         <div style={{ paddingBottom: "5px" }}>

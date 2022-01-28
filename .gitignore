@@ -11,6 +11,10 @@
 # production
 /build
 
+# some assets
+/src/assets/sem-header-picture.png
+/src/assets/sem-operator-device-list.json
+
 # python floders
 /backend/venv
 /backend/temp-files

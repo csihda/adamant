@@ -33,14 +33,35 @@ const StringType = ({ withinObject, field_uri, dataInputItems, setDataInputItems
 
     //const [descriptionText, setDescriptionText] = useState(field_description);
     const [openDialog, setOpenDialog] = useState(false);
-    const { updateParent, convertedSchema, handleDataInput, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
+    const { updateParent, convertedSchema, handleDataInput, handleDataDelete, handleConvertedDataInput, SEMSelectedDevice, setSEMSelectedDevice } = useContext(FormContext);
     const [fieldValue, setFieldValue] = useState(defaultValue !== undefined ? defaultValue : value !== undefined ? value : "")
+    const [fieldEnumerate, setFieldEnumerate] = useState(field_enumerate)
     //const [required, setRequired] = useState(false)
     const classes = useStyles();
 
     const handleOnChange = (event) => {
         setFieldValue(event.target.value)
+
+        // this is for SEM form only!
+        if (field_key === "sem_device") {
+            setSEMSelectedDevice(event.target.value)
+        }
     }
+
+    // for SEM only
+    useEffect(() => {
+        if (field_key === "sem_operator") {
+            if (SEMSelectedDevice === "") {
+                setFieldEnumerate(field_enumerate)
+                setFieldValue("")
+            } else {
+                let semOperatorDeviceList = require("../../assets/sem-operator-device-list.json")
+                setFieldValue("")
+                setFieldEnumerate(semOperatorDeviceList[SEMSelectedDevice])
+            }
+        }
+
+    }, [SEMSelectedDevice])
 
 
     // clean up empty strings in the paths
@@ -60,7 +81,7 @@ const StringType = ({ withinObject, field_uri, dataInputItems, setDataInputItems
     };
 
     var enumerated
-    if (field_enumerate === undefined) {
+    if (fieldEnumerate === undefined) {
         enumerated = false;
     } else {
         enumerated = true;
@@ -174,7 +195,7 @@ const StringType = ({ withinObject, field_uri, dataInputItems, setDataInputItems
                     dataInputItemVal = items[field_index][field_key]
                 }
             }
-            let val = (value !== undefined ? value : defaultValue !== undefined ? defaultValue : dataInputItemVal !== undefined ? dataInputItemVal : field_enumerate !== undefined ? field_enumerate[0] : "")
+            let val = (value !== undefined ? value : defaultValue !== undefined ? defaultValue : dataInputItemVal !== undefined ? dataInputItemVal : fieldEnumerate !== undefined ? fieldEnumerate[0] : "")
             if (val === "") {
                 setFieldValue("")
             } else {
@@ -202,7 +223,7 @@ const StringType = ({ withinObject, field_uri, dataInputItems, setDataInputItems
             }
         } else {
             //let latestVal = getValue(convertedSchema, path + ".prevValue")
-            let val = (value !== undefined ? value : defaultValue !== undefined ? defaultValue : field_enumerate !== undefined ? field_enumerate[0] : "")
+            let val = (value !== undefined ? value : defaultValue !== undefined ? defaultValue : fieldEnumerate !== undefined ? fieldEnumerate[0] : "")
             let event = {
                 "target": {
                     "value":
@@ -224,7 +245,7 @@ const StringType = ({ withinObject, field_uri, dataInputItems, setDataInputItems
 
     }, [value])
 
-    if (field_enumerate === undefined) {
+    if (fieldEnumerate === undefined) {
         return (
             <>
                 <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
@@ -250,7 +271,7 @@ const StringType = ({ withinObject, field_uri, dataInputItems, setDataInputItems
                         </Tooltip>
                     </> : null}
                 </div>
-                {openDialog ? <EditElement field_uri={field_uri} pathFormData={pathFormData} defaultValue={defaultValue} enumerated={enumerated} field_enumerate={field_enumerate} field_key={field_key} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
+                {openDialog ? <EditElement field_uri={field_uri} pathFormData={pathFormData} defaultValue={defaultValue} enumerated={enumerated} field_enumerate={fieldEnumerate} field_key={field_key} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
             </>
         )
     } else {
@@ -275,7 +296,7 @@ const StringType = ({ withinObject, field_uri, dataInputItems, setDataInputItems
                         value={fieldValue === undefined ? defaultValue : fieldValue}
                     >
                         {
-                            field_enumerate.map((content, index) => (
+                            fieldEnumerate.map((content, index) => (
                                 <option key={index} value={content}>
                                     {content}
                                 </option>
@@ -295,7 +316,7 @@ const StringType = ({ withinObject, field_uri, dataInputItems, setDataInputItems
                         </Tooltip>
                     </> : null}
                 </div >
-                {openDialog ? <EditElement field_uri={field_uri} pathFormData={pathFormData} enumerated={enumerated} defaultValue={defaultValue} field_enumerate={field_enumerate} field_key={field_key} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
+                {openDialog ? <EditElement field_uri={field_uri} pathFormData={pathFormData} enumerated={enumerated} defaultValue={defaultValue} field_enumerate={fieldEnumerate} field_key={field_key} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
             </>
         )
     }

@@ -13,6 +13,7 @@ import set from 'set-value';
 import { useDropzone } from "react-dropzone";
 import LinearProgress from '@mui/material/LinearProgress';
 import Box from "@material-ui/core/Box";
+import NotRenderable from "../../assets/not-renderable.png"
 
 
 const useStyles = makeStyles((theme) => ({
@@ -66,8 +67,11 @@ const FileUpload = ({ contentEncoding, withinObject, field_uri, dataInputItems, 
     const [descriptionText, setDescriptionText] = useState(field_description !== undefined ? field_description : "");
     const [dataUrl, setDataUrl] = useState(defaultValue !== undefined ? defaultValue : value !== undefined ? value : "")
     const [renderingInProgress, setRenderingInProgress] = useState(false)
+    const [mediaFileType, setMediaFileType] = useState(value !== undefined ? value.split(";")[0].replace("data:", "") : "")
     //const [required, setRequired] = useState(false)
     const classes = useStyles();
+
+    let renderableMediaFileTypes = ["image/jpeg", "image/png", "image/bmp", "image/tiff", "image/svg+xml"]
 
 
 
@@ -145,6 +149,7 @@ const FileUpload = ({ contentEncoding, withinObject, field_uri, dataInputItems, 
                 reader.onload = () => {
                     const binaryStr = reader.result;
                     setDataUrl(binaryStr)
+                    setMediaFileType(acceptedFile[0]["type"])
                     if (withinArray !== undefined & withinArray) {
                         let newPathFormData = pathFormData.split(".");
                         newPathFormData.pop()
@@ -175,6 +180,8 @@ const FileUpload = ({ contentEncoding, withinObject, field_uri, dataInputItems, 
                 setInputError(true)
                 setDescriptionText("Seems like you've given a file with an unaccepted file type?")
                 setDataUrl("")
+
+                setMediaFileType("")
             }
         },
         []
@@ -263,6 +270,7 @@ const FileUpload = ({ contentEncoding, withinObject, field_uri, dataInputItems, 
     });
 
     const handleOnClickedClear = () => {
+        setMediaFileType("")
         setDataUrl("")
         // then delete in the form convdata
         if (withinArray !== undefined & withinArray) {
@@ -290,7 +298,7 @@ const FileUpload = ({ contentEncoding, withinObject, field_uri, dataInputItems, 
 
     return (
         <>
-            <div onMouseEnter={() => {
+            <div onMouseLeave={() => {
                 if (inputError === true) {
                     setInputError(false)
                     setDescriptionText(field_description !== undefined ? field_description : "")
@@ -305,13 +313,13 @@ const FileUpload = ({ contentEncoding, withinObject, field_uri, dataInputItems, 
                             <LinearProgress />
                         </Box> : null}
                         <div style={{ width: "225px", display: "flex", justifyContent: "center" }}>
-                            {dataUrl !== "" ? <img src={dataUrl} width="225" /> : null}
+                            {dataUrl !== "" ? <img src={renderableMediaFileTypes.includes(mediaFileType) ? dataUrl : NotRenderable} width="225" /> : ""}
                         </div>
                         <div style={{ width: "225px", fontSize: "10px", color: "grey", paddingTop: "5px", whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden" }}>
                             {dataUrl}
                         </div>
                         <div style={{ paddingTop: "5px", textAlign: "left", width: "100%" }} >
-                            <Button color={inputError ? "secondary" : ""} variant="outlined" {...getRootProps()} ><input {...getInputProps()} />Upload a file</Button>
+                            <Button color={inputError ? "secondary" : "default"} variant="outlined" {...getRootProps()} ><input {...getInputProps()} />Upload a file</Button>
                             {dataUrl !== "" ? <Button onClick={() => { handleOnClickedClear() }} style={{ marginLeft: "5px" }} variant="outlined" color="secondary">Clear</Button> : null}
                         </div>
                         <FormHelperText style={{ color: `${inputError ? "red" : ""}` }}>{descriptionText}</FormHelperText>
