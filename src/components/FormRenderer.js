@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const FormRenderer = ({ revertAllChanges, schema, edit, originalSchema }) => {
-    const { updateParent, convertedSchema } = useContext(FormContext);
+    const { updateParent, convertedSchema, implementedFieldTypes } = useContext(FormContext);
     const [openDialogAddElement, setOpenDialogAddElement] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
     const [openSchemaViewer, setOpenSchemaViewer] = useState(false);

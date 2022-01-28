@@ -55,9 +55,16 @@ const StringType = ({ withinObject, field_uri, dataInputItems, setDataInputItems
                 setFieldEnumerate(field_enumerate)
                 setFieldValue("")
             } else {
-                let semOperatorDeviceList = require("../../assets/sem-operator-device-list.json")
-                setFieldValue("")
-                setFieldEnumerate(semOperatorDeviceList[SEMSelectedDevice])
+                try {
+                    let semOperatorDeviceList = require("../../assets/sem-operator-device-list.json")
+                    setFieldValue("")
+                    setFieldEnumerate(semOperatorDeviceList[SEMSelectedDevice])
+                }
+                catch (error) {
+                    console.log(error)
+                    setFieldEnumerate(field_enumerate)
+                    setFieldValue("")
+                }
             }
         }
 

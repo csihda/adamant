@@ -72,7 +72,7 @@ const ObjectType = ({ dataInputItems, setDataInputItems, withinArray, withinObje
     const [openDialog, setOpenDialog] = useState(false);
     const [openDialogAddElement, setOpenDialogAddElement] = useState(false);
     const [expand, setExpand] = useState(true)// set to "true" for normally open accordion
-    const { updateParent, convertedSchema, handleDataDelete } = useContext(FormContext);
+    const { updateParent, convertedSchema, handleDataDelete, implementedFieldTypes } = useContext(FormContext);
 
     // clean up empty strings in the paths
     path = path.split(".")

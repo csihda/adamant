@@ -31,6 +31,8 @@ import SchemaThree from "../schemas/appj-schema.json";
 import SchemaFour from "../schemas/all-types.json";
 import fillValueWithEmptyString from "../components/utils/fillValueWithEmptyString";
 import convData2FormData from "../components/utils/convData2FormData";
+import getTableCandidates from "../components/utils/getTableCandidates";
+import table2DescListTable from "../components/utils/table2DescListTable";
 
 // function that receive the schema and convert it to Form/json data blueprint
 // also to already put the default value to this blueprint
@@ -127,6 +129,15 @@ const AdamantMain = () => {
   const handleClose = () => {
     setAnchorEl(null);
   }; //
+
+  let implementedFieldTypes = [
+    "string",
+    "number",
+    "integer",
+    "array",
+    "boolean",
+    "object",
+  ];
 
   // check if the front-end is connected to backend at all
   useEffect(() => {
@@ -254,8 +265,13 @@ const AdamantMain = () => {
     // convert selectedSchema schema to iterable array properties
     let convertedSchema = JSON.parse(JSON.stringify(selectedSchema));
     if (convertedSchema["title"] === "SEM Request Form") {
-      let SEMlogo = require("../assets/sem-header-picture.png");
-      setHeaderImage(SEMlogo["default"]);
+      try {
+        let SEMlogo = require("../assets/sem-header-picture.png");
+        setHeaderImage(SEMlogo["default"]);
+      } catch (error) {
+        console.log(error);
+        setHeaderImage(QPTDATLogo);
+      }
     } else {
       setHeaderImage(QPTDATLogo);
     }
@@ -299,8 +315,13 @@ const AdamantMain = () => {
         const obj = JSON.parse(binaryStr);
 
         if (obj["title"] === "SEM Request Form") {
-          let SEMlogo = require("../assets/sem-header-picture.png");
-          setHeaderImage(SEMlogo["default"]);
+          try {
+            let SEMlogo = require("../assets/sem-header-picture.png");
+            setHeaderImage(SEMlogo["default"]);
+          } catch (error) {
+            console.log(error);
+            setHeaderImage(QPTDATLogo);
+          }
         } else {
           setHeaderImage(QPTDATLogo);
         }
@@ -396,8 +417,13 @@ const AdamantMain = () => {
     };
     const obj = JSON.parse(JSON.stringify(schemaBlueprint));
     if (obj["title"] === "SEM Request Form") {
-      let SEMlogo = require("../assets/sem-header-picture.png");
-      setHeaderImage(SEMlogo["default"]);
+      try {
+        let SEMlogo = require("../assets/sem-header-picture.png");
+        setHeaderImage(SEMlogo["default"]);
+      } catch (error) {
+        console.log(error);
+        setHeaderImage(QPTDATLogo);
+      }
     } else {
       setHeaderImage(QPTDATLogo);
     }
@@ -699,7 +725,8 @@ const AdamantMain = () => {
     // use this if we want to show all fields in description list
     let convProp = JSON.parse(JSON.stringify(convSch["properties"]));
     fillValueWithEmptyString(convProp);
-    let cleaned = convData2DescList(convProp);
+    let cleaned = convData2DescList(convProp); // skip keyword that has value of array with objects as its elements
+    //console.log(cleaned);
     //let cleaned = removeEmpty(convData2DescList(convSch["properties"]));
     if ((cleaned === undefined) | (cleaned === {})) {
       toast.error(
@@ -726,17 +753,31 @@ const AdamantMain = () => {
     let preProcessed = preProcessB4DescList(cleaned, cleaned, schema, []);
     //console.log(preProcessed);
     let nicelySorted = nicelySort(preProcessed);
+    // now check if there is array that contains object if there is then create a html table for this array
+    let tables = getTableCandidates(convProp, []);
+    let descListTables = [];
+    if (tables.length !== 0) {
+      tables.forEach((table) =>
+        descListTables.push(table2DescListTable(table))
+      );
+    }
     let descList = `<dl>\n${createDescriptionList(nicelySorted)}</dl>\n`;
     let descListHeading = `<h1><strong>${convSch["title"]}</strong></h1>\n`;
     descListHeading += descList;
+    // now insert desc list tables if applicable/available
+    if (descListTables.length !== 0) {
+      descListTables.forEach((item) => {
+        descListHeading += item;
+      });
+    }
     descListHeading += `<div> This experiment template was generated with <span><a title=https://github.com/csihda/adamant href=https://github.com/csihda/adamant>ADAMANT v0.0.1</a></span> </div>`;
     console.log("created description list:\n", descListHeading);
-    setDescriptionList(descList);
+    setDescriptionList(descListHeading);
 
     let sha256_hash = CryptoJS.SHA256(descListHeading);
     let a = document.createElement("a");
     let file = new Blob([descListHeading], {
-      type: "text/plain",
+      type: "text/html",
     });
     a.href = URL.createObjectURL(file);
     a.download = `desclist-${sha256_hash}.tpl`;
@@ -1020,13 +1061,14 @@ const AdamantMain = () => {
           handleConvertedDataInput,
           SEMSelectedDevice,
           setSEMSelectedDevice,
+          implementedFieldTypes,
         }}
       >
         <div style={{ paddingBottom: "5px" }}>
           <img
             style={{ width: "100%", borderRadius: "5px" }}
             alt="header"
-            src={HeaderImage}
+            src={HeaderImage !== undefined ? HeaderImage : QPTDATLogo}
           />
           {!inputMode ? (
             <div
@@ -1105,7 +1147,6 @@ const AdamantMain = () => {
               <>
                 <div
                   style={{
-                    width: "498px",
                     paddingRight: "10px",
                     display: "flex",
                     justifyContent: "left",
@@ -1123,6 +1164,7 @@ const AdamantMain = () => {
                   Render
                 </Button>
                 <Button
+                  style={{ marginRight: "10px" }}
                   onClick={() => clearSchemaOnClick()}
                   variant="outlined"
                   color="secondary"
