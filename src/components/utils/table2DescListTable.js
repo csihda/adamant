@@ -1,4 +1,5 @@
 // curently only works with flat json structure
+import listMimeTypes from "../../assets/mime-types-extensions.json"
 
 const table2DescListTable = (table) => {
 
@@ -15,7 +16,7 @@ const table2DescListTable = (table) => {
     // now create the table header
     let keyTitleMapper = []
     descListTable += `<tr>\n`
-    descListTable += `<td style="text-align: left;"><strong>Priority</strong></td>\n`
+    descListTable += `<td style="text-align: left;"><strong>No.</strong></td>\n`
     Object.keys(table["schemaProperties"]).forEach((element, index) => {
         //keyTitleMapper.push({ [element]: table["schemaProperties"][element]["title"] })
         keyTitleMapper.push(element)
@@ -33,7 +34,12 @@ const table2DescListTable = (table) => {
                 descListTable += `<td style="text-align: left;">n/a</td>\n`
             } else {
                 if (table["value"][index][item].startsWith("data:") & table["value"][index][item].length > 1000) {
-                    descListTable += `<td style="text-align: left;">See attachment</td>\n`
+                    //console.log(table["fieldKey"] + "-" + (index + 1))
+                    let extension = table["value"][index][item].split(";")[0].replace("data:", "")
+                    extension = Object.keys(listMimeTypes).find(key => listMimeTypes[key] === extension)
+                    let fileName = table["fieldKey"] + "-" + (index + 1) + extension
+                    console.log(fileName)
+                    descListTable += `<td style="text-align: left;">See attachment (${fileName})</td>\n`
                 }
                 else if (table["value"][index][item].trim() === "") {
                     descListTable += `<td style="text-align: left;">n/a</td>\n`

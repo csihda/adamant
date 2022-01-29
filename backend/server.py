@@ -7,15 +7,27 @@ import io
 import base64
 from PIL import Image
 from pathlib import Path
-from collections import OrderedDict
+import os
 
 app = Flask(__name__)
 api = Api(app)
 
 
 # convert json form data to eLabFTW description list
-def json_to_description_list(json_data):
-    return json_data
+def findBase64(data, prevKey, emptyArray):
+    for key in data:
+        if type(data[key]) is dict:
+            findBase64(data[key], prevKey+"-"+key, emptyArray)
+        elif isinstance(data[key], list):
+            for i in range(0, len(data[key])):
+                findBase64(data[key][i], key+"-"+str(i+1), emptyArray)
+        else:
+            if isinstance(data[key], str):
+                if data[key].startswith("data:") and len(data[key]) > 1000:
+                    print("found data")
+                    emptyArray.append({"key": prevKey, "data": data[key]})
+
+    return emptyArray
 
 
 @app.route('/adamant/api/check_mode', methods=["GET"])
@@ -101,6 +113,33 @@ def create_experiment():
     params = {"bodyappend": "appended text<br>"}
     manager.post_experiment(response['id'], params)
     """
+
+    # now check if there are file data in jsdata, if there is then upload it
+    collected_data = findBase64(jsdata, "start", [])
+    file = open("./mime-types-extensions.json",
+                'r', encoding='utf-8')
+    mimeExtensions = file.read()
+    file.close()
+    fileNames = []
+    mimeExtensions = json.loads(mimeExtensions)
+    for item in collected_data:
+        mimeType = item["data"].split(";")[0].replace("data:", "")
+        extension = list(mimeExtensions.keys())[
+            list(mimeExtensions.values()).index(mimeType)]
+        fileNames.append(item["key"]+extension)
+        _, encoded = item["data"].split(",", 1)
+        binary_data = base64.b64decode(encoded)
+        with open("./temp-files/"+item["key"]+extension, "wb") as fh:
+            fh.write(binary_data)
+        with open("temp-files//"+item["key"]+extension, "r+b") as fh:
+            file_param = {'file': fh}
+            manager.upload_to_experiment(response['id'], file_param)
+    print(fileNames)
+
+    # now delete everything in temp-files directory
+    dir = './temp-files'
+    for f in os.listdir(dir):
+        os.remove(os.path.join(dir, f))
 
     return {"responseText": f"Created experiment with id {response['id']}.", "message": "success", "experimentId": response['id']}
 

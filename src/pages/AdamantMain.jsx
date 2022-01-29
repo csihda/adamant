@@ -112,7 +112,9 @@ const AdamantMain = () => {
   const [descriptionList, setDescriptionList] = useState("");
   const [schemaWithValues, setSchemaWithValues] = useState({});
   const [token, setToken] = useState("");
-  const [eLabURL, setELabURL] = useState("");
+  const [eLabURL, setELabURL] = useState(
+    "https://pm-labbook.intranet.inp-greifswald.de/"
+  );
   const [experimentTitle, setExperimentTitle] = useState("");
   const [onlineMode, setOnlineMode] = useState(false);
   const [tags, setTags] = useState([]);
@@ -264,17 +266,6 @@ const AdamantMain = () => {
 
     // convert selectedSchema schema to iterable array properties
     let convertedSchema = JSON.parse(JSON.stringify(selectedSchema));
-    if (convertedSchema["title"] === "SEM Request Form") {
-      try {
-        let SEMlogo = require("../assets/sem-header-picture.png");
-        setHeaderImage(SEMlogo["default"]);
-      } catch (error) {
-        console.log(error);
-        setHeaderImage(QPTDATLogo);
-      }
-    } else {
-      setHeaderImage(QPTDATLogo);
-    }
     try {
       convertedSchema["properties"] = object2array(
         selectedSchema["properties"]
@@ -288,7 +279,21 @@ const AdamantMain = () => {
       setOriginalSchema(oriSchema);
       setSchemaWithValues(JSON.parse(JSON.stringify(oriSchema)));
       setConvertedSchema(convertedSchema);
-      setEditMode(true);
+
+      if (convertedSchema["title"] === "SEM Request Form") {
+        try {
+          let SEMlogo = require("../assets/sem-header-picture.png");
+          setHeaderImage(SEMlogo["default"]);
+          setEditMode(false);
+        } catch (error) {
+          console.log(error);
+          setHeaderImage(QPTDATLogo);
+          setEditMode(true);
+        }
+      } else {
+        setHeaderImage(QPTDATLogo);
+        setEditMode(true);
+      }
 
       // create form data
       let formData = createFormDataBlueprint(selectedSchema["properties"]);
@@ -314,18 +319,6 @@ const AdamantMain = () => {
         const binaryStr = reader.result;
         const obj = JSON.parse(binaryStr);
 
-        if (obj["title"] === "SEM Request Form") {
-          try {
-            let SEMlogo = require("../assets/sem-header-picture.png");
-            setHeaderImage(SEMlogo["default"]);
-          } catch (error) {
-            console.log(error);
-            setHeaderImage(QPTDATLogo);
-          }
-        } else {
-          setHeaderImage(QPTDATLogo);
-        }
-
         // convert obj schema to iterable array properties
         let convertedSchema = JSON.parse(JSON.stringify(obj));
         try {
@@ -339,7 +332,21 @@ const AdamantMain = () => {
           setOriginalSchema(oriSchema);
           setSchemaWithValues(JSON.parse(JSON.stringify(oriSchema)));
           setConvertedSchema(convertedSchema);
-          setEditMode(true);
+
+          if (obj["title"] === "SEM Request Form") {
+            try {
+              let SEMlogo = require("../assets/sem-header-picture.png");
+              setHeaderImage(SEMlogo["default"]);
+              setEditMode(false);
+            } catch (error) {
+              console.log(error);
+              setHeaderImage(QPTDATLogo);
+              setEditMode(true);
+            }
+          } else {
+            setHeaderImage(QPTDATLogo);
+            setEditMode(true);
+          }
 
           // create form data
           let formData = createFormDataBlueprint(obj["properties"]);
@@ -416,17 +423,6 @@ const AdamantMain = () => {
       type: "object",
     };
     const obj = JSON.parse(JSON.stringify(schemaBlueprint));
-    if (obj["title"] === "SEM Request Form") {
-      try {
-        let SEMlogo = require("../assets/sem-header-picture.png");
-        setHeaderImage(SEMlogo["default"]);
-      } catch (error) {
-        console.log(error);
-        setHeaderImage(QPTDATLogo);
-      }
-    } else {
-      setHeaderImage(QPTDATLogo);
-    }
 
     // create form data again
     let formData = createFormDataBlueprint(obj["properties"]);
@@ -443,7 +439,21 @@ const AdamantMain = () => {
     setOriginalSchema(oriSchema);
     setSchemaWithValues(JSON.parse(JSON.stringify(oriSchema)));
     setConvertedSchema(convertedSchema);
-    setEditMode(true);
+
+    if (obj["title"] === "SEM Request Form") {
+      try {
+        let SEMlogo = require("../assets/sem-header-picture.png");
+        setHeaderImage(SEMlogo["default"]);
+        setEditMode(false);
+      } catch (error) {
+        console.log(error);
+        setHeaderImage(QPTDATLogo);
+        setEditMode(true);
+      }
+    } else {
+      setHeaderImage(QPTDATLogo);
+      setEditMode(true);
+    }
 
     setDisable(false);
     setRenderReady(true);
@@ -461,10 +471,17 @@ const AdamantMain = () => {
   // return to edit mode handle
   const toEditMode = () => {
     let value = schema;
-    setInputMode(false);
-    setSchema(value);
-    setEditMode(true);
-    setDisable(false);
+    if (schema["title"] === "SEM Request Form") {
+      setInputMode(false);
+      setSchema(value);
+      setEditMode(false);
+      setDisable(false);
+    } else {
+      setInputMode(false);
+      setSchema(value);
+      setEditMode(true);
+      setDisable(false);
+    }
   };
 
   // update parent (re-render everything)
@@ -833,7 +850,12 @@ const AdamantMain = () => {
   // create an experiment in elabftw based on the schema and data
   const createExperimentELabFTW = () => {
     // validate the data first using ajv
-    let content = { ...jsonData };
+    //let content = { ...jsonData };
+    let convSchemaData = { ...convertedSchema };
+    let content = convData2FormData(
+      JSON.parse(JSON.stringify(convSchemaData["properties"]))
+    );
+
     let contentSchema = { ...schema };
 
     // get rid of empty values in content
@@ -988,10 +1010,24 @@ const AdamantMain = () => {
     let preProcessed = preProcessB4DescList(cleaned, cleaned, schema, []);
     //console.log(preProcessed);
     let nicelySorted = nicelySort(preProcessed);
+    // now check if there is array that contains object if there is then create a html table for this array
+    let tables = getTableCandidates(convProp, []);
+    let descListTables = [];
+    if (tables.length !== 0) {
+      tables.forEach((table) =>
+        descListTables.push(table2DescListTable(table))
+      );
+    }
     let descList = `<dl>\n${createDescriptionList(nicelySorted)}</dl>\n`;
     let descListHeading = `<h1><strong>${convSch["title"]}</strong></h1>\n`;
     descListHeading += descList;
-    descListHeading += `<div> This experiment template was generated with <span ><a title=https://github.com/csihda/adamant href=https://github.com/csihda/adamant>ADAMANT v0.0.1</a></span> </div>`;
+    // now insert desc list tables if applicable/available
+    if (descListTables.length !== 0) {
+      descListTables.forEach((item) => {
+        descListHeading += item;
+      });
+    }
+    descListHeading += `<div> This experiment template was generated with <span><a title=https://github.com/csihda/adamant href=https://github.com/csihda/adamant>ADAMANT v0.0.1</a></span> </div>`;
     console.log("created description list:\n", descListHeading);
     setDescriptionList(descListHeading);
 
