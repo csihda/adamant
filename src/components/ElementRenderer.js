@@ -5,7 +5,7 @@ import ObjectType from './elements/ObjectType';
 import IntegerType from './elements/IntegerType';
 import BooleanType from './elements/BooleanType';
 import ArrayType from './elements/ArrayType';
-import AnyOfKeyword from './elements/AnyOfKeyword';
+import AnyOfKeywordPlaceHolder from './elements/AnyOfKeywordPlaceHolder';
 import FileUpload from './elements/FileUpload';
 
 
@@ -136,7 +136,7 @@ const ElementRenderer = ({ withinObject, dataInputItems, setDataInputItems, with
         case 'object':
             if (anyOf !== undefined) {
                 return (
-                    <AnyOfKeyword
+                    <AnyOfKeywordPlaceHolder
                         pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldkey : fieldkey}
                         withinArray={withinArray}
                         withinObject={withinObject}
@@ -172,7 +172,7 @@ const ElementRenderer = ({ withinObject, dataInputItems, setDataInputItems, with
         case undefined:
             if (anyOf) {
                 return (
-                    <AnyOfKeyword
+                    <AnyOfKeywordPlaceHolder
                         pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldkey : fieldkey}
                         withinArray={withinArray}
                         withinObject={withinObject}
