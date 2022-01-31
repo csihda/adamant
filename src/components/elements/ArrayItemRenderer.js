@@ -9,6 +9,7 @@ const ArrayItemRenderer = ({ oSetDataInputItems, oDataInputItems, arrayFieldKey,
     switch (type) {
         case 'string':
             return (<ItemStringType
+                field_label={field_label}
                 value={value}
                 withinObject={withinObject}
                 arrayFieldKey={arrayFieldKey}
@@ -27,6 +28,7 @@ const ArrayItemRenderer = ({ oSetDataInputItems, oDataInputItems, arrayFieldKey,
             />)
         case 'number':
             return (<ItemNumberType
+                field_label={field_label}
                 value={value}
                 path={path}
                 pathFormData={pathFormData}
@@ -45,6 +47,7 @@ const ArrayItemRenderer = ({ oSetDataInputItems, oDataInputItems, arrayFieldKey,
             />)
         case 'integer':
             return (<ItemIntegerType
+                field_label={field_label}
                 value={value}
                 path={path}
                 pathFormData={pathFormData}
@@ -63,6 +66,7 @@ const ArrayItemRenderer = ({ oSetDataInputItems, oDataInputItems, arrayFieldKey,
             />)
         case 'object':
             return (<ItemObjectType
+                field_label={field_label}
                 value={value}
                 setDataInputItems={setDataInputItems}
                 dataInputItems={dataInputItems}

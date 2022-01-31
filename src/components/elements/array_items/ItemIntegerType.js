@@ -5,6 +5,9 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import { IconButton } from '@material-ui/core';
 import { Typography } from '@material-ui/core';
 import { FormContext } from '../../../FormContext';
+import getUnit from '../../utils/getUnit';
+import { MathComponent } from 'mathjax-react'
+import { InputAdornment } from '@material-ui/core';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -23,10 +26,16 @@ const style = {
 }
 
 
-const ItemIntegerType = ({ oDataInputItems, oSetDataInputItems, arrayFieldKey, withinObject, value, path, pathFormData, dataInputItems, setDataInputItems, edit, index, field_key, handleDeleteArrayItem }) => {
+const ItemIntegerType = ({ field_label, oDataInputItems, oSetDataInputItems, arrayFieldKey, withinObject, value, path, pathFormData, dataInputItems, setDataInputItems, edit, index, field_key, handleDeleteArrayItem }) => {
     const classes = useStyles();
     const [inputValue, setInputValue] = useState(value === undefined ? "" : value[index] === undefined ? "" : value[index]);
     const { handleDataInput, handleConvertedDataInput } = useContext(FormContext);
+
+    let unit = getUnit(field_label)
+    if (unit[0] === '%') {
+        unit = "\\" + unit
+    }
+
 
     // handle input on change for signed integer
     const handleInputOnChange = (event) => {
@@ -102,7 +111,9 @@ const ItemIntegerType = ({ oDataInputItems, oSetDataInputItems, arrayFieldKey, w
                 <Typography className={classes.heading}>{index + 1}.</Typography>
             </div> : null}
             <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
-                <TextField onBlur={() => handleInputOnBlur()} onChange={e => handleInputOnChange(e)} value={inputValue} fullWidth={true} className={classes.heading} id={field_key} variant="outlined" />
+                <TextField onBlur={() => handleInputOnBlur()} onChange={e => handleInputOnChange(e)} value={inputValue} fullWidth={true} className={classes.heading} id={field_key} variant="outlined" InputProps={{
+                    endAdornment: <InputAdornment position="start">{<MathComponent tex={String.raw`\\${unit}`} />}</InputAdornment>,
+                }} />
                 {edit ? <>
                     <IconButton onClick={() => handleDeleteArrayItem(index)} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}><DeleteIcon fontSize="small" color="secondary" /></IconButton></> : null}
             </div>
