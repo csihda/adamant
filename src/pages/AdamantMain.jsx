@@ -699,7 +699,11 @@ const AdamantMain = () => {
 
   // handle download json schema
   const handleDownloadDescriptionList = () => {
-    let content = { ...jsonData };
+    //let content = { ...jsonData };
+    let convSchemaData = { ...convertedSchema };
+    let content = convData2FormData(
+      JSON.parse(JSON.stringify(convSchemaData["properties"]))
+    );
     let contentSchema = { ...schema };
 
     // get rid of empty values in content
@@ -1036,18 +1040,17 @@ const AdamantMain = () => {
       });
     }
     descListHeading += `<div> This experiment template was generated with <span><a title=https://github.com/csihda/adamant href=https://github.com/csihda/adamant>ADAMANT v0.0.1</a></span> </div>`;
-    console.log("created description list:\n", descListHeading);
+    //console.log("created description list:\n", descListHeading);
     setDescriptionList(descListHeading);
 
     // validate the data first using ajv
-    let content = { ...jsonData };
+    //let content = { ...jsonData };
+    let convSchemaData = { ...convertedSchema };
+    let content = convData2FormData(
+      JSON.parse(JSON.stringify(convSchemaData["properties"]))
+    );
     let contentSchema = { ...schema };
 
-    // get rid of empty values in content
-    content = removeEmpty(content);
-    if (content === undefined) {
-      content = {};
-    }
     //console.log("content", content);
 
     //
