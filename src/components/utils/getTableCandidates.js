@@ -5,7 +5,7 @@ const getTableCandidates = (convProp, container) => {
         if (element["type"] === "object") {
             getTableCandidates(element["properties"], container)
         } else if (element["type"] === "array") {
-            if (typeof (element["value"]) === "object") {
+            if (typeof (element["value"][0]) === "object") {
                 container.push({
                     "fieldKey": element["fieldKey"],
                     "title": element["title"],

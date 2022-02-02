@@ -462,7 +462,7 @@ const ArrayType = ({ maxItems, oSetDataInputItems, oDataInputItems, withinObject
             <Accordion expanded={expand} >
                 <AccordionSummary
                     expandIcon={withinObject ? null :
-                        <Tooltip placement="top" title={`Collapse/Expand this container"`}>
+                        <Tooltip placement="top" title={`Collapse/Expand this container`}>
                             <ExpandMoreIcon />
                         </Tooltip>}
                     aria-controls="panel1a-content"

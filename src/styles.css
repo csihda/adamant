@@ -26,3 +26,26 @@
   padding: 0.75rem;
   border-top: 2px solid #251d92;
 }
+
+/** for eLabFTW description list styling */
+dd:nth-of-type(2n + 1) {
+  background-color: #eee;
+}
+dl {
+  display: grid;
+  grid-auto-columns: fit-content(300px) minmax(100px, 80vmax);
+}
+dt {
+  grid-column: 1;
+  padding: 2px 4px;
+  background: #29aeb9;
+  color: white;
+  border: 0.5px solid #595959;
+}
+dd {
+  grid-column: 2;
+  margin: 0;
+  padding: 2px 4px;
+  background-color: #fff;
+  border: 0.5px solid #595959;
+}

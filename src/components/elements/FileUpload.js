@@ -135,7 +135,7 @@ const FileUpload = ({ contentEncoding, withinObject, field_uri, dataInputItems, 
             let acceptedTypes = getAcceptedTypes(field_description);
             let valid = true
             if (acceptedTypes.length === 0) {
-                valid = false
+                valid = true
             } else {
                 valid = validateAcceptedFile(acceptedFile[0]["name"], acceptedTypes)
             }

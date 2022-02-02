@@ -15,7 +15,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import { Autocomplete } from '@material-ui/lab';
 
 
-const CreateELabFTWExperimentDialog = ({ getTagsELabFTW, eLabURL, setELabURL, setTags, tags, setRetrievedTags, retrievedTags, setExperimentTitle, setToken, token, setOpenSubmitDialog, openSubmitDialog, createExperimentELabFTW }) => {
+const CreateELabFTWExperimentDialog = ({ getTagsELabFTW, eLabURL, setELabURL, setTags, tags, setRetrievedTags, retrievedTags, setExperimentTitle, setToken, token, setOpenCreateElabFTWExperimentDialog, openCreateElabFTWExperimentDialog, createExperimentELabFTW }) => {
 
     const onTagsChange = (event, values) => {
         setTags(values);
@@ -23,7 +23,7 @@ const CreateELabFTWExperimentDialog = ({ getTagsELabFTW, eLabURL, setELabURL, se
 
     // cancel submit
     const handleCancelEdit = () => {
-        setOpenSubmitDialog(false)
+        setOpenCreateElabFTWExperimentDialog(false)
         setRetrievedTags([])
         setELabURL("")
         setToken("")
@@ -32,7 +32,7 @@ const CreateELabFTWExperimentDialog = ({ getTagsELabFTW, eLabURL, setELabURL, se
 
     return (
         <><Dialog
-            open={openSubmitDialog}
+            open={openCreateElabFTWExperimentDialog}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
         >

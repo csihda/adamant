@@ -33,7 +33,7 @@ const table2DescListTable = (table) => {
             if (table["value"][index][item] === undefined) {
                 descListTable += `<td style="text-align: left;">n/a</td>\n`
             } else {
-                if (table["value"][index][item].startsWith("data:") & table["value"][index][item].length > 1000) {
+                if (table["value"][index][item].startsWith("data:") & table["value"][index][item].includes("base64")) {
                     //console.log(table["fieldKey"] + "-" + (index + 1))
                     let extension = table["value"][index][item].split(";")[0].replace("data:", "")
                     extension = Object.keys(listMimeTypes).find(key => listMimeTypes[key] === extension)

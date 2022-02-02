@@ -106,7 +106,7 @@ const FormRenderer = ({ revertAllChanges, schema, edit, originalSchema }) => {
     });
 
     // deconstruct
-    const { properties, title, description, required, $schema, id } = schema ?? {}
+    const { properties, title, description, required, $schema, id, $id } = schema ?? {}
 
     // update the order in properties on drag end
     const handleOnDragEnd = (result) => {
@@ -192,7 +192,7 @@ const FormRenderer = ({ revertAllChanges, schema, edit, originalSchema }) => {
             </DragDropContext>
         </div>
         {openDialogAddElement ? <AddElement openDialog={openDialogAddElement} setOpenDialog={setOpenDialogAddElement} defaultSchema={defaultSchema} schemaTitle={title} /> : null}
-        {openDialog ? <EditSchemaHeader schemaID={id} title={title} description={description} schemaURI={$schema} openDialog={openDialog} setOpenDialog={setOpenDialog} /> : null}
+        {openDialog ? <EditSchemaHeader schemaID={id !== undefined ? id : $id} title={title} description={description} schemaURI={$schema} openDialog={openDialog} setOpenDialog={setOpenDialog} /> : null}
         {openSchemaViewer ? <JSONSchemaViewerDialog
             openSchemaViewer={openSchemaViewer}
             setOpenSchemaViewer={setOpenSchemaViewer}

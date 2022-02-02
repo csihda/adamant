@@ -9,7 +9,7 @@ import AnyOfKeywordPlaceHolder from './elements/AnyOfKeywordPlaceHolder';
 import FileUpload from './elements/FileUpload';
 
 
-const ElementRenderer = ({ withinObject, dataInputItems, setDataInputItems, withinArray, path, pathSchema, pathFormData, elementRequired, fieldkey, fieldIndex, edit, field: { maxItems, type, $id, title, contentEncoding, description, properties, required, enumerate, items, defaultValue, value, anyOf } }) => {
+const ElementRenderer = ({ withinObject, dataInputItems, setDataInputItems, withinArray, path, pathSchema, pathFormData, elementRequired, fieldkey, fieldIndex, edit, field: { maxItems, type, $id, id, title, contentEncoding, description, properties, required, enumerate, items, defaultValue, value, anyOf } }) => {
 
     switch (type) {
         case 'string':
@@ -27,7 +27,7 @@ const ElementRenderer = ({ withinObject, dataInputItems, setDataInputItems, with
                     field_key={fieldkey}
                     field_index={fieldIndex}
                     field_label={title}
-                    field_uri={$id}
+                    field_uri={$id !== undefined ? $id : id}
                     field_description={description}
                     field_required={elementRequired}
                     defaultValue={defaultValue}
@@ -46,7 +46,7 @@ const ElementRenderer = ({ withinObject, dataInputItems, setDataInputItems, with
                     field_key={fieldkey}
                     field_index={fieldIndex}
                     field_label={title}
-                    field_uri={$id}
+                    field_uri={$id !== undefined ? $id : id}
                     field_description={description}
                     field_required={elementRequired}
                     field_enumerate={enumerate}
@@ -65,7 +65,7 @@ const ElementRenderer = ({ withinObject, dataInputItems, setDataInputItems, with
                 pathSchema={pathSchema + "." + fieldkey}
                 pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldkey : fieldkey}
                 field_key={fieldkey}
-                field_uri={$id}
+                field_uri={$id !== undefined ? $id : id}
                 field_index={fieldIndex}
                 field_label={title}
                 field_description={description}
@@ -85,7 +85,7 @@ const ElementRenderer = ({ withinObject, dataInputItems, setDataInputItems, with
                 pathSchema={pathSchema + "." + fieldkey}
                 pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldkey : fieldkey}
                 field_key={fieldkey}
-                field_uri={$id}
+                field_uri={$id !== undefined ? $id : id}
                 field_index={fieldIndex}
                 field_label={title}
                 field_description={description}
@@ -105,7 +105,7 @@ const ElementRenderer = ({ withinObject, dataInputItems, setDataInputItems, with
                 pathSchema={pathSchema + "." + fieldkey}
                 pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldkey : fieldkey}
                 field_key={fieldkey}
-                field_uri={$id}
+                field_uri={$id !== undefined ? $id : id}
                 field_index={fieldIndex}
                 field_label={title}
                 field_description={description}
@@ -126,7 +126,7 @@ const ElementRenderer = ({ withinObject, dataInputItems, setDataInputItems, with
                 pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldkey : fieldkey}
                 field_key={fieldkey}
                 field_index={fieldIndex}
-                field_uri={$id}
+                field_uri={$id !== undefined ? $id : id}
                 field_label={title}
                 field_description={description}
                 field_required={elementRequired}
@@ -145,7 +145,7 @@ const ElementRenderer = ({ withinObject, dataInputItems, setDataInputItems, with
                         path={path + "." + fieldIndex}
                         field_index={fieldIndex}
                         field_key={fieldkey}
-                        field_uri={$id}
+                        field_uri={$id !== undefined ? $id : id}
                         field_label={title}
                         field_description={description}
                         field_required={elementRequired}
@@ -161,7 +161,7 @@ const ElementRenderer = ({ withinObject, dataInputItems, setDataInputItems, with
                     pathSchema={pathSchema + "." + fieldkey}
                     pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldkey : fieldkey}
                     field_key={fieldkey}
-                    field_uri={$id}
+                    field_uri={$id !== undefined ? $id : id}
                     field_label={title}
                     field_description={description}
                     field_required={required}
@@ -179,7 +179,7 @@ const ElementRenderer = ({ withinObject, dataInputItems, setDataInputItems, with
                         path={path + "." + fieldIndex}
                         field_index={fieldIndex}
                         field_key={fieldkey}
-                        field_uri={$id}
+                        field_uri={$id !== undefined ? $id : id}
                         field_label={title}
                         field_description={description}
                         field_required={elementRequired}

@@ -310,7 +310,7 @@ const AnyOfKeyword = ({ pathFormData, path, field_required, field_uri, field_key
             <Accordion expanded={expand} >
                 <AccordionSummary
                     expandIcon={
-                        <Tooltip placement="top" title={`Collapse/Expand this container"`}>
+                        <Tooltip placement="top" title={`Collapse/Expand this container`}>
                             <ExpandMoreIcon />
                         </Tooltip>}
                     aria-controls="panel1a-content"

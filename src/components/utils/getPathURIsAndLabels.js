@@ -15,7 +15,11 @@ const getPathURIsAndLabels = (object, path) => {
         if (typeof (value) === "object") {
             if (value["$id"] !== undefined) {
                 uris.push(value["$id"])
-            } else {
+            }
+            else if (value["id"] !== undefined) {
+                uris.push(value["id"])
+            }
+            else {
                 uris.push("")
             }
             if (value["title"] !== undefined) {

@@ -33,6 +33,7 @@ import fillValueWithEmptyString from "../components/utils/fillValueWithEmptyStri
 import convData2FormData from "../components/utils/convData2FormData";
 import getTableCandidates from "../components/utils/getTableCandidates";
 import table2DescListTable from "../components/utils/table2DescListTable";
+import FormReviewBeforeSubmit from "../components/FormReviewBeforeSubmit";
 
 // function that receive the schema and convert it to Form/json data blueprint
 // also to already put the default value to this blueprint
@@ -119,9 +120,13 @@ const AdamantMain = () => {
   const [retrievedTags, setRetrievedTags] = useState([]);
   const [SEMSelectedDevice, setSEMSelectedDevice] = useState("");
   const [HeaderImage, setHeaderImage] = useState(QPTDATLogo);
+  const [openFormReviewDialog, setOpenFormReviewDialog] = useState(false);
   // for dropdown buttons
   const [anchorEl, setAnchorEl] = useState(null);
-  const [openSubmitDialog, setOpenSubmitDialog] = useState(false);
+  const [
+    openCreateElabFTWExperimentDialog,
+    setOpenCreateElabFTWExperimentDialog,
+  ] = useState(false);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -282,7 +287,7 @@ const AdamantMain = () => {
         try {
           let SEMlogo = require("../assets/sem-header-picture.png");
           setHeaderImage(SEMlogo["default"]);
-          setEditMode(false);
+          setEditMode(true);
         } catch (error) {
           console.log(error);
           setHeaderImage(QPTDATLogo);
@@ -335,7 +340,7 @@ const AdamantMain = () => {
             try {
               let SEMlogo = require("../assets/sem-header-picture.png");
               setHeaderImage(SEMlogo["default"]);
-              setEditMode(false);
+              setEditMode(true);
             } catch (error) {
               console.log(error);
               setHeaderImage(QPTDATLogo);
@@ -442,7 +447,7 @@ const AdamantMain = () => {
       try {
         let SEMlogo = require("../assets/sem-header-picture.png");
         setHeaderImage(SEMlogo["default"]);
-        setEditMode(false);
+        setEditMode(true);
       } catch (error) {
         console.log(error);
         setHeaderImage(QPTDATLogo);
@@ -741,7 +746,6 @@ const AdamantMain = () => {
     let convProp = JSON.parse(JSON.stringify(convSch["properties"]));
     fillValueWithEmptyString(convProp);
     let cleaned = convData2DescList(convProp); // skip keyword that has value of array with objects as its elements
-    //console.log(cleaned);
     //let cleaned = removeEmpty(convData2DescList(convSch["properties"]));
     if ((cleaned === undefined) | (cleaned === {})) {
       toast.error(
@@ -928,7 +932,7 @@ const AdamantMain = () => {
         console.log(status);
 
         // close submit dialog
-        setOpenSubmitDialog(false);
+        setOpenCreateElabFTWExperimentDialog(false);
         toast.success(
           `Successfully created an experiment with id: ${status["experimentId"]}!`,
           {
@@ -953,7 +957,7 @@ const AdamantMain = () => {
         console.log(status);
 
         // close submit dialog
-        setOpenSubmitDialog(false);
+        setOpenCreateElabFTWExperimentDialog(false);
         toast.error(
           `Failed to create an experiment!\nMaybe wrong url or token?`,
           {
@@ -1079,7 +1083,8 @@ const AdamantMain = () => {
       setTags([]);
       return;
     } else {
-      setOpenSubmitDialog(true);
+      //setOpenSubmitDialog(true);
+      setOpenFormReviewDialog(true);
     }
   };
 
@@ -1345,11 +1350,21 @@ const AdamantMain = () => {
         token={token}
         setELabURL={setELabURL}
         eLabURL={eLabURL}
-        setOpenSubmitDialog={setOpenSubmitDialog}
-        openSubmitDialog={openSubmitDialog}
+        setOpenCreateElabFTWExperimentDialog={
+          setOpenCreateElabFTWExperimentDialog
+        }
+        openCreateElabFTWExperimentDialog={openCreateElabFTWExperimentDialog}
         getTagsELabFTW={getTagsELabFTW}
       />
       <ToastContainer />
+      {openFormReviewDialog ? (
+        <FormReviewBeforeSubmit
+          openFormReviewDialog={openFormReviewDialog}
+          setOpenFormReviewDialog={setOpenFormReviewDialog}
+          descriptionList={descriptionList}
+          setOpenFunctions={{ setOpenCreateElabFTWExperimentDialog }}
+        />
+      ) : null}
     </>
   );
 };

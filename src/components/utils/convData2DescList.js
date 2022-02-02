@@ -1,5 +1,3 @@
-import object2array from "./object2array";
-
 const convData2DescList = (convDataProp) => {
     let someObject = {};
     convDataProp.forEach((item) => {
@@ -15,11 +13,17 @@ const convData2DescList = (convDataProp) => {
                     if (typeof (item["value"][0]) === "object") {
                         console.log("convData2DescList is skipped for this field:", item["title"])
                     }
+                    else {
+                        someObject[fieldkey] = { value: item["value"] }
+                        someObject[fieldkey]["label"] = item["title"]
+                        someObject[fieldkey]["key"] = item["fieldKey"]
+                        someObject[fieldkey]["$id"] = (item["$id"] !== undefined ? item["$id"] : item["id"])
+                    }
                 } else {
                     someObject[fieldkey] = { value: item["value"] }
                     someObject[fieldkey]["label"] = item["title"]
                     someObject[fieldkey]["key"] = item["fieldKey"]
-                    someObject[fieldkey]["$id"] = item["$id"]
+                    someObject[fieldkey]["$id"] = (item["$id"] !== undefined ? item["$id"] : item["id"])
                 }
             }
         }

@@ -15,17 +15,19 @@ api = Api(app)
 
 # convert json form data to eLabFTW description list
 def findBase64(data, prevKey, emptyArray):
+
     for key in data:
-        if type(data[key]) is dict:
+
+        if isinstance(data[key], list) and (type(data[key]) is dict):
             findBase64(data[key], prevKey+"-"+key, emptyArray)
         elif isinstance(data[key], list):
             for i in range(0, len(data[key])):
                 findBase64(data[key][i], key+"-"+str(i+1), emptyArray)
         else:
             if isinstance(data[key], str):
-                if data[key].startswith("data:") and len(data[key]) > 1000:
+                if data[key].startswith("data:") and ("base64" in data[key]):
                     print("found data")
-                    emptyArray.append({"key": prevKey, "data": data[key]})
+                    emptyArray.append({"key": key, "data": data[key]})
 
     return emptyArray
 
