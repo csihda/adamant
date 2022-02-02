@@ -34,6 +34,7 @@ import convData2FormData from "../components/utils/convData2FormData";
 import getTableCandidates from "../components/utils/getTableCandidates";
 import table2DescListTable from "../components/utils/table2DescListTable";
 import FormReviewBeforeSubmit from "../components/FormReviewBeforeSubmit";
+import createDescriptionListWithoutStyling from "../components/utils/createDescriptionListWithoutStyling";
 
 // function that receive the schema and convert it to Form/json data blueprint
 // also to already put the default value to this blueprint
@@ -782,7 +783,10 @@ const AdamantMain = () => {
         descListTables.push(table2DescListTable(table))
       );
     }
-    let descList = `<dl>\n${createDescriptionList(nicelySorted)}</dl>\n`;
+    //let descList = `<dl>\n${createDescriptionList(nicelySorted)}</dl>\n`;
+    let descList = `<dl>\n${createDescriptionListWithoutStyling(
+      nicelySorted
+    )}</dl>\n`;
     let descListHeading = `<h1><strong>${convSch["title"]}</strong></h1>\n`;
     descListHeading += descList;
     // now insert desc list tables if applicable/available
