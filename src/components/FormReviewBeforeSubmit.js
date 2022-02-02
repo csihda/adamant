@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const FormReviewBeforeSubmit = ({ openFormReviewDialog, setOpenFormReviewDialog, descriptionList, setOpenFunctions }) => {
+const FormReviewBeforeSubmit = ({ onlineMode, openFormReviewDialog, setOpenFormReviewDialog, descriptionList, setOpenFunctions }) => {
 
     // for dropdown buttons
     const [anchorEl, setAnchorEl] = useState(null);
@@ -60,6 +60,7 @@ const FormReviewBeforeSubmit = ({ openFormReviewDialog, setOpenFormReviewDialog,
                     Cancel
                 </Button>
                 <Button
+                    disabled={!onlineMode}
                     style={{ float: "right", marginRight: "5px" }}
                     id="demo-positioned-button"
                     aria-controls={open ? "demo-positioned-menu" : undefined}

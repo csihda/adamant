@@ -164,7 +164,9 @@ const AdamantMain = () => {
         });
       },
       error: function () {
-        console.log("Unable to establish connection to server. Offline mode");
+        console.log(
+          "Unable to establish connection to server. Offline mode. Submit feature is disabled."
+        );
         setOnlineMode(false);
 
         // use available schema as a place holder
@@ -178,7 +180,7 @@ const AdamantMain = () => {
         setSchemaList([null, SchemaOne, SchemaTwo, SchemaThree, SchemaFour]);
 
         toast.warning(
-          "Unable to establish connection to server. Offline mode.",
+          "Unable to establish connection to server. Offline mode. Submit feature is disabled.",
           {
             position: "top-right",
             autoClose: 5000,
@@ -1282,7 +1284,6 @@ const AdamantMain = () => {
                 Back to Edit Mode
               </Button>
               <Button
-                disabled={!onlineMode}
                 onClick={() => handleOnClickProceedButton()}
                 style={{ float: "right" }}
                 variant="contained"
@@ -1359,6 +1360,7 @@ const AdamantMain = () => {
       <ToastContainer />
       {openFormReviewDialog ? (
         <FormReviewBeforeSubmit
+          onlineMode={onlineMode}
           openFormReviewDialog={openFormReviewDialog}
           setOpenFormReviewDialog={setOpenFormReviewDialog}
           descriptionList={descriptionList}
