@@ -127,6 +127,33 @@ const BooleanType = ({ field_uri, withinArray, withinObject, value, dataInputIte
         }
     }
 
+    // handle input on change for checkbox (boolean type: checked is true unchecked is false)
+    const handleInputWhenInvalid = (value) => {
+        if (withinArray !== undefined & withinArray) {
+            let newPathFormData = pathFormData.split(".");
+            newPathFormData.pop()
+            newPathFormData = newPathFormData.join(".")
+
+            let newPath = path.split(".")
+            newPath.pop()
+            newPath = newPath.join(".")
+
+            let arr = dataInputItems;
+            const items = Array.from(arr);
+            items[field_index][field_key] = value;
+            setDataInputItems(items);
+
+            setInputValue(value)
+            handleDataInput(items, newPathFormData, "boolean")
+            handleConvertedDataInput(items, newPath + ".value", "boolean")
+
+        } else {
+            setInputValue(value)
+            handleDataInput(value, pathFormData, "boolean")
+            handleConvertedDataInput(value, path + ".value", "boolean")
+        }
+    }
+
     // update this field input value everytime the value changes. E.g., when autofilling or first render of the field when defaultvalue exists 
     useEffect(() => {
         if (withinArray !== undefined & withinArray === true) {
@@ -206,23 +233,13 @@ const BooleanType = ({ field_uri, withinArray, withinObject, value, dataInputIte
 
     return (
         <>
-            <div onMouseLeave={() => {
+            <div onMouseEnter={() => {
                 if (inputError === true) {
                     setInputError(false)
                     setDescriptionText(field_description !== undefined ? field_description : "")
 
-                    // then delete the value the convertedSchema
-                    let value = { ...convertedSchema }
-                    if (withinArray === undefined | (withinArray !== undefined & withinArray === true)) {
-                        value = deleteKey(value, path + ".value")
-                        updateParent(value)
-                    } else {
-                        let newPath = path.split(".")
-                        newPath.pop()
-                        newPath = newPath.join(".")
-                        value = deleteKey(value, newPath + ".value")
-                        updateParent(value)
-                    }
+                    // then set inputValue to default value or false
+                    handleInputWhenInvalid(typeof (defaultValue) === "boolean" ? defaultValue : false)
                 }
             }} style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', alignItems: "center", width: '100%' }}>
                 <div style={{ paddingLeft: "15px", width: "100%" }}>

@@ -406,6 +406,7 @@ const AdamantMain = () => {
 
   // clear schema on-click handle
   const clearSchemaOnClick = () => {
+    setHeaderImage(QPTDATLogo);
     setDisable(true);
     setRenderReady(false);
     setSchema(null);
