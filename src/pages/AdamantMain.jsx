@@ -800,7 +800,7 @@ const AdamantMain = () => {
         descListHeading += item;
       });
     }
-    descListHeading += `<div> This experiment template was generated with <span><a title=https://github.com/csihda/adamant href=https://github.com/csihda/adamant>ADAMANT v0.0.1</a></span> </div>`;
+    descListHeading += `<div> This template was generated with <span><a title=https://github.com/csihda/adamant href=https://github.com/csihda/adamant>ADAMANT v0.0.1</a></span> </div>`;
     console.log("created description list:\n", descListHeading);
     setDescriptionList(descListHeading);
 
@@ -1040,7 +1040,7 @@ const AdamantMain = () => {
         descListHeading += item;
       });
     }
-    descListHeading += `<div> This experiment template was generated with <span><a title=https://github.com/csihda/adamant href=https://github.com/csihda/adamant>ADAMANT v0.0.1</a></span> </div>`;
+    descListHeading += `<div> This template was generated with <span><a title=https://github.com/csihda/adamant href=https://github.com/csihda/adamant>ADAMANT v0.0.1</a></span> </div>`;
     //console.log("created description list:\n", descListHeading);
     setDescriptionList(descListHeading);
 
