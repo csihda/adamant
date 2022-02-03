@@ -16,11 +16,11 @@
 /src/assets/sem-operator-device-list.json
 
 # python floders
-/backend/venv_
-/backend/temp-files_
+/backend/venv
+/backend/temp-files
 
-/deployment/adamant-main.nginx_
-/deployment/adamant-main.service_
+/deployment/adamant-main.nginx
+/deployment/adamant-main.service
 
 # misc
 .DS_Store
