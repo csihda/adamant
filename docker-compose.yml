@@ -1,0 +1,13 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    image: adamant-server
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile.client
+    image: adamant-client
+    ports:
+      - "3000:80"
