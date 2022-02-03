@@ -1,0 +1,25 @@
+server {
+    listen 80;
+    root /home/ubuntu/adamant/build;
+    server_name _;
+    index index.html;
+    client_max_body_size 64M;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+        add_header Cache-Control "no-cache";
+        client_max_body_size 64M;
+    }
+
+    location /static {
+        expires 1y;
+        add_header Cache-Control "public";
+        client_max_body_size 64M;
+    }
+
+    location /api {
+        include proxy_params;
+        proxy_pass http://localhost:5000;
+        client_max_body_size 64M;
+    }
+}

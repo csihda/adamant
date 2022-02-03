@@ -192,7 +192,7 @@ const FormRenderer = ({ revertAllChanges, schema, edit, originalSchema }) => {
             </DragDropContext>
         </div>
         {openDialogAddElement ? <AddElement openDialog={openDialogAddElement} setOpenDialog={setOpenDialogAddElement} defaultSchema={defaultSchema} schemaTitle={title} /> : null}
-        {openDialog ? <EditSchemaHeader schemaID={id !== undefined ? id : $id} title={title} description={description} schemaURI={$schema} openDialog={openDialog} setOpenDialog={setOpenDialog} /> : null}
+        {openDialog ? <EditSchemaHeader schemaID={id !== undefined ? id : $id} title={title} description={description} schemaVersion={$schema} openDialog={openDialog} setOpenDialog={setOpenDialog} /> : null}
         {openSchemaViewer ? <JSONSchemaViewerDialog
             openSchemaViewer={openSchemaViewer}
             setOpenSchemaViewer={setOpenSchemaViewer}

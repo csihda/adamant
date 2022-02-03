@@ -45,13 +45,16 @@ const FormReviewBeforeSubmit = ({ onlineMode, openFormReviewDialog, setOpenFormR
         >
             <DialogTitle id="alert-dialog-title">
                 <div style={{ display: "inline-flex", width: "100%", verticalAlign: "middle" }}>
-                    <div style={{ width: "100%", alignSelf: "center" }}>
-                        Check your filled form before submitting.
+                    <div style={{ fontSize: "30px", width: "100%", alignSelf: "center" }}>
+                        Form review and submission
                     </div>
                     <IconButton onClick={() => setOpenFormReviewDialog(false)}><CloseIcon fontSize="large" color="secondary" /></IconButton>
                 </div>
             </DialogTitle>
             <Divider />
+            <DialogContentText style={{ paddingLeft: "25px", paddingTop: "10px" }} id="alert-dialog-description" component="span">
+                Please review your filled form before submitting.
+            </DialogContentText>
             <DialogContent>
                 <div dangerouslySetInnerHTML={{ __html: descriptionList }}></div>
             </DialogContent>
@@ -60,7 +63,6 @@ const FormReviewBeforeSubmit = ({ onlineMode, openFormReviewDialog, setOpenFormR
                     Cancel
                 </Button>
                 <Button
-                    disabled={!onlineMode}
                     style={{ float: "right", marginRight: "5px" }}
                     id="demo-positioned-button"
                     aria-controls={open ? "demo-positioned-menu" : undefined}
@@ -87,14 +89,14 @@ const FormReviewBeforeSubmit = ({ onlineMode, openFormReviewDialog, setOpenFormR
                         horizontal: "left",
                     }}
                 >
-                    <MenuItem onClick={() => {
+                    <MenuItem disabled={!onlineMode} onClick={() => {
                         setOpenFunctions.setOpenCreateElabFTWExperimentDialog(true);
                         setOpenFormReviewDialog(false);
                     }} >
                         Create eLabFTW Experiment
                     </MenuItem>
-                    <MenuItem >
-                        Submit SEM Request Form
+                    <MenuItem disabled={!onlineMode} >
+                        Submit SEM job request
                     </MenuItem>
                 </Menu>
             </DialogActions>

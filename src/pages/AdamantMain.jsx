@@ -35,6 +35,7 @@ import getTableCandidates from "../components/utils/getTableCandidates";
 import table2DescListTable from "../components/utils/table2DescListTable";
 import FormReviewBeforeSubmit from "../components/FormReviewBeforeSubmit";
 import createDescriptionListWithoutStyling from "../components/utils/createDescriptionListWithoutStyling";
+import changeKeywords from "../components/utils/changeKeywords";
 
 // function that receive the schema and convert it to Form/json data blueprint
 // also to already put the default value to this blueprint
@@ -150,7 +151,7 @@ const AdamantMain = () => {
     let $ = require("jquery");
     $.ajax({
       type: "GET",
-      url: "/adamant/api/check_mode",
+      url: "/api/check_mode",
       success: function () {
         console.log("Connection to server is established. Online mode");
         setOnlineMode(true);
@@ -203,7 +204,7 @@ const AdamantMain = () => {
       let $ = require("jquery");
       $.ajax({
         type: "GET",
-        url: "/adamant/api/get_schemas",
+        url: "/api/get_schemas",
         success: function (status) {
           console.log("SUCCESS");
 
@@ -494,6 +495,12 @@ const AdamantMain = () => {
   // update parent (re-render everything)
   const updateParent = (value) => {
     let newValue = { ...value };
+
+    if (newValue["$schema"] === "http://json-schema.org/draft-04/schema#") {
+      changeKeywords(newValue, "$id", "id");
+    } else {
+      changeKeywords(newValue, "id", "$id");
+    }
 
     // update original schema
     let updatedSchema = JSON.parse(JSON.stringify(newValue));
@@ -821,7 +828,7 @@ const AdamantMain = () => {
     var $ = require("jquery");
     $.ajax({
       type: "POST",
-      url: "/adamant/api/get_tags",
+      url: "/api/get_tags",
       dataType: "json",
       data: {
         eLabURL: eLabURL,
@@ -926,7 +933,7 @@ const AdamantMain = () => {
     var $ = require("jquery");
     $.ajax({
       type: "POST",
-      url: "/adamant/api/create_experiment",
+      url: "/api/create_experiment",
       async: false,
       dataType: "json",
       data: {

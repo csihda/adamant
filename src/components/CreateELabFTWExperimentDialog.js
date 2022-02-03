@@ -25,7 +25,6 @@ const CreateELabFTWExperimentDialog = ({ getTagsELabFTW, eLabURL, setELabURL, se
     const handleCancelEdit = () => {
         setOpenCreateElabFTWExperimentDialog(false)
         setRetrievedTags([])
-        setELabURL("")
         setToken("")
         setTags([])
     }

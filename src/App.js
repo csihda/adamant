@@ -18,8 +18,7 @@ export default function App() {
     */
     <div className="the_app">
       <Switch>
-        <Redirect exact from="/" to="/adamant" />
-        <Route exact path="/adamant" component={AdamantMain}></Route>
+        <Route exact path="/" component={AdamantMain}></Route>
       </Switch>
     </div>
   );

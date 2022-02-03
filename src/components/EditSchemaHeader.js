@@ -15,35 +15,107 @@ import { IconButton } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 
 
-const EditSchemaHeader = ({ schemaID, title, description, schemaURI, openDialog, setOpenDialog }) => {
+const changeKeywords = (convertedSchema, oldKey, desiredNewKey) => {
+    if (typeof convertedSchema === 'object' && !Array.isArray(convertedSchema) && convertedSchema !== null) {
+        Object.keys(convertedSchema).forEach(keyword => {
+            if (keyword === oldKey) {
+                let tempValue = convertedSchema[keyword]
+                delete convertedSchema[keyword]
+                convertedSchema[desiredNewKey] = tempValue
+            } else {
+                // to maintain the order
+                let tempValue = convertedSchema[keyword]
+                delete convertedSchema[keyword]
+                convertedSchema[keyword] = tempValue
+                //
+            }
+            if (typeof convertedSchema[keyword] === 'object' && !Array.isArray(convertedSchema[keyword]) && convertedSchema[keyword] !== null) {
+                changeKeywords(convertedSchema[keyword], oldKey, desiredNewKey)
+            }
+            else if (Array.isArray(convertedSchema[keyword]) && convertedSchema[keyword] !== null) {
+                convertedSchema[keyword].forEach(item => {
+                    changeKeywords(item, oldKey, desiredNewKey)
+                })
+            }
+        })
+    }
+    else if (Array.isArray(convertedSchema) && convertedSchema !== null) {
+        convertedSchema.forEach(item => {
+            changeKeywords(item, oldKey, desiredNewKey)
+        })
+    }
+}
 
-    const [_schemaID, _setSchemaID] = useState(schemaID);
+const EditSchemaHeader = ({ schemaVersion, title, description, schemaID, openDialog, setOpenDialog }) => {
+
+    const [_schemaVersion, _setSchemaVersion] = useState(schemaVersion);
     const [_title, _setTitle] = useState(title);
     const [_description, _setDescription] = useState(description);
-    const [_schemaURI, _setSchemaURI] = useState(schemaURI);
+    const [_schemaID, _setSchemaID] = useState(schemaID);
     const { updateParent, convertedSchema } = useContext(FormContext);
 
+
+    const allowedSchemaDrafts = ["http://json-schema.org/draft-04/schema#", "http://json-schema.org/draft-05/schema#", "http://json-schema.org/draft-06/schema#", "http://json-schema.org/draft-07/schema#"]
 
 
 
     // save the change and update the UI
     const handleUpdateSchemaOnClick = () => {
 
-        if (_schemaURI === undefined) {
+        if (_schemaVersion === undefined) {
             delete convertedSchema["$schema"]
-        } else if (_schemaURI.replace(/\s+/g, '') === "") {
+        } else if (_schemaVersion.replace(/\s+/g, '') === "") {
             delete convertedSchema["$schema"]
         } else {
-            convertedSchema["$schema"] = _schemaURI
+            convertedSchema["$schema"] = _schemaVersion
         };
 
         if (_schemaID === undefined) {
             delete convertedSchema["id"]
+            delete convertedSchema["$id"]
         } else if (_schemaID.replace(/\s+/g, '') === "") {
             delete convertedSchema["id"]
+            delete convertedSchema["$id"]
         } else {
-            convertedSchema["id"] = _schemaID
+            if (_schemaVersion === "http://json-schema.org/draft-04/schema#") {
+                Object.keys(convertedSchema).forEach(keyword => {
+                    if (keyword === "$id") {
+                        let tempValue = convertedSchema[keyword]
+                        delete convertedSchema["$id"]
+                        convertedSchema["id"] = tempValue
+                    } else {
+                        // to maintain the order
+                        let tempValue = convertedSchema[keyword]
+                        delete convertedSchema[keyword]
+                        convertedSchema[keyword] = tempValue
+                        //
+                    }
+                })
+            } else {
+                Object.keys(convertedSchema).forEach(keyword => {
+                    if (keyword === "id") {
+                        let tempValue = convertedSchema[keyword]
+                        delete convertedSchema["id"]
+                        convertedSchema["$id"] = tempValue
+                    } else {
+                        // to maintain the order
+                        let tempValue = convertedSchema[keyword]
+                        delete convertedSchema[keyword]
+                        convertedSchema[keyword] = tempValue
+                        //
+                    }
+                })
+            }
         };
+
+        // change id/$id according to the selected schema version 
+        if (_schemaVersion !== "http://json-schema.org/draft-04/schema#") {
+            // change all id's to $id
+            changeKeywords(convertedSchema["properties"], "id", "$id")
+        } else {
+            //change all $id's to id
+            changeKeywords(convertedSchema["properties"], "$id", "id")
+        }
 
         if (_title === undefined) {
             delete convertedSchema["title"]
@@ -73,10 +145,10 @@ const EditSchemaHeader = ({ schemaID, title, description, schemaURI, openDialog,
                 return _setTitle(event.target.value)
             case 'description':
                 return _setDescription(event.target.value)
+            case 'version':
+                return _setSchemaVersion(event.target.value)
             case 'id':
                 return _setSchemaID(event.target.value)
-            case 'uri':
-                return _setSchemaURI(event.target.value)
             default:
                 return null;
         }
@@ -85,8 +157,8 @@ const EditSchemaHeader = ({ schemaID, title, description, schemaURI, openDialog,
     // cancel editing
     const handleCancelEdit = () => {
         _setDescription(description);
+        _setSchemaVersion(schemaVersion);
         _setSchemaID(schemaID);
-        _setSchemaURI(schemaURI);
         _setTitle(title);
         setOpenDialog(false)
     }
@@ -112,7 +184,16 @@ const EditSchemaHeader = ({ schemaID, title, description, schemaURI, openDialog,
                     <div>
                         <FormControl component="widget-type">
                             <FormLabel style={{ color: "#01579b" }} component="legend">Basic Descriptors:</FormLabel>
-                            <TextField disabled margin='normal' onChange={event => handleChangeUISchema(event, "id")} style={{ marginTop: "20px" }} defaultValue={schemaURI} variant="outlined" fullWidth={true} label={"$schema"} />
+                            <TextField select margin='normal' onChange={event => handleChangeUISchema(event, "version")} style={{ marginTop: "20px" }} defaultValue={schemaVersion} variant="outlined" fullWidth={true} label={"$schema"} SelectProps={{
+                                native: true,
+                            }}> {
+                                    allowedSchemaDrafts.map((content, index) => (
+                                        <option key={index} value={content}>
+                                            {content}
+                                        </option>
+                                    ))
+                                }
+                            </TextField>
                             <TextField margin='normal' onChange={event => handleChangeUISchema(event, "id")} style={{ marginTop: "10px" }} defaultValue={schemaID} variant="outlined" fullWidth={true} label={"Schema ID"} />
                             <TextField margin='normal' onChange={event => handleChangeUISchema(event, "title")} style={{ marginTop: "10px" }} defaultValue={title} variant="outlined" fullWidth={true} label={"Schema Title"} />
                             <TextField margin='normal' onChange={event => handleChangeUISchema(event, "description")} style={{ marginTop: "10px" }} defaultValue={description} variant="outlined" fullWidth={true} label={"Schema Description"} multiline rows={3} />

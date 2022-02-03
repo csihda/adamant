@@ -1,0 +1,14 @@
+Metadata-Version: 2.1
+Name: elabapy
+Version: 0.8.2
+Summary: elabftw API to manage experiments and items
+Home-page: https://github.com/elabftw/elabapy
+Author: Nicolas CARPi
+Author-email: nico-git@deltablot.email
+License: GPL v3
+Platform: UNKNOWN
+Requires-Dist: requests
+
+This library provides easy access to eLabFTW's API.
+
+
