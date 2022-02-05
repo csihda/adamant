@@ -181,7 +181,6 @@ const AnyOfKeyword = ({ pathFormData, path, field_required, field_uri, field_key
         handleDataInput(items2, pathFormData, "array");
         // conv. schema data
         handleConvertedDataInput(items2, path + ".value", "array")
-        handleConvertedDataInput(items2, path + ".prevValue", "array")
     }
 
     // handle delete object UI
@@ -302,7 +301,6 @@ const AnyOfKeyword = ({ pathFormData, path, field_required, field_uri, field_key
         handleDataInput(items2, pathFormData, "array");
         // conv. schema data
         handleConvertedDataInput(items2, path + ".value", "array")
-        handleConvertedDataInput(items2, path + ".prevValue", "array")
     }
 
     return (<>

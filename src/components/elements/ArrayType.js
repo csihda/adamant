@@ -114,7 +114,6 @@ const ArrayType = ({ maxItems, oSetDataInputItems, oDataInputItems, withinObject
                     handleDataInput(value, pathFormData, "array");
                     // conv. schema data
                     handleConvertedDataInput(value, path + ".value", "array")
-                    handleConvertedDataInput(value, path + ".prevValue", "array")
                 } else if (newFieldItems["type"] === "object") {
                     let arr2 = dataInputItems;
                     const items2 = Array.from(arr2);
@@ -125,7 +124,6 @@ const ArrayType = ({ maxItems, oSetDataInputItems, oDataInputItems, withinObject
                     handleDataInput(value, pathFormData, "array");
                     // conv. schema data
                     handleConvertedDataInput(value, path + ".value", "array")
-                    handleConvertedDataInput(value, path + ".prevValue", "array")
                 }
             }
         }
@@ -180,7 +178,6 @@ const ArrayType = ({ maxItems, oSetDataInputItems, oDataInputItems, withinObject
                             handleDataInput(value, pathFormData, "array");
                             // conv. schema data
                             handleConvertedDataInput(value, path + ".value", "array")
-                            handleConvertedDataInput(value, path + ".prevValue", "array")
                         } else {
                             // use existing schema if items is not empty
                             let items = [];
@@ -196,7 +193,6 @@ const ArrayType = ({ maxItems, oSetDataInputItems, oDataInputItems, withinObject
                             handleDataInput(value, pathFormData, "array");
                             // conv. schema data
                             handleConvertedDataInput(value, path + ".value", "array")
-                            handleConvertedDataInput(value, path + ".prevValue", "array")
                         }
                     }
                     else {
@@ -282,7 +278,6 @@ const ArrayType = ({ maxItems, oSetDataInputItems, oDataInputItems, withinObject
 
             // conv. schema data
             handleConvertedDataInput(items2, newPath + ".value", "array")
-            handleConvertedDataInput(items2, newPath + ".prevValue", "array")
             */
         }
         else {
@@ -305,7 +300,6 @@ const ArrayType = ({ maxItems, oSetDataInputItems, oDataInputItems, withinObject
 
             // conv. schema data
             handleConvertedDataInput(items2, path + ".value", "array")
-            handleConvertedDataInput(items2, path + ".prevValue", "array")
 
         }
     }
@@ -453,7 +447,6 @@ const ArrayType = ({ maxItems, oSetDataInputItems, oDataInputItems, withinObject
             handleDataInput(items2, pathFormData, "array");
             // conv. schema data
             handleConvertedDataInput(items2, path + ".value", "array")
-            handleConvertedDataInput(items2, path + ".prevValue", "array")
         }
     }
 

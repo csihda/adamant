@@ -117,7 +117,7 @@ const EditElement = ({ field_uri, enumerated, field_enumerate, field_required, f
         const set = require("set-value");
         set(convertedSchema, path, tempUISchema)
         // update the required value
-        const newConvertedSchema = updateRequired({ selectedType, path, requiredChecked, field_key, convertedSchema })
+        let newConvertedSchema = updateRequired({ selectedType, path, requiredChecked, field_key, convertedSchema })
         // update enum
         if (["string", "integer", "number"].includes(tempUISchema["type"]) & enumChecked) {
             let newList = enumList
@@ -126,9 +126,11 @@ const EditElement = ({ field_uri, enumerated, field_enumerate, field_required, f
                 case 'string':
                     if (Array.isArray(newList)) {
                         set(newConvertedSchema, path + ".enumerate", newList)
+                        console.log(newConvertedSchema)
                     } else {
                         newList = newList.replace(/\s*,\s*/g, ",")
                         set(newConvertedSchema, path + ".enumerate", newList.split(","))
+                        console.log("test")
                     }
                 case 'integer':
                     if (Array.isArray(newList)) {

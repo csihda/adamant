@@ -177,7 +177,6 @@ const NumberType = ({ field_uri, value, dataInputItems, setDataInputItems, withi
                 handleDataInput(items, newPathFormData, "number")
                 // conv. schema data
                 handleConvertedDataInput(items, newPath + ".value", "number")
-                handleConvertedDataInput(items, newPath + ".prevValue", "number")
             }
         } else {
             let value = inputValue;
@@ -188,7 +187,6 @@ const NumberType = ({ field_uri, value, dataInputItems, setDataInputItems, withi
                 handleDataInput(parseFloat(inputValue), pathFormData, "number")
                 // conv. schema data
                 handleConvertedDataInput(parseFloat(inputValue), path + ".value", "number")
-                handleConvertedDataInput(parseFloat(inputValue), path + ".prevValue", "number")
             }
         }
     }
@@ -242,14 +240,12 @@ const NumberType = ({ field_uri, value, dataInputItems, setDataInputItems, withi
                     handleDataInput(event, newPathFormData, "number")
                     // conv. schema data
                     handleConvertedDataInput(val, newPath + ".value", "number")
-                    handleConvertedDataInput(val, newPath + ".prevValue", "number")
                     // update field value
                     setInputValue(val)
                 }
             }
         }
         else {
-            //let latestVal = getValue(convertedSchema, path + ".prevValue")
             let val = (value !== undefined ? value : defaultValue !== undefined ? defaultValue : field_enumerate !== undefined ? field_enumerate[0] : "")
 
             // check if input is of type number
@@ -266,7 +262,6 @@ const NumberType = ({ field_uri, value, dataInputItems, setDataInputItems, withi
                 handleDataInput(val, pathFormData, "number")
                 // conv. schema data
                 handleConvertedDataInput(val, path + ".value", "number")
-                handleConvertedDataInput(val, path + ".prevValue", "number")
                 // update field value
                 setInputValue(val)
                 setInputError(false)

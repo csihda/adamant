@@ -117,13 +117,11 @@ const BooleanType = ({ field_uri, withinArray, withinObject, value, dataInputIte
             setInputValue(!value)
             handleDataInput(items, newPathFormData, "boolean")
             handleConvertedDataInput(items, newPath + ".value", "boolean")
-            handleConvertedDataInput(items, newPath + ".prevValue", "boolean")
 
         } else {
             setInputValue(!value)
             handleDataInput(!value, pathFormData, "boolean")
             handleConvertedDataInput(!value, path + ".value", "boolean")
-            handleConvertedDataInput(!value, path + ".prevValue", "boolean")
         }
     }
 
@@ -168,7 +166,6 @@ const BooleanType = ({ field_uri, withinArray, withinObject, value, dataInputIte
             let arr = dataInputItems;
             const items = Array.from(arr);
 
-            //let latestVal = getValue(convertedSchema, newPath + ".prevValue")
             //if (Array.isArray(latestVal)) { latestVal = latestVal[field_key] }
             let dataInputItemVal = "";
             if (items.length !== 0) {
@@ -201,12 +198,10 @@ const BooleanType = ({ field_uri, withinArray, withinObject, value, dataInputIte
 
                     handleDataInput(items, newPathFormData, "boolean")
                     handleConvertedDataInput(items, newPath + ".value", "boolean")
-                    handleConvertedDataInput(items, newPath + ".prevValue", "boolean")
                 }
             }
         }
         else {
-            //let latestVal = getValue(convertedSchema, path + ".prevValue")
             let val = (value !== undefined ? value : defaultValue !== undefined ? defaultValue : "")
             if (val === "") {
                 setInputValue(false)
@@ -225,7 +220,6 @@ const BooleanType = ({ field_uri, withinArray, withinObject, value, dataInputIte
 
                 handleDataInput(val, pathFormData, "boolean")
                 handleConvertedDataInput(val, path + ".value", "boolean")
-                handleConvertedDataInput(val, path + ".prevValue", "boolean")
             }
         }
     }, [value])

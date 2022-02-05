@@ -204,7 +204,6 @@ const FileUpload = ({ contentEncoding, withinObject, field_uri, dataInputItems, 
             let arr = dataInputItems;
             const items = Array.from(arr);
 
-            //let latestVal = getValue(convertedSchema, newPath + ".prevValue")
             //if (Array.isArray(latestVal)) { latestVal = latestVal[field_key] }
             let dataInputItemVal = "";
             if (items.length !== 0) {
@@ -236,7 +235,6 @@ const FileUpload = ({ contentEncoding, withinObject, field_uri, dataInputItems, 
             }
         }
         else {
-            //let latestVal = getValue(convertedSchema, path + ".prevValue")
             let val = (value !== undefined ? value : defaultValue !== undefined ? defaultValue : "")
             if (val === "") {
                 setDataUrl("")
@@ -288,11 +286,9 @@ const FileUpload = ({ contentEncoding, withinObject, field_uri, dataInputItems, 
             setDataInputItems(items);
             handleDataInput(items, newPathFormData, "boolean")
             handleConvertedDataInput(items, newPath + ".value", "boolean")
-            handleConvertedDataInput(items, newPath + ".prevValue", "boolean")
         } else {
             handleDataInput("", pathFormData, "boolean")
             handleConvertedDataInput("", path + ".value", "boolean")
-            handleConvertedDataInput("", path + ".prevValue", "boolean")
         }
     }
 

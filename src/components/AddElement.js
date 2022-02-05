@@ -116,7 +116,7 @@ const AddElement = ({ enumerated, field_enumerate, field_required, defaultSchema
             path = "properties." + (properties.length - 1).toString()
             let field_key = fieldkey
             // update the required value
-            const newConvertedSchema = updateRequired({ selectedType, path, requiredChecked, field_key, convertedSchema })
+            let newConvertedSchema = updateRequired({ selectedType, path, requiredChecked, field_key, convertedSchema })
             // update enum
             if (tempUISchema["type"] === "string" & enumChecked) {
                 let newList = enumList
