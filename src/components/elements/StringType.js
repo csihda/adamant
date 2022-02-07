@@ -35,7 +35,7 @@ const StringType = ({ withinObject, field_uri, dataInputItems, setDataInputItems
     const [openDialog, setOpenDialog] = useState(false);
     const { updateParent, convertedSchema, handleDataInput, handleDataDelete, handleConvertedDataInput, SEMSelectedDevice, setSEMSelectedDevice } = useContext(FormContext);
     const [fieldValue, setFieldValue] = useState(defaultValue !== undefined ? defaultValue : value !== undefined ? value : "")
-    //const [fieldEnumerate, setFieldEnumerate] = useState(field_enumerate)
+    const [fieldEnumerate, setFieldEnumerate] = useState()
     //const [required, setRequired] = useState(false)
     const classes = useStyles();
 
@@ -43,15 +43,14 @@ const StringType = ({ withinObject, field_uri, dataInputItems, setDataInputItems
         setFieldValue(event.target.value)
 
         // this is for SEM form only!
-        //if (field_key === "sem_device") {
-        //    setSEMSelectedDevice(event.target.value)
-        //}
+        if (field_key === "semDevice") {
+            setSEMSelectedDevice(event.target.value)
+        }
     }
 
     // for SEM only
-    /*
     useEffect(() => {
-        if (field_key === "sem_operator") {
+        if (field_key === "semOperator") {
             if (SEMSelectedDevice === "") {
                 setFieldEnumerate(field_enumerate)
                 setFieldValue("")
@@ -63,14 +62,13 @@ const StringType = ({ withinObject, field_uri, dataInputItems, setDataInputItems
                 }
                 catch (error) {
                     console.log(error)
-                    setFieldEnumerate(field_enumerate)
                     setFieldValue("")
+                    setFieldEnumerate(field_enumerate)
                 }
             }
         }
 
-    }, [SEMSelectedDevice])
-    */
+    }, [SEMSelectedDevice, field_enumerate, field_key])
 
     // clean up empty strings in the paths
     path = path.split(".")
@@ -248,36 +246,7 @@ const StringType = ({ withinObject, field_uri, dataInputItems, setDataInputItems
 
     }, [value])
 
-    if (field_enumerate === undefined) {
-        return (
-            <>
-                <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
-                    <TextField
-                        multiline
-                        onKeyDown={(e) => {
-                            if (e.key === "Enter" && !(e.shiftKey)) {
-                                e.preventDefault();
-                                //setFieldValue(e.target.value);
-                            }
-                        }}
-                        onBlur={(event) => handleOnBlur(event, pathFormData, "string")} required={required} helperText={field_description} onChange={(event) => { handleOnChange(event) }} value={fieldValue} fullWidth={true} className={classes.heading} id={field_key} label={field_label} variant="outlined" />
-                    {edit ? <>
-                        <Tooltip placement="top" title={`Edit field "${field_label}"`}>
-                            <IconButton onClick={() => setOpenDialog(true)} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}>
-                                <EditIcon fontSize="small" color="primary" />
-                            </IconButton>
-                        </Tooltip>
-                        <Tooltip placement="top" title={`Remove field "${field_label}"`}>
-                            <IconButton onClick={() => handleDeleteElement()} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}>
-                                <DeleteIcon fontSize="small" color="secondary" />
-                            </IconButton>
-                        </Tooltip>
-                    </> : null}
-                </div>
-                {openDialog ? <EditElement field_uri={field_uri} pathFormData={pathFormData} defaultValue={defaultValue} enumerated={enumerated} field_enumerate={field_enumerate} field_key={field_key} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
-            </>
-        )
-    } else {
+    if (fieldEnumerate !== undefined) {
         return (
             <>
                 <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
@@ -299,7 +268,7 @@ const StringType = ({ withinObject, field_uri, dataInputItems, setDataInputItems
                         value={fieldValue === undefined ? defaultValue : fieldValue}
                     >
                         {
-                            field_enumerate.map((content, index) => (
+                            fieldEnumerate.map((content, index) => (
                                 <option key={index} value={content}>
                                     {content}
                                 </option>
@@ -319,9 +288,85 @@ const StringType = ({ withinObject, field_uri, dataInputItems, setDataInputItems
                         </Tooltip>
                     </> : null}
                 </div >
-                {openDialog ? <EditElement field_uri={field_uri} pathFormData={pathFormData} enumerated={enumerated} defaultValue={defaultValue} field_enumerate={field_enumerate} field_key={field_key} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
+                {openDialog ? <EditElement field_uri={field_uri} pathFormData={pathFormData} enumerated={true} defaultValue={defaultValue} field_enumerate={fieldEnumerate} field_key={field_key} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
             </>
         )
+    } else {
+        if (field_enumerate === undefined) {
+            return (
+                <>
+                    <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
+                        <TextField
+                            multiline
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter" && !(e.shiftKey)) {
+                                    e.preventDefault();
+                                    //setFieldValue(e.target.value);
+                                }
+                            }}
+                            onBlur={(event) => handleOnBlur(event, pathFormData, "string")} required={required} helperText={field_description} onChange={(event) => { handleOnChange(event) }} value={fieldValue} fullWidth={true} className={classes.heading} id={field_key} label={field_label} variant="outlined" />
+                        {edit ? <>
+                            <Tooltip placement="top" title={`Edit field "${field_label}"`}>
+                                <IconButton onClick={() => setOpenDialog(true)} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}>
+                                    <EditIcon fontSize="small" color="primary" />
+                                </IconButton>
+                            </Tooltip>
+                            <Tooltip placement="top" title={`Remove field "${field_label}"`}>
+                                <IconButton onClick={() => handleDeleteElement()} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}>
+                                    <DeleteIcon fontSize="small" color="secondary" />
+                                </IconButton>
+                            </Tooltip>
+                        </> : null}
+                    </div>
+                    {openDialog ? <EditElement field_uri={field_uri} pathFormData={pathFormData} defaultValue={defaultValue} enumerated={enumerated} field_enumerate={field_enumerate} field_key={field_key} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
+                </>
+            )
+        } else {
+            return (
+                <>
+                    <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
+                        < TextField
+                            onBlur={(event) => handleOnBlur(event, pathFormData, "string")}
+                            onChange={event => handleOnChange(event)}
+                            required={required}
+                            select
+                            fullWidth={true}
+                            className={classes.heading}
+                            id={field_key}
+                            label={field_label}
+                            variant="outlined"
+                            SelectProps={{
+                                native: true,
+                            }
+                            }
+                            helperText={field_description}
+                            value={fieldValue === undefined ? defaultValue : fieldValue}
+                        >
+                            {
+                                field_enumerate.map((content, index) => (
+                                    <option key={index} value={content}>
+                                        {content}
+                                    </option>
+                                ))
+                            }
+                        </TextField >
+                        {edit ? <>
+                            <Tooltip placement="top" title={`Edit field "${field_label}"`}>
+                                <IconButton onClick={() => setOpenDialog(true)} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}>
+                                    <EditIcon fontSize="small" color="primary" />
+                                </IconButton>
+                            </Tooltip>
+                            <Tooltip placement="top" title={`Remove field "${field_label}"`}>
+                                <IconButton onClick={() => handleDeleteElement()} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}>
+                                    <DeleteIcon fontSize="small" color="secondary" />
+                                </IconButton>
+                            </Tooltip>
+                        </> : null}
+                    </div >
+                    {openDialog ? <EditElement field_uri={field_uri} pathFormData={pathFormData} enumerated={enumerated} defaultValue={defaultValue} field_enumerate={field_enumerate} field_key={field_key} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
+                </>
+            )
+        }
     }
 };
 

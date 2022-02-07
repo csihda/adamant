@@ -118,7 +118,7 @@ const EditElement = ({ field_uri, enumerated, field_enumerate, field_required, f
         set(convertedSchema, path, tempUISchema)
         // update the required value
         let newConvertedSchema = updateRequired({ selectedType, path, requiredChecked, field_key, convertedSchema })
-        console.log("stuff:", newConvertedSchema)
+        //console.log("stuff:", newConvertedSchema)
         // update enum
         if (["string", "integer", "number"].includes(tempUISchema["type"]) & enumChecked) {
             let newList = enumList
@@ -133,7 +133,7 @@ const EditElement = ({ field_uri, enumerated, field_enumerate, field_required, f
                         return item.toString();
                     })
                     set(newConvertedSchema, path + ".enumerate", parsed.filter(x => x.toString() !== "NaN"))
-                    console.log("stuff:", newConvertedSchema)
+                    //console.log("stuff:", newConvertedSchema)
                 }
             } else if (tempUISchema["type"] === "number") {
                 if (Array.isArray(newList)) {
@@ -148,7 +148,7 @@ const EditElement = ({ field_uri, enumerated, field_enumerate, field_required, f
                     })
                     set(newConvertedSchema, path + ".enumerate", parsed.filter(x => x.toString() !== "NaN"))
                 }
-            } else if (tempUISchema["type"] === "number") {
+            } else if (tempUISchema["type"] === "integer") {
                 if (Array.isArray(newList)) {
                     let parsed = newList.map(function (item) {
                         return parseInt(item, 10);
@@ -268,6 +268,11 @@ const EditElement = ({ field_uri, enumerated, field_enumerate, field_required, f
                                     <TextField margin="normal" onChange={event => handleChangeUISchema(event, "$id")} style={{ marginTop: "10px" }} defaultValue={field_uri} variant="outlined" fullWidth={true} label={"Field ID/URI"} helperText='ID or URI for this field if available.' />
                                     <TextField margin="normal" onChange={event => handleChangeUISchema(event, "title")} style={{ marginTop: "10px" }} defaultValue={tempUISchema["title"]} variant="outlined" fullWidth={true} label={"Field Title"} helperText='Label or title of the field. For a field that requires a unit, the unit can be placed within a square bracket, e,g., "Chamber Pressure [Pa]".' />
                                     <TextField margin="normal" onChange={event => handleChangeUISchema(event, "description")} style={{ marginTop: "10px" }} defaultValue={tempUISchema["description"]} variant="outlined" fullWidth={true} label={"Field Description"} multiline rows={3} helperText='A detailed description of the field, how the input should be formated, etc.' />
+                                    <div style={{ paddingTop: "10px", paddingBottom: "10px" }}>
+                                        <FormControl component="validation-related">
+                                            <FormLabel style={{ color: "#01579b" }} component="legend">Validation Related:</FormLabel>
+                                        </FormControl>
+                                    </div>
                                     <TextField
                                         margin="normal"
                                         helperText='Data type of the field input.'
@@ -297,10 +302,7 @@ const EditElement = ({ field_uri, enumerated, field_enumerate, field_required, f
                                             </div>
                                         </> : null}
                                 </FormControl>
-                                <div style={{ paddingTop: "10px", paddingBottom: "10px" }}>
-                                    <FormControl component="validation-related">
-                                        <FormLabel style={{ color: "#01579b" }} component="legend">Validation Related:</FormLabel>
-                                    </FormControl>
+                                <div style={{ paddingBottom: "10px" }}>
                                     <FormGroup>
                                         {selectedType === "array" ?
                                             <FormControlLabel control={<Checkbox onChange={() => handleCheckBoxOnChange()} checked={requiredChecked} />} label="Required. Checked means the field must be filled." />
