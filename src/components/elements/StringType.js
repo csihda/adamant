@@ -48,7 +48,7 @@ const StringType = ({ withinObject, field_uri, dataInputItems, setDataInputItems
         }
     }
 
-    // for SEM only
+    // for SEM only - currently hardcoded
     useEffect(() => {
         if (field_key === "semOperator") {
             if (SEMSelectedDevice === "") {

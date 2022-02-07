@@ -20,6 +20,7 @@ import { Tooltip } from "@material-ui/core";
 import { useDropzone } from "react-dropzone";
 import { ToastContainer, toast } from "react-toastify";
 import fillForm from "./utils/fillForm";
+import EditElement from "./EditElement";
 
 const checkFormDataValidity = (file) => {
     let validity = false
@@ -191,7 +192,7 @@ const FormRenderer = ({ revertAllChanges, schema, edit, originalSchema }) => {
                 </Droppable>
             </DragDropContext>
         </div>
-        {openDialogAddElement ? <AddElement openDialog={openDialogAddElement} setOpenDialog={setOpenDialogAddElement} defaultSchema={defaultSchema} schemaTitle={title} /> : null}
+        {openDialogAddElement ? <EditElement editOrAdd={"add"} openDialog={openDialogAddElement} setOpenDialog={setOpenDialogAddElement} defaultSchema={defaultSchema} schemaTitle={title} /> : null}
         {openDialog ? <EditSchemaHeader schemaID={id !== undefined ? id : $id} title={title} description={description} schemaVersion={$schema} openDialog={openDialog} setOpenDialog={setOpenDialog} /> : null}
         {openSchemaViewer ? <JSONSchemaViewerDialog
             openSchemaViewer={openSchemaViewer}

@@ -19,6 +19,8 @@ import { FormGroup } from '@material-ui/core';
 import updateRequired from './utils/updateRequired';
 import { IconButton } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
+import AddIcon from "@material-ui/icons/AddBox";
+import getValue from './utils/getValue';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -35,24 +37,42 @@ const style = {
     paddingBottom: "10px",
 }
 
-const EditElement = ({ field_uri, enumerated, field_enumerate, field_required, field_key, UISchema, path, pathFormData, openDialog, setOpenDialog, defaultValue }) => {
+const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_required, field_key, UISchema, path, pathFormData, openDialog, setOpenDialog, defaultValue }) => {
 
-    const [selectedType, setSelectedType] = useState(UISchema["type"])
-    const [title, setTitle] = useState(UISchema["title"])
-    const [fieldkey, setFieldKey] = useState(UISchema["fieldKey"])
-    const [fieldUri, setFieldUri] = useState(UISchema["$id"])
-    const [description, setDescription] = useState(UISchema["description"])
-    const [defValue, setDefValue] = useState(defaultValue)
+    const [selectedType, setSelectedType] = useState(UISchema !== undefined ? UISchema["type"] : "string")
+    const [title, setTitle] = useState(UISchema !== undefined ? UISchema["title"] : "")
+    const [fieldkey, setFieldKey] = useState(UISchema !== undefined ? UISchema["fieldKey"] : "")
+    const [fieldUri, setFieldUri] = useState(UISchema !== undefined ? UISchema["$id"] : "")
+    const [description, setDescription] = useState(UISchema !== undefined ? UISchema["description"] : "")
+    const [defValue, setDefValue] = useState(defaultValue !== undefined ? defaultValue : "")
     const { updateParent, convertedSchema, updateFormDataId } = useContext(FormContext);
     const [requiredChecked, setRequiredChecked] = useState(field_required === undefined ? false : field_required)
     const [enumChecked, setEnumChecked] = useState(enumerated === undefined ? false : enumerated)
     const [enumList, setEnumList] = useState(field_enumerate === undefined ? [] : field_enumerate);
 
-    let tempUISchema = JSON.parse(JSON.stringify(UISchema))
+    let tempUISchema
+    if (editOrAdd !== undefined && editOrAdd === "add") {
+        UISchema = {
+            "type": "string",
+            "fieldKey": "",
+            "title": "",
+            "description": ""
+        }
+        tempUISchema = {
+            "type": "string",
+            "fieldKey": "",
+            "title": "",
+            "description": ""
+        }
+    } else {
+        tempUISchema = JSON.parse(JSON.stringify(UISchema))
+    }
 
     let notImplemented = false;
-    if (!["string", "number", "integer", "object", "array", "boolean"].includes(UISchema["type"])) {
-        notImplemented = true;
+    if (UISchema !== undefined) {
+        if (!["string", "number", "integer", "object", "array", "boolean"].includes(UISchema["type"])) {
+            notImplemented = true;
+        }
     }
 
 
@@ -65,117 +85,210 @@ const EditElement = ({ field_uri, enumerated, field_enumerate, field_required, f
 
     // save the change and update the UI
     const handleUpdateSchemaOnClick = () => {
-        // update default value
-        if (defValue === undefined & defaultValue === undefined) {
-            // do nothing
-        } else if (defValue.toString().replace(/\s+/g, '') === "" & defaultValue === undefined) {
-            // do nothing
-        } else if (selectedType === "boolean" & defValue.toString().replace(/\s+/g, '') === "" & defaultValue === undefined) {
-            // do nothing
-        } else if (selectedType === "boolean" & defValue.toString().replace(/\s+/g, '') !== "" & defaultValue !== undefined) {
-            tempUISchema["defaultValue"] = (defValue === "true")
-        } else if (defValue.toString().replace(/\s+/g, '') === "") {
-            delete tempUISchema["defaultValue"]
-        }
-        else {
-            tempUISchema["defaultValue"] = defValue
-        };
-
-        // check if fieldkey already exist
-        let existed = checkIfFieldIDExist(convertedSchema, path, fieldkey)
-        if (UISchema["fieldKey"] !== fieldkey) {
-            if (existed) {
+        // do this if add
+        if (editOrAdd === "add") {
+            // check if fieldkey already exist
+            if (checkIfFieldIDExist(convertedSchema, path, fieldkey)) {
                 alert("Field ID already exists!")
                 return
             }
-        }
 
-        if (fieldkey === undefined | fieldkey.replace(/\s+/g, '') === "") {
-            alert("Field ID must be defined!")
-            return
-        }
-
-        tempUISchema["fieldKey"] = fieldkey;
-        if (fieldUri !== undefined) {
-            if (fieldUri.toString().replace(/\s+/g, '') !== "") {
-                tempUISchema["$id"] = fieldUri
-            }
-        }
-        tempUISchema["type"] = selectedType;
-        if (title !== undefined) { tempUISchema["title"] = title }
-        if (description !== undefined) { tempUISchema["description"] = description }
-
-        if (tempUISchema["type"] === "object" & tempUISchema["properties"] === undefined) {
-            tempUISchema["properties"] = []
-        }
-        if (tempUISchema["type"] === "array" & tempUISchema["items"] === undefined) {
-            tempUISchema["items"] = {}
-        }
-        if (!["string", "integer", "number"].includes(tempUISchema["type"])) {
-            setEnumChecked(false);
-        }
-        const set = require("set-value");
-        set(convertedSchema, path, tempUISchema)
-        // update the required value
-        let newConvertedSchema = updateRequired({ selectedType, path, requiredChecked, field_key, convertedSchema })
-        //console.log("stuff:", newConvertedSchema)
-        // update enum
-        if (["string", "integer", "number"].includes(tempUISchema["type"]) & enumChecked) {
-            let newList = enumList
-
-            // use if else statements instead of switch case statements for this case
-            if (tempUISchema["type"] === "string") {
-                if (Array.isArray(newList)) {
-                    set(newConvertedSchema, path + ".enumerate", newList)
-                } else {
-                    newList = newList.replace(/\s*,\s*/g, ",")
-                    let parsed = newList.split(",").map(function (item) {
-                        return item.toString();
-                    })
-                    set(newConvertedSchema, path + ".enumerate", parsed.filter(x => x.toString() !== "NaN"))
-                    //console.log("stuff:", newConvertedSchema)
-                }
-            } else if (tempUISchema["type"] === "number") {
-                if (Array.isArray(newList)) {
-                    let parsed = newList.map(function (item) {
-                        return parseFloat(item, 10);
-                    })
-                    set(newConvertedSchema, path + ".enumerate", parsed.filter(x => x.toString() !== "NaN"))
-                } else {
-                    newList = newList.replace(/\s*,\s*/g, ",")
-                    let parsed = newList.split(",").map(function (item) {
-                        return parseFloat(item, 10);
-                    })
-                    set(newConvertedSchema, path + ".enumerate", parsed.filter(x => x.toString() !== "NaN"))
-                }
-            } else if (tempUISchema["type"] === "integer") {
-                if (Array.isArray(newList)) {
-                    let parsed = newList.map(function (item) {
-                        return parseInt(item, 10);
-                    })
-                    set(newConvertedSchema, path + ".enumerate", parsed.filter(x => x.toString() !== "NaN"))
-                } else {
-                    newList = newList.replace(/\s*,\s*/g, ",")
-                    let parsed = newList.split(",").map(function (item) {
-                        return parseInt(item, 10);
-                    })
-                    set(newConvertedSchema, path + ".enumerate", parsed.filter(x => x.toString() !== "NaN"))
+            tempUISchema["fieldKey"] = fieldkey;
+            if (fieldUri !== undefined) {
+                if (fieldUri.toString().replace(/\s+/g, '') !== "") {
+                    tempUISchema["$id"] = fieldUri
                 }
             }
+            tempUISchema["type"] = selectedType;
+            if (title !== undefined) { tempUISchema["title"] = title }
+            if (description !== undefined) { tempUISchema["description"] = description }
+
+            if (fieldkey === undefined) {
+                alert("Field ID must be defined!")
+                return
+            }
+
+            if (typeof (fieldkey) === "string" & fieldkey.replace(/\s+/g, '') === "") {
+                alert("Field ID must be defined!")
+                return
+            }
+
+            if (tempUISchema["type"] === "object") {
+                tempUISchema["properties"] = []
+            }
+            if (tempUISchema["type"] === "array") {
+                tempUISchema["items"] = {}
+            }
+            if (tempUISchema["type"] !== "string") {
+                setEnumChecked(false);
+            }
+
+            if (path !== undefined) {
+                const set = require("set-value");
+
+                let properties = getValue(convertedSchema, path)["properties"]
+                properties.push(tempUISchema)
+                set(convertedSchema, path + ".properties", properties)
+
+                // create a new path to the new element
+                path = path + ".properties." + (properties.length - 1).toString()
+                let field_key = fieldkey
+                // update the required value
+                const newConvertedSchema = updateRequired({ selectedType, path, requiredChecked, field_key, convertedSchema })
+                // update enum
+                if (tempUISchema["type"] === "string" & enumChecked) {
+                    let newList = enumList
+                    if (Array.isArray(newList)) {
+                        set(newConvertedSchema, path + ".enumerate", newList)
+                    } else {
+                        newList = newList.replace(/\s*,\s*/g, ",")
+                        set(newConvertedSchema, path + ".enumerate", newList.split(","))
+                    }
+
+                }
+
+                updateParent(newConvertedSchema)
+                setOpenDialog(false)
+            } else {
+                const set = require("set-value");
+                let properties = convertedSchema["properties"]
+                properties.push(tempUISchema)
+                convertedSchema["properties"] = properties
+
+                // create a new path to the new element
+                path = "properties." + (properties.length - 1).toString()
+                let field_key = fieldkey
+                // update the required value
+                let newConvertedSchema = updateRequired({ selectedType, path, requiredChecked, field_key, convertedSchema })
+                // update enum
+                if (tempUISchema["type"] === "string" & enumChecked) {
+                    let newList = enumList
+                    if (Array.isArray(newList)) {
+                        set(newConvertedSchema, path + ".enumerate", newList)
+                    } else {
+                        newList = newList.replace(/\s*,\s*/g, ",")
+                        set(newConvertedSchema, path + ".enumerate", newList.split(","))
+                    }
+
+                }
+
+                updateParent(newConvertedSchema)
+                setOpenDialog(false)
+            }
         }
-        // update main component
-        updateParent(newConvertedSchema)
-        setOpenDialog(false)
+        else {
+            // and do this if edit
 
-        //* update form data if fieldkey change
-        // update pathFormData with new fieldkey
-        updateFormDataId(field_key, fieldkey, pathFormData, defaultValue)
+            // update default value
+            if (defValue === undefined & defaultValue === undefined) {
+                // do nothing
+            } else if (defValue.toString().replace(/\s+/g, '') === "" & defaultValue === undefined) {
+                // do nothing
+            } else if (selectedType === "boolean" & defValue.toString().replace(/\s+/g, '') === "" & defaultValue === undefined) {
+                // do nothing
+            } else if (selectedType === "boolean" & defValue.toString().replace(/\s+/g, '') !== "" & defaultValue !== undefined) {
+                tempUISchema["defaultValue"] = (defValue === "true")
+            } else if (defValue.toString().replace(/\s+/g, '') === "") {
+                delete tempUISchema["defaultValue"]
+            }
+            else {
+                tempUISchema["defaultValue"] = defValue
+            };
 
+            // check if fieldkey already exist
+            let existed = checkIfFieldIDExist(convertedSchema, path, fieldkey)
+            if (UISchema["fieldKey"] !== fieldkey) {
+                if (existed) {
+                    alert("Field Keyword already exists!")
+                    return
+                }
+            }
+
+            if (fieldkey === undefined | fieldkey.replace(/\s+/g, '') === "") {
+                alert("Field Keyword must be defined!")
+                return
+            }
+
+            tempUISchema["fieldKey"] = fieldkey;
+            if (fieldUri !== undefined) {
+                if (fieldUri.toString().replace(/\s+/g, '') !== "") {
+                    tempUISchema["$id"] = fieldUri
+                }
+            }
+            tempUISchema["type"] = selectedType;
+            if (title !== undefined) { tempUISchema["title"] = title }
+            if (description !== undefined) { tempUISchema["description"] = description }
+
+            if (tempUISchema["type"] === "object" & tempUISchema["properties"] === undefined) {
+                tempUISchema["properties"] = []
+            }
+            if (tempUISchema["type"] === "array" & tempUISchema["items"] === undefined) {
+                tempUISchema["items"] = {}
+            }
+            if (!["string", "integer", "number"].includes(tempUISchema["type"])) {
+                setEnumChecked(false);
+            }
+            const set = require("set-value");
+            set(convertedSchema, path, tempUISchema)
+            // update the required value
+            let newConvertedSchema = updateRequired({ selectedType, path, requiredChecked, field_key, convertedSchema })
+            //console.log("stuff:", newConvertedSchema)
+            // update enum
+            if (["string", "integer", "number"].includes(tempUISchema["type"]) & enumChecked) {
+                let newList = enumList
+
+                // use if else statements instead of switch case statements for this case
+                if (tempUISchema["type"] === "string") {
+                    if (Array.isArray(newList)) {
+                        set(newConvertedSchema, path + ".enumerate", newList)
+                    } else {
+                        newList = newList.replace(/\s*,\s*/g, ",")
+                        let parsed = newList.split(",").map(function (item) {
+                            return item.toString();
+                        })
+                        set(newConvertedSchema, path + ".enumerate", parsed.filter(x => x.toString() !== "NaN"))
+                        //console.log("stuff:", newConvertedSchema)
+                    }
+                } else if (tempUISchema["type"] === "number") {
+                    if (Array.isArray(newList)) {
+                        let parsed = newList.map(function (item) {
+                            return parseFloat(item, 10);
+                        })
+                        set(newConvertedSchema, path + ".enumerate", parsed.filter(x => x.toString() !== "NaN"))
+                    } else {
+                        newList = newList.replace(/\s*,\s*/g, ",")
+                        let parsed = newList.split(",").map(function (item) {
+                            return parseFloat(item, 10);
+                        })
+                        set(newConvertedSchema, path + ".enumerate", parsed.filter(x => x.toString() !== "NaN"))
+                    }
+                } else if (tempUISchema["type"] === "integer") {
+                    if (Array.isArray(newList)) {
+                        let parsed = newList.map(function (item) {
+                            return parseInt(item, 10);
+                        })
+                        set(newConvertedSchema, path + ".enumerate", parsed.filter(x => x.toString() !== "NaN"))
+                    } else {
+                        newList = newList.replace(/\s*,\s*/g, ",")
+                        let parsed = newList.split(",").map(function (item) {
+                            return parseInt(item, 10);
+                        })
+                        set(newConvertedSchema, path + ".enumerate", parsed.filter(x => x.toString() !== "NaN"))
+                    }
+                }
+            }
+            // update main component
+            updateParent(newConvertedSchema)
+            setOpenDialog(false)
+
+            //* update form data if fieldkey change
+            // update pathFormData with new fieldkey
+            updateFormDataId(field_key, fieldkey, pathFormData, defaultValue)
+        }
     }
 
     // change descriptor value
     const handleChangeUISchema = (event, keyword) => {
-
         switch (keyword) {
             case 'type':
                 return setSelectedType(event.target.value)
@@ -183,7 +296,7 @@ const EditElement = ({ field_uri, enumerated, field_enumerate, field_required, f
                 return setTitle(event.target.value)
             case 'description':
                 return setDescription(event.target.value)
-            case 'fieldkey':
+            case 'fieldKey':
                 return setFieldKey(event.target.value.replace(/ /g, "_"))
             case 'defaultValue':
                 return setDefValue(event.target.value)
@@ -196,11 +309,16 @@ const EditElement = ({ field_uri, enumerated, field_enumerate, field_required, f
 
     // cancel editing
     const handleCancelEdit = () => {
-        tempUISchema = JSON.parse(JSON.stringify(UISchema))
-        setOpenDialog(false)
-        setEnumList(field_enumerate)
-        setDefValue(defaultValue)
-        setSelectedType(UISchema["type"])
+        if (editOrAdd !== undefined && editOrAdd === "add") {
+            setOpenDialog(false)
+        }
+        else {
+            tempUISchema = JSON.parse(JSON.stringify(UISchema))
+            setOpenDialog(false)
+            setEnumList(field_enumerate)
+            setDefValue(defaultValue)
+            setSelectedType(UISchema["type"])
+        }
     }
 
     // handle change required check box
@@ -223,9 +341,9 @@ const EditElement = ({ field_uri, enumerated, field_enumerate, field_required, f
                 >
                     <DialogTitle id="alert-dialog-title">
                         <div style={{ display: "inline-flex", width: "100%", verticalAlign: "middle" }}>
-                            <EditIcon fontSize="large" color="primary" style={{ alignSelf: "center" }} />
+                            {editOrAdd === "add" ? <AddIcon fontSize="large" color="primary" style={{ alignSelf: "center" }} /> : <EditIcon fontSize="large" color="primary" style={{ alignSelf: "center" }} />}
                             <div style={{ width: "100%", alignSelf: "center" }}>
-                                Edit "{tempUISchema["title"]}"
+                                {editOrAdd === "add" ? "Add element in" : "Edit"} "{tempUISchema["title"]}"
                             </div>
                             <IconButton onClick={() => handleCancelEdit()}><CloseIcon fontSize="large" color="secondary" /></IconButton>
                         </div>
@@ -239,7 +357,7 @@ const EditElement = ({ field_uri, enumerated, field_enumerate, field_required, f
                             Cancel
                         </Button>
                         <Button disabled onClick={() => handleUpdateSchemaOnClick()} color="primary" autoFocus>
-                            Save
+                            {editOrAdd === "add" ? "Add" : "Save"}
                         </Button>
                     </DialogActions>
                 </Dialog>
@@ -251,9 +369,9 @@ const EditElement = ({ field_uri, enumerated, field_enumerate, field_required, f
                 >
                     <DialogTitle id="alert-dialog-title">
                         <div style={{ display: "inline-flex", width: "100%", verticalAlign: "middle" }}>
-                            <EditIcon fontSize="large" color="primary" style={{ alignSelf: "center" }} />
+                            {editOrAdd === "add" ? <AddIcon fontSize="large" color="primary" style={{ alignSelf: "center" }} /> : <EditIcon fontSize="large" color="primary" style={{ alignSelf: "center" }} />}
                             <div style={{ width: "100%", alignSelf: "center" }}>
-                                Edit "{tempUISchema["title"]}"
+                                {editOrAdd === "add" ? "Add element in" : "Edit"} "{tempUISchema["title"]}"
                             </div>
                             <IconButton onClick={() => handleCancelEdit()}><CloseIcon fontSize="large" color="secondary" /></IconButton>
                         </div>
@@ -264,7 +382,7 @@ const EditElement = ({ field_uri, enumerated, field_enumerate, field_required, f
                             <div>
                                 <FormControl component="widget-type">
                                     <FormLabel style={{ color: "#01579b" }} component="legend">Basic Descriptors:</FormLabel>
-                                    <TextField margin="normal" required onChange={event => handleChangeUISchema(event, "fieldKey")} style={{ marginTop: "20px" }} defaultValue={field_key} variant="outlined" fullWidth={true} label={"Field Key"} helperText='A unique json key for this field. Usually short and no spaces (use "_" instead). Spaces are replaced automatically with "_" upon saving.' />
+                                    <TextField margin="normal" required onChange={event => handleChangeUISchema(event, "fieldKey")} style={{ marginTop: "20px" }} defaultValue={field_key} variant="outlined" fullWidth={true} label={"Field Keyword"} helperText='A unique json keyword for this field. Usually short and no spaces (use "_" instead). Spaces are replaced automatically with "_" upon saving.' />
                                     <TextField margin="normal" onChange={event => handleChangeUISchema(event, "$id")} style={{ marginTop: "10px" }} defaultValue={field_uri} variant="outlined" fullWidth={true} label={"Field ID/URI"} helperText='ID or URI for this field if available.' />
                                     <TextField margin="normal" onChange={event => handleChangeUISchema(event, "title")} style={{ marginTop: "10px" }} defaultValue={tempUISchema["title"]} variant="outlined" fullWidth={true} label={"Field Title"} helperText='Label or title of the field. For a field that requires a unit, the unit can be placed within a square bracket, e,g., "Chamber Pressure [Pa]".' />
                                     <TextField margin="normal" onChange={event => handleChangeUISchema(event, "description")} style={{ marginTop: "10px" }} defaultValue={tempUISchema["description"]} variant="outlined" fullWidth={true} label={"Field Description"} multiline rows={3} helperText='A detailed description of the field, how the input should be formated, etc.' />
@@ -347,7 +465,7 @@ const EditElement = ({ field_uri, enumerated, field_enumerate, field_required, f
                             Cancel
                         </Button>
                         <Button onClick={() => handleUpdateSchemaOnClick()} color="primary" autoFocus>
-                            Save
+                            {editOrAdd === "add" ? "Add" : "Save"}
                         </Button>
                     </DialogActions>
                 </Dialog>}

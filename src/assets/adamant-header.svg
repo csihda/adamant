@@ -23,14 +23,14 @@
      inkscape:pagecheckerboard="0"
      inkscape:document-units="mm"
      showgrid="false"
-     inkscape:zoom="1.4467452"
-     inkscape:cx="493.86719"
-     inkscape:cy="62.554207"
-     inkscape:window-width="2400"
-     inkscape:window-height="1271"
-     inkscape:window-x="2391"
-     inkscape:window-y="-9"
-     inkscape:window-maximized="1"
+     inkscape:zoom="1.0230034"
+     inkscape:cx="390.5168"
+     inkscape:cy="193.54775"
+     inkscape:window-width="1482"
+     inkscape:window-height="1030"
+     inkscape:window-x="3245"
+     inkscape:window-y="188"
+     inkscape:window-maximized="0"
      inkscape:current-layer="layer1" />
   <defs
      id="defs2">
@@ -305,11 +305,11 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(15.72783,-146.12254)">
+     transform="translate(-65.837441,-55.413177)">
     <g
        inkscape:label="Layer 1"
        id="layer1-0"
-       transform="translate(7.2730987,92.640221)">
+       transform="translate(88.83837,1.9308619)">
       <rect
          style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke-width:0.266252"
          id="rect436"
@@ -395,11 +395,13 @@
              id="g123"
              clip-path="url(#clipPath127-5)">
             <text
-               transform="matrix(1,0,0,-1,291.05,387.5)"
+               transform="scale(1,-1)"
                style="font-variant:normal;font-weight:600;font-size:14.04px;font-family:'Yu Gothic UI';-inkscape-font-specification:YuGothicUI-Semibold;writing-mode:lr-tb;fill:#4f4f4f;fill-opacity:1;fill-rule:nonzero;stroke:none"
-               id="text131"><tspan
-                 x="0 9.4629602 13.18356 18.743401 26.381161 36.93924 47.70792 51.56892 57.620159 64.218964 72.334084 79.789322 92.22876 99.55764 103.41864 108.22032 116.6022 121.797 134.23643 138.09744 143.29224 150.70535 158.90472 167.37083 174.82608 180.02087 187.41995 192.61476 196.53192 203.86079 212.01804 220.52628 224.38728 231.84251 240.30864 244.02924 249.09769 257.47955"
-                 y="0"
+               id="text131"
+               x="324.04999"
+               y="-393.5"><tspan
+                 x="324.04999 333.51297 337.23355 342.7934 350.43115 360.98923 371.75793 375.61893 381.67017 388.26895 396.38409 403.83932 416.27875 423.60764 427.46863 432.27032 440.65219 445.84698 458.28644 462.14743 467.34222 474.75534 482.95471 491.42084 498.87607 504.07086 511.46997 516.66479 520.58191 527.91083 536.06805 544.57629 548.43726 555.89252 564.35864 568.07922 573.14771 581.52954"
+                 y="-393.5"
                  sodipodi:role="line"
                  id="tspan129">A JSON schema form renderer and editor</tspan></text>
           </g>
