@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 //import { makeStyles } from "@material-ui/core/styles";
 import { useDropzone } from "react-dropzone";
-import QPTDATLogo from "../assets/header-image.png";
+//import QPTDATLogo from "../assets/header-image.png";
 import FormRenderer from "../components/FormRenderer";
 import Button from "@material-ui/core/Button";
 import { TextField } from "@material-ui/core";
@@ -36,6 +36,7 @@ import table2DescListTable from "../components/utils/table2DescListTable";
 import FormReviewBeforeSubmit from "../components/FormReviewBeforeSubmit";
 import createDescriptionListWithoutStyling from "../components/utils/createDescriptionListWithoutStyling";
 import changeKeywords from "../components/utils/changeKeywords";
+import QPTDATLogo from "../assets/adamant-header.svg";
 
 // function that receive the schema and convert it to Form/json data blueprint
 // also to already put the default value to this blueprint
@@ -289,8 +290,9 @@ const AdamantMain = () => {
 
       if (convertedSchema["title"] === "SEM Request Form") {
         try {
-          let SEMlogo = require("../assets/sem-header-picture.png");
-          setHeaderImage(SEMlogo["default"]);
+          //let SEMlogo = require("../assets/sem-header-picture.png");
+          //setHeaderImage(SEMlogo["default"]);
+          setHeaderImage(QPTDATLogo);
           setEditMode(true);
         } catch (error) {
           console.log(error);
@@ -342,8 +344,9 @@ const AdamantMain = () => {
 
           if (obj["title"] === "SEM Request Form") {
             try {
-              let SEMlogo = require("../assets/sem-header-picture.png");
-              setHeaderImage(SEMlogo["default"]);
+              //let SEMlogo = require("../assets/sem-header-picture.png");
+              //setHeaderImage(SEMlogo["default"]);
+              setHeaderImage(QPTDATLogo);
               setEditMode(true);
             } catch (error) {
               console.log(error);
@@ -450,8 +453,9 @@ const AdamantMain = () => {
 
     if (obj["title"] === "SEM Request Form") {
       try {
-        let SEMlogo = require("../assets/sem-header-picture.png");
-        setHeaderImage(SEMlogo["default"]);
+        //let SEMlogo = require("../assets/sem-header-picture.png");
+        //setHeaderImage(SEMlogo["default"]);
+        setHeaderImage(QPTDATLogo);
         setEditMode(true);
       } catch (error) {
         console.log(error);
@@ -1122,7 +1126,7 @@ const AdamantMain = () => {
       >
         <div style={{ paddingBottom: "5px" }}>
           <img
-            style={{ width: "100%", borderRadius: "5px" }}
+            style={{ height: "150px", borderRadius: "5px" }}
             alt="header"
             src={HeaderImage !== undefined ? HeaderImage : QPTDATLogo}
           />

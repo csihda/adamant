@@ -117,13 +117,14 @@ const EditElement = ({ field_uri, enumerated, field_enumerate, field_required, f
         const set = require("set-value");
         set(convertedSchema, path, tempUISchema)
         // update the required value
-        let newConvertedSchema = updateRequired({ selectedType, path, requiredChecked, field_key,  convertedSchema})
+        let newConvertedSchema = updateRequired({ selectedType, path, requiredChecked, field_key, convertedSchema })
         console.log("stuff:", newConvertedSchema)
         // update enum
         if (["string", "integer", "number"].includes(tempUISchema["type"]) & enumChecked) {
             let newList = enumList
 
-            if (tempUISchema["type"] === "string"){
+            // use if else statements instead of switch case statements for this case
+            if (tempUISchema["type"] === "string") {
                 if (Array.isArray(newList)) {
                     set(newConvertedSchema, path + ".enumerate", newList)
                 } else {
@@ -134,7 +135,7 @@ const EditElement = ({ field_uri, enumerated, field_enumerate, field_required, f
                     set(newConvertedSchema, path + ".enumerate", parsed.filter(x => x.toString() !== "NaN"))
                     console.log("stuff:", newConvertedSchema)
                 }
-            } else if (tempUISchema["type"] === "number"){
+            } else if (tempUISchema["type"] === "number") {
                 if (Array.isArray(newList)) {
                     let parsed = newList.map(function (item) {
                         return parseFloat(item, 10);
@@ -147,7 +148,7 @@ const EditElement = ({ field_uri, enumerated, field_enumerate, field_required, f
                     })
                     set(newConvertedSchema, path + ".enumerate", parsed.filter(x => x.toString() !== "NaN"))
                 }
-            } else if (tempUISchema["type"] === "number"){
+            } else if (tempUISchema["type"] === "number") {
                 if (Array.isArray(newList)) {
                     let parsed = newList.map(function (item) {
                         return parseInt(item, 10);
