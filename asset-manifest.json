@@ -1,25 +1,25 @@
 {
   "files": {
-    "main.css": "/static/css/main.9ec9fc5a.chunk.css",
-    "main.js": "/static/js/main.66b4af26.chunk.js",
-    "main.js.map": "/static/js/main.66b4af26.chunk.js.map",
-    "runtime-main.js": "/static/js/runtime-main.47d69199.js",
-    "runtime-main.js.map": "/static/js/runtime-main.47d69199.js.map",
-    "static/css/2.f4c56af9.chunk.css": "/static/css/2.f4c56af9.chunk.css",
-    "static/js/2.6662c918.chunk.js": "/static/js/2.6662c918.chunk.js",
-    "static/js/2.6662c918.chunk.js.map": "/static/js/2.6662c918.chunk.js.map",
-    "index.html": "/index.html",
-    "static/css/2.f4c56af9.chunk.css.map": "/static/css/2.f4c56af9.chunk.css.map",
-    "static/css/main.9ec9fc5a.chunk.css.map": "/static/css/main.9ec9fc5a.chunk.css.map",
-    "static/js/2.6662c918.chunk.js.LICENSE.txt": "/static/js/2.6662c918.chunk.js.LICENSE.txt",
-    "static/media/adamant-header.822895f5.svg": "/static/media/adamant-header.822895f5.svg",
-    "static/media/json-file-svgrepo-com.805d27de.svg": "/static/media/json-file-svgrepo-com.805d27de.svg"
+    "main.css": "/adamant/static/css/main.9ec9fc5a.chunk.css",
+    "main.js": "/adamant/static/js/main.501de1e0.chunk.js",
+    "main.js.map": "/adamant/static/js/main.501de1e0.chunk.js.map",
+    "runtime-main.js": "/adamant/static/js/runtime-main.f1fe3efa.js",
+    "runtime-main.js.map": "/adamant/static/js/runtime-main.f1fe3efa.js.map",
+    "static/css/2.f4c56af9.chunk.css": "/adamant/static/css/2.f4c56af9.chunk.css",
+    "static/js/2.6662c918.chunk.js": "/adamant/static/js/2.6662c918.chunk.js",
+    "static/js/2.6662c918.chunk.js.map": "/adamant/static/js/2.6662c918.chunk.js.map",
+    "index.html": "/adamant/index.html",
+    "static/css/2.f4c56af9.chunk.css.map": "/adamant/static/css/2.f4c56af9.chunk.css.map",
+    "static/css/main.9ec9fc5a.chunk.css.map": "/adamant/static/css/main.9ec9fc5a.chunk.css.map",
+    "static/js/2.6662c918.chunk.js.LICENSE.txt": "/adamant/static/js/2.6662c918.chunk.js.LICENSE.txt",
+    "static/media/adamant-header.822895f5.svg": "/adamant/static/media/adamant-header.822895f5.svg",
+    "static/media/json-file-svgrepo-com.805d27de.svg": "/adamant/static/media/json-file-svgrepo-com.805d27de.svg"
   },
   "entrypoints": [
-    "static/js/runtime-main.47d69199.js",
+    "static/js/runtime-main.f1fe3efa.js",
     "static/css/2.f4c56af9.chunk.css",
     "static/js/2.6662c918.chunk.js",
     "static/css/main.9ec9fc5a.chunk.css",
-    "static/js/main.66b4af26.chunk.js"
+    "static/js/main.501de1e0.chunk.js"
   ]
 }
