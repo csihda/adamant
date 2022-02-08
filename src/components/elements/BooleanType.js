@@ -30,7 +30,7 @@ const style = {
 const BooleanType = ({ field_uri, withinArray, withinObject, value, dataInputItems, setDataInputItems, path, pathFormData, field_required, field_index, edit, field_key, field_label, field_description, defaultValue }) => {
     const [descriptionText, setDescriptionText] = useState(field_description !== undefined ? field_description : "");
     const [openDialog, setOpenDialog] = useState(false);
-    const { updateParent, convertedSchema, handleDataInput, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
+    const { updateParent, convertedSchema, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
     const [inputValue, setInputValue] = useState(value !== undefined ? value : typeof (defaultValue) === "boolean" ? defaultValue : false);
     const [inputError, setInputError] = useState(false)
     const classes = useStyles();
@@ -115,12 +115,10 @@ const BooleanType = ({ field_uri, withinArray, withinObject, value, dataInputIte
             setDataInputItems(items);
 
             setInputValue(!value)
-            handleDataInput(items, newPathFormData, "boolean")
             handleConvertedDataInput(items, newPath + ".value", "boolean")
 
         } else {
             setInputValue(!value)
-            handleDataInput(!value, pathFormData, "boolean")
             handleConvertedDataInput(!value, path + ".value", "boolean")
         }
     }
@@ -142,12 +140,10 @@ const BooleanType = ({ field_uri, withinArray, withinObject, value, dataInputIte
             setDataInputItems(items);
 
             setInputValue(value)
-            handleDataInput(items, newPathFormData, "boolean")
             handleConvertedDataInput(items, newPath + ".value", "boolean")
 
         } else {
             setInputValue(value)
-            handleDataInput(value, pathFormData, "boolean")
             handleConvertedDataInput(value, path + ".value", "boolean")
         }
     }
@@ -196,7 +192,6 @@ const BooleanType = ({ field_uri, withinArray, withinObject, value, dataInputIte
                     setInputError(false)
                     setDescriptionText(field_description !== undefined ? field_description : "")
 
-                    handleDataInput(items, newPathFormData, "boolean")
                     handleConvertedDataInput(items, newPath + ".value", "boolean")
                 }
             }
@@ -218,7 +213,6 @@ const BooleanType = ({ field_uri, withinArray, withinObject, value, dataInputIte
                 setInputError(false)
                 setDescriptionText(field_description !== undefined ? field_description : "")
 
-                handleDataInput(val, pathFormData, "boolean")
                 handleConvertedDataInput(val, path + ".value", "boolean")
             }
         }

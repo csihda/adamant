@@ -17,9 +17,30 @@ const convData2FormData = (convDataProp) => {
                     );
                 }
                 if (item === "value") {
-                    let value = someObject[tempKey]["value"]
-                    delete someObject[tempKey]
-                    someObject[tempKey] = value
+                    if (Array.isArray(someObject[tempKey]["value"])) {
+                        if (typeof someObject[tempKey]["value"][0] === 'object') {
+                            someObject[tempKey]["value"].forEach((item, index) => {
+                                Object.keys(item).forEach(key => {
+                                    if (key === "adamant-ui-specific-expand") {
+                                        delete someObject[tempKey]["value"][index]["adamant-ui-specific-expand"]
+                                    }
+                                })
+                            })
+
+                            let value = someObject[tempKey]["value"]
+                            delete someObject[tempKey]
+                            someObject[tempKey] = value
+
+                        } else {
+                            let value = someObject[tempKey]["value"]
+                            delete someObject[tempKey]
+                            someObject[tempKey] = value
+                        }
+                    } else {
+                        let value = someObject[tempKey]["value"]
+                        delete someObject[tempKey]
+                        someObject[tempKey] = value
+                    }
                 }
             });
         }

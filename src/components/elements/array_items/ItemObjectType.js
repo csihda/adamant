@@ -28,7 +28,7 @@ const style = {
 
 
 const ItemObjectType = ({ value, path, dataInputItems, setDataInputItems, field_label, pathFormData, field_required, field_items, field_type, edit, index, field_key, handleDeleteArrayItem }) => {
-    const [expand, setExpand] = useState(dataInputItems[index]["expand"] === undefined ? true : dataInputItems[index]["expand"]); // set to "true" for normally open accordion
+    const [expand, setExpand] = useState(dataInputItems[index]["adamant-ui-specific-expand"] === undefined ? true : dataInputItems[index]["adamant-ui-specific-expand"]); // set to "true" for normally open accordion
     let objectIndex = index;
     let field_properties = field_items["properties"]
     let withinArray = true;
@@ -41,7 +41,7 @@ const ItemObjectType = ({ value, path, dataInputItems, setDataInputItems, field_
         setExpand(!value)
 
         let newVal = [...dataInputItems]
-        newVal[index]["expand"] = !value
+        newVal[index]["adamant-ui-specific-expand"] = !value
 
         setDataInputItems(newVal)
     };

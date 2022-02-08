@@ -534,7 +534,7 @@ const AdamantMain = () => {
     setJsonData(formData);
   };
 
-  // handle data input on blur
+  /*/ handle data input on blur
   const handleDataInput = (event, path, type) => {
     let jData = { ...jsonData };
     let value;
@@ -551,7 +551,7 @@ const AdamantMain = () => {
     //console.log("Current form data    (jData):", jData);
     setJsonData(jData);
   };
-  //
+  /*/
 
   // handle data input on blur to convertedSchema
   const handleConvertedDataInput = (event, path, type) => {
@@ -1086,7 +1086,6 @@ const AdamantMain = () => {
         value={{
           updateParent,
           convertedSchema,
-          handleDataInput,
           updateFormDataId,
           handleDataDelete,
           handleConvertedDataInput,

@@ -33,7 +33,7 @@ const StringType = ({ withinObject, field_uri, dataInputItems, setDataInputItems
 
     //const [descriptionText, setDescriptionText] = useState(field_description);
     const [openDialog, setOpenDialog] = useState(false);
-    const { updateParent, convertedSchema, handleDataInput, handleDataDelete, handleConvertedDataInput, SEMSelectedDevice, setSEMSelectedDevice } = useContext(FormContext);
+    const { updateParent, convertedSchema, handleDataDelete, handleConvertedDataInput, SEMSelectedDevice, setSEMSelectedDevice } = useContext(FormContext);
     const [fieldValue, setFieldValue] = useState(defaultValue !== undefined ? defaultValue : value !== undefined ? value : "")
     const [fieldEnumerate, setFieldEnumerate] = useState()
     //const [required, setRequired] = useState(false)
@@ -164,14 +164,12 @@ const StringType = ({ withinObject, field_uri, dataInputItems, setDataInputItems
                         items
                 }
             }
-            handleDataInput(value, newPathFormData, "string")
             // conv. schema data
             handleConvertedDataInput(value, newPath + ".value", "string")
 
             // update field value
             setFieldValue(event.target.value)
         } else {
-            handleDataInput(event, pathFormData, type)
             // conv. schema data
             handleConvertedDataInput(event, path + ".value", "string")
             // update field value
@@ -217,7 +215,6 @@ const StringType = ({ withinObject, field_uri, dataInputItems, setDataInputItems
                                 items
                         }
                     }
-                    handleDataInput(event, newPathFormData, "string")
                     // conv. schema data
                     handleConvertedDataInput(event, newPath + ".value", "string")
                     // update field value
@@ -236,7 +233,6 @@ const StringType = ({ withinObject, field_uri, dataInputItems, setDataInputItems
             if (val === "") {
                 setFieldValue(val)
             } else {
-                handleDataInput(event, pathFormData, "string")
                 // conv. schema data
                 handleConvertedDataInput(event, path + ".value", "string")
                 // update field value

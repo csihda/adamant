@@ -33,7 +33,7 @@ const style = {
 const IntegerType = ({ minimum, maximum, field_uri, value, dataInputItems, setDataInputItems, withinArray, withinObject, defaultValue, path, pathFormData, field_required, field_index, edit, field_key, field_label, field_description, field_enumerate }) => {
     const [descriptionText, setDescriptionText] = useState(field_description !== undefined ? field_description : "");
     const [openDialog, setOpenDialog] = useState(false);
-    const { updateParent, convertedSchema, handleDataInput, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
+    const { updateParent, convertedSchema, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
     const [inputValue, setInputValue] = useState(defaultValue !== undefined & value === undefined ? defaultValue : value === undefined ? "" : value)// useState(defaultValue !== undefined ? defaultValue : value);
     const [inputError, setInputError] = useState(false)
     const classes = useStyles();
@@ -178,8 +178,6 @@ const IntegerType = ({ minimum, maximum, field_uri, value, dataInputItems, setDa
                 items[field_index][field_key] = value;
                 setDataInputItems(items);
 
-                // store to the main form data
-                handleDataInput(items, newPathFormData, "integer")
                 // conv. schema data
                 handleConvertedDataInput(items, newPath + ".value", "integer")
             }
@@ -188,8 +186,6 @@ const IntegerType = ({ minimum, maximum, field_uri, value, dataInputItems, setDa
             value = parseInt(value)
             if (!isNaN(value)) {
                 setInputValue(value)
-                // store in jData
-                handleDataInput(parseInt(inputValue), pathFormData, "integer")
                 // conv. schema data
                 handleConvertedDataInput(parseInt(inputValue), path + ".value", "integer")
             }
@@ -242,7 +238,6 @@ const IntegerType = ({ minimum, maximum, field_uri, value, dataInputItems, setDa
                                 items
                         }
                     }
-                    handleDataInput(event, newPathFormData, "integer")
                     // conv. schema data
                     handleConvertedDataInput(val, newPath + ".value", "integer")
                     // update field value
@@ -264,7 +259,6 @@ const IntegerType = ({ minimum, maximum, field_uri, value, dataInputItems, setDa
                 setInputError(true)
                 setDescriptionText("Invalid input type. This field only accepts input of an integer type.")
             } else {
-                handleDataInput(val, pathFormData, "integer")
                 // conv. schema data
                 handleConvertedDataInput(val, path + ".value", "integer")
                 // update field value

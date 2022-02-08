@@ -29,7 +29,7 @@ const style = {
 const ItemIntegerType = ({ field_label, oDataInputItems, oSetDataInputItems, arrayFieldKey, withinObject, value, path, pathFormData, dataInputItems, setDataInputItems, edit, index, field_key, handleDeleteArrayItem }) => {
     const classes = useStyles();
     const [inputValue, setInputValue] = useState(value === undefined ? "" : value[index] === undefined ? "" : value[index]);
-    const { handleDataInput, handleConvertedDataInput } = useContext(FormContext);
+    const { handleConvertedDataInput } = useContext(FormContext);
 
     let unit = getUnit(field_label)
     if (unit[0] === '%') {
@@ -77,9 +77,6 @@ const ItemIntegerType = ({ field_label, oDataInputItems, oSetDataInputItems, arr
                 newPath.pop()
                 newPath = newPath.join(".")
 
-                // store to form data
-                //handleDataInput(items, pathFormData, "array")
-
                 // conv. schema data
                 handleConvertedDataInput(items2, newPath + ".value", "array")
             }
@@ -95,9 +92,6 @@ const ItemIntegerType = ({ field_label, oDataInputItems, oSetDataInputItems, arr
                 const items = Array.from(arr);
                 items[index] = value;
                 setDataInputItems(items);
-
-                // store to the main form data
-                handleDataInput(items, pathFormData, "array")
 
                 // conv. schema data
                 handleConvertedDataInput(items, path + ".value", "array")

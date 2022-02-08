@@ -62,7 +62,7 @@ const validateAcceptedFile = (fileType, acceptedTypes) => {
 const FileUpload = ({ contentEncoding, withinObject, field_uri, dataInputItems, setDataInputItems, withinArray, path, pathFormData, field_required, field_index, edit, field_key, field_label, field_description, field_enumerate, defaultValue, value }) => {
 
     const [openDialog, setOpenDialog] = useState(false);
-    const { updateParent, convertedSchema, handleDataInput, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
+    const { updateParent, convertedSchema, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
     const [inputError, setInputError] = useState(false)
     const [descriptionText, setDescriptionText] = useState(field_description !== undefined ? field_description : "");
     const [dataUrl, setDataUrl] = useState(defaultValue !== undefined ? defaultValue : value !== undefined ? value : "")
@@ -163,12 +163,10 @@ const FileUpload = ({ contentEncoding, withinObject, field_uri, dataInputItems, 
                         const items = Array.from(arr);
                         items[field_index][field_key] = binaryStr;
                         setDataInputItems(items);
-                        handleDataInput(items, newPathFormData, "boolean")
                         handleConvertedDataInput(items, newPath + ".value", "boolean")
 
                         setRenderingInProgress(false)
                     } else {
-                        handleDataInput(binaryStr, pathFormData, "boolean")
                         handleConvertedDataInput(binaryStr, path + ".value", "boolean")
 
                         setRenderingInProgress(false)
@@ -229,7 +227,6 @@ const FileUpload = ({ contentEncoding, withinObject, field_uri, dataInputItems, 
                     setInputError(false)
                     setDescriptionText(field_description !== undefined ? field_description : "")
 
-                    handleDataInput(items, newPathFormData, "boolean")
                     handleConvertedDataInput(items, newPath + ".value", "boolean")
                 }
             }
@@ -246,7 +243,6 @@ const FileUpload = ({ contentEncoding, withinObject, field_uri, dataInputItems, 
                 setInputError(false)
                 setDescriptionText(field_description !== undefined ? field_description : "")
 
-                handleDataInput(val, pathFormData, "boolean")
                 handleConvertedDataInput(val, path + ".value", "boolean")
             }
         }
@@ -284,10 +280,8 @@ const FileUpload = ({ contentEncoding, withinObject, field_uri, dataInputItems, 
             const items = Array.from(arr);
             items[field_index][field_key] = undefined;
             setDataInputItems(items);
-            handleDataInput(items, newPathFormData, "boolean")
             handleConvertedDataInput(items, newPath + ".value", "boolean")
         } else {
-            handleDataInput("", pathFormData, "boolean")
             handleConvertedDataInput("", path + ".value", "boolean")
         }
     }

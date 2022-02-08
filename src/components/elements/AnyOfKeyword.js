@@ -76,7 +76,7 @@ const AccordionSummary = withStyles({
 const AnyOfKeyword = ({ pathFormData, path, field_required, field_uri, field_key, field_index, edit, field_label, field_description, field_prefixItems, anyOf_list }) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [expand, setExpand] = useState(true); // set to "true" for normally open accordion
-    const { updateParent, convertedSchema, handleDataInput, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
+    const { updateParent, convertedSchema, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
     const [field_items, setField_items] = useState(Array.isArray(anyOf_list) & anyOf_list[0]["type"] === "array" ? anyOf_list[0]["items"] : anyOf_list[0])
     const [globalIndex, setGlobalIndex] = useState(0);
     const [inputItems, setInputItems] = useState([]);
@@ -177,8 +177,6 @@ const AnyOfKeyword = ({ pathFormData, path, field_required, field_uri, field_key
         items2.splice(result.destination.index, 0, reorderedItem2);
         setDataInputItems(items2)
 
-        // for form data
-        handleDataInput(items2, pathFormData, "array");
         // conv. schema data
         handleConvertedDataInput(items2, path + ".value", "array")
     }
@@ -297,8 +295,6 @@ const AnyOfKeyword = ({ pathFormData, path, field_required, field_uri, field_key
         items2.splice(index, 1);
         setDataInputItems(items2)
 
-        // for form data
-        handleDataInput(items2, pathFormData, "array");
         // conv. schema data
         handleConvertedDataInput(items2, path + ".value", "array")
     }

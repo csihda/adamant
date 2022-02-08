@@ -25,7 +25,7 @@ const style = {
 
 const ItemStringType = ({ oDataInputItems, oSetDataInputItems, arrayFieldKey, withinObject, value, pathFormData, dataInputItems, setDataInputItems, path, edit, index, field_key, handleDeleteArrayItem }) => {
     const classes = useStyles();
-    const { handleDataInput, handleConvertedDataInput } = useContext(FormContext)
+    const { handleConvertedDataInput } = useContext(FormContext)
     const [fieldValue, setFieldValue] = useState(value === undefined ? undefined : value[index])
 
 
@@ -49,9 +49,6 @@ const ItemStringType = ({ oDataInputItems, oSetDataInputItems, arrayFieldKey, wi
             newPath.pop()
             newPath = newPath.join(".")
 
-            // store to form data
-            //handleDataInput(items, pathFormData, "array")
-
             // conv. schema data
             handleConvertedDataInput(items2, newPath + ".value", "array")
 
@@ -61,9 +58,6 @@ const ItemStringType = ({ oDataInputItems, oSetDataInputItems, arrayFieldKey, wi
             items[index] = event.target.value;
             setDataInputItems(items);
             setFieldValue(event.target.value)
-
-            // store to form data
-            handleDataInput(items, pathFormData, "array")
 
             // conv. schema data
             handleConvertedDataInput(items, path + ".value", "array")

@@ -45,7 +45,7 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
     const [requiredChecked, setRequiredChecked] = useState(field_required === undefined ? false : field_required)
     const [enumChecked, setEnumChecked] = useState(enumerated === undefined ? false : enumerated)
     const [enumList, setEnumList] = useState(field_enumerate === undefined ? [] : field_enumerate);
-    const [arrayItemType, setArrayItemType] = useState(UISchema !== undefined ? UISchema["items"] : "string")
+    const [arrayItemType, setArrayItemType] = useState("string")
     const [arrayMinMaxItem, setArrayMinMaxItem] = useState(["None", "None"])
     const [numberMinMaxValue, setNumberMinMaxValue] = useState(["None", "None"])
     const [arrayMinMaxHelperText, setArrayMinMaxHelperText] = useState("Set the minimum and maximum values of the items allowed for this array field.")
@@ -71,6 +71,9 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                 }
                 if (UISchema["maxItems"] !== undefined) {
                     value[1] = UISchema["maxItems"]
+                }
+                if (UISchema["items"] === undefined) {
+                    UISchema["items"] = { "type": "string" }
                 }
                 setArrayMinMaxItem(value)
             }
@@ -702,6 +705,16 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                                                 <TextField onFocus={() => setNumberMinMaxValueHelpertext("Set the minimum and maximum values of this field.")} value={numberMinMaxValue[1]} onBlur={(event) => { handleMinMaxValueOnBlur(event, "max-" + selectedType) }} onChange={event => handleMinMaxValue(event, "max-" + selectedType)} margin="normal" fullWidth variant='outlined' label="Maximum Value" />
                                             </div>
                                             <div style={{ color: "gray", fontSize: "12px", paddingLeft: "11px", paddingRight: "11px" }}>{numberMinMaxValueHelperText}</div>
+                                        </>
+                                        : null}
+                                    {selectedType === "string" ?
+                                        <>
+                                            <div style={{ display: "flex" }}>
+                                                <TextField margin="normal" fullWidth variant='outlined' label="Minimum Character Number" />
+                                                <div style={{ paddingLeft: "10px" }}></div>
+                                                <TextField margin="normal" fullWidth variant='outlined' label="Maximum Character Number" />
+                                            </div>
+                                            <div style={{ color: "gray", fontSize: "12px", paddingLeft: "11px", paddingRight: "11px" }}>Minimum and maximum allowed number of characters for this field.</div>
                                         </>
                                         : null}
                                     {["string", "integer", "number"].includes(selectedType) ?

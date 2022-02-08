@@ -71,7 +71,7 @@ const AccordionSummary = withStyles({
 const ArrayType = ({ maxItems, minItems, oSetDataInputItems, oDataInputItems, withinObject, withinArray, field_uri, value, pathFormData, path, pathSchema, field_required, field_key, field_index, edit, field_label, field_description, field_items, field_prefixItems }) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [expand, setExpand] = useState(true);
-    const { updateParent, convertedSchema, handleDataInput, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
+    const { updateParent, convertedSchema, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
     const [inputItems, setInputItems] = useState([]);
     const [dataInputItems, setDataInputItems] = useState([]);
     // clean up empty strings in the paths
@@ -110,8 +110,6 @@ const ArrayType = ({ maxItems, minItems, oSetDataInputItems, oDataInputItems, wi
                     items2.push("");
                     setDataInputItems(items2)
 
-                    // for form data
-                    handleDataInput(value, pathFormData, "array");
                     // conv. schema data
                     handleConvertedDataInput(value, path + ".value", "array")
                 } else if (newFieldItems["type"] === "object") {
@@ -120,8 +118,6 @@ const ArrayType = ({ maxItems, minItems, oSetDataInputItems, oDataInputItems, wi
                     items2.push({});
                     setDataInputItems(items2)
 
-                    // for form data
-                    handleDataInput(value, pathFormData, "array");
                     // conv. schema data
                     handleConvertedDataInput(value, path + ".value", "array")
                 }
@@ -174,8 +170,6 @@ const ArrayType = ({ maxItems, minItems, oSetDataInputItems, oDataInputItems, wi
                             setInputItems(items);
                             setDataInputItems(value);
 
-                            // for form data
-                            handleDataInput(value, pathFormData, "array");
                             // conv. schema data
                             handleConvertedDataInput(value, path + ".value", "array")
                         } else {
@@ -189,8 +183,6 @@ const ArrayType = ({ maxItems, minItems, oSetDataInputItems, oDataInputItems, wi
                             setInputItems(items);
                             setDataInputItems(value);
 
-                            // for form data
-                            handleDataInput(value, pathFormData, "array");
                             // conv. schema data
                             handleConvertedDataInput(value, path + ".value", "array")
                         }
@@ -294,9 +286,6 @@ const ArrayType = ({ maxItems, minItems, oSetDataInputItems, oDataInputItems, wi
             const [reorderedItem2] = items2.splice(result.source.index, 1);
             items2.splice(result.destination.index, 0, reorderedItem2);
             setDataInputItems(items2)
-
-            // for form data
-            handleDataInput(items2, pathFormData, "array");
 
             // conv. schema data
             handleConvertedDataInput(items2, path + ".value", "array")
@@ -445,8 +434,6 @@ const ArrayType = ({ maxItems, minItems, oSetDataInputItems, oDataInputItems, wi
             items2.splice(index, 1);
             setDataInputItems(items2)
 
-            // for form data
-            handleDataInput(items2, pathFormData, "array");
             // conv. schema data
             handleConvertedDataInput(items2, path + ".value", "array")
         }
