@@ -18,12 +18,9 @@ import deleteKeySchema from "../components/utils/deleteKeySchema";
 import validateAgainstSchema from "../components/utils/validateAgainstSchema";
 import CreateELabFTWExperimentDialog from "../components/CreateELabFTWExperimentDialog";
 import { useEffect } from "react";
-import createDescriptionList from "../components/utils/createDescriptionList";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import convData2DescList from "../components/utils/convData2DescList";
-import preProcessB4DescList from "../components/utils/preProcessB4DescList";
-import nicelySort from "../components/utils/nicelySort";
+import prepareDataForDescList from "../components/utils/prepareDataForDescList";
 import array2objectAnyOf from "../components/utils/array2objectAnyOf";
 import SchemaOne from "../schemas/plasma-mds.json";
 import SchemaTwo from "../schemas/pak-schema.json";
@@ -31,12 +28,10 @@ import SchemaThree from "../schemas/appj-schema.json";
 import SchemaFour from "../schemas/all-types.json";
 import fillValueWithEmptyString from "../components/utils/fillValueWithEmptyString";
 import convData2FormData from "../components/utils/convData2FormData";
-import getTableCandidates from "../components/utils/getTableCandidates";
-import table2DescListTable from "../components/utils/table2DescListTable";
 import FormReviewBeforeSubmit from "../components/FormReviewBeforeSubmit";
-import createDescriptionListWithoutStyling from "../components/utils/createDescriptionListWithoutStyling";
 import changeKeywords from "../components/utils/changeKeywords";
-import QPTDATLogo from "../assets/adamant-header.svg";
+import QPTDATLogo from "../assets/adamant-header-3.svg";
+import createDescriptionListFromJSON from "../components/utils/createDescriptionListFromJSON";
 
 // function that receive the schema and convert it to Form/json data blueprint
 // also to already put the default value to this blueprint
@@ -69,17 +64,6 @@ const createFormDataBlueprint = (schemaProperties) => {
 
   return newObject;
 };
-
-/*
-// function to remove empty artributes
-const removeEmpty = (obj) => {
-  return Object.fromEntries(
-    Object.entries(obj)
-      .filter(([_, v]) => (v !== null) & (v !== "") & (v !== {}) & (v !== []))
-      .map(([k, v]) => [k, v === Object(v) ? removeEmpty(v) : v])
-  );
-};
-*/
 
 // function to remove empty artributes
 const removeEmpty = (obj) => {
@@ -156,15 +140,22 @@ const AdamantMain = () => {
       success: function () {
         console.log("Connection to server is established. Online mode");
         setOnlineMode(true);
-        toast.success("Connection to server is established. Online mode.", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: false,
-          progress: undefined,
-        });
+        toast.success(
+          <>
+            <div>
+              <strong>Connection to server is established.</strong>
+            </div>
+          </>,
+          {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: false,
+            progress: undefined,
+          }
+        );
       },
       error: function () {
         console.log(
@@ -183,7 +174,12 @@ const AdamantMain = () => {
         setSchemaList([null, SchemaOne, SchemaTwo, SchemaThree, SchemaFour]);
 
         toast.warning(
-          "Unable to establish connection to server. Offline mode. Submit feature is disabled.",
+          <>
+            <div>
+              <strong>Unable to establish connection to server.</strong>
+            </div>
+            <div>Submit feature is disabled.</div>
+          </>,
           {
             position: "top-right",
             autoClose: 5000,
@@ -430,8 +426,8 @@ const AdamantMain = () => {
 
     let schemaBlueprint = {
       $schema: "http://json-schema.org/draft-04/schema#",
-      properties: {},
       type: "object",
+      properties: {},
     };
     const obj = JSON.parse(JSON.stringify(schemaBlueprint));
 
@@ -764,8 +760,8 @@ const AdamantMain = () => {
     // use this if we want to show all fields in description list
     let convProp = JSON.parse(JSON.stringify(convSch["properties"]));
     fillValueWithEmptyString(convProp);
-    let cleaned = convData2DescList(convProp); // skip keyword that has value of array with objects as its elements
-    //let cleaned = removeEmpty(convData2DescList(convSch["properties"]));
+    let cleaned = prepareDataForDescList(convProp); // skip keyword that has value of array with objects as its elements
+    //let cleaned = removeEmpty(prepareDataForDescList(convSch["properties"]));
     if ((cleaned === undefined) | (cleaned === {})) {
       toast.error(
         <>
@@ -788,36 +784,22 @@ const AdamantMain = () => {
       );
       return;
     }
-    let preProcessed = preProcessB4DescList(cleaned, cleaned, schema, []);
-    //console.log(preProcessed);
-    let nicelySorted = nicelySort(preProcessed);
-    // now check if there is array that contains object if there is then create a html table for this array
-    let tables = getTableCandidates(convProp, []);
-    let descListTables = [];
-    if (tables.length !== 0) {
-      tables.forEach((table) =>
-        descListTables.push(table2DescListTable(table))
-      );
-    }
-    //let descList = `<dl>\n${createDescriptionList(nicelySorted)}</dl>\n`;
-    let descList = `<dl>\n${createDescriptionListWithoutStyling(
-      nicelySorted
-    )}</dl>\n`;
-    let descListHeading = `<h1><strong>${convSch["title"]}</strong></h1>\n`;
-    descListHeading += descList;
-    // now insert desc list tables if applicable/available
-    if (descListTables.length !== 0) {
-      descListTables.forEach((item) => {
-        descListHeading += item;
-      });
-    }
-    descListHeading += `<div> This template was generated with <span><a title=https://github.com/csihda/adamant href=https://github.com/csihda/adamant>ADAMANT v0.0.1</a></span> </div>`;
-    console.log("created description list:\n", descListHeading);
-    setDescriptionList(descListHeading);
+    // create description list
+    let footnote = `<div> This template was generated with <span><a title=https://github.com/csihda/adamant href=https://github.com/csihda/adamant>ADAMANT v0.0.1</a></span> </div>`;
+    let descList = createDescriptionListFromJSON(
+      cleaned,
+      convSch,
+      convProp,
+      schema,
+      footnote,
+      false
+    ); // false means without styling
 
-    let sha256_hash = CryptoJS.SHA256(descListHeading);
+    setDescriptionList(descList);
+
+    let sha256_hash = CryptoJS.SHA256(descList);
     let a = document.createElement("a");
-    let file = new Blob([descListHeading], {
+    let file = new Blob([descList], {
       type: "text/html",
     });
     a.href = URL.createObjectURL(file);
@@ -1007,8 +989,8 @@ const AdamantMain = () => {
     // use this if we want to show all fields in description list
     let convProp = JSON.parse(JSON.stringify(convSch["properties"]));
     fillValueWithEmptyString(convProp);
-    let cleaned = convData2DescList(convProp);
-    //let cleaned = removeEmpty(convData2DescList(convSch["properties"]));
+    let cleaned = prepareDataForDescList(convProp);
+    //let cleaned = removeEmpty(prepareDataForDescList(convSch["properties"]));
     if ((cleaned === undefined) | (cleaned === {})) {
       toast.error(
         <>
@@ -1031,29 +1013,18 @@ const AdamantMain = () => {
       );
       return;
     }
-    let preProcessed = preProcessB4DescList(cleaned, cleaned, schema, []);
-    //console.log(preProcessed);
-    let nicelySorted = nicelySort(preProcessed);
-    // now check if there is array that contains object if there is then create a html table for this array
-    let tables = getTableCandidates(convProp, []);
-    let descListTables = [];
-    if (tables.length !== 0) {
-      tables.forEach((table) =>
-        descListTables.push(table2DescListTable(table))
-      );
-    }
-    let descList = `<dl>\n${createDescriptionList(nicelySorted)}</dl>\n`;
-    let descListHeading = `<h1><strong>${convSch["title"]}</strong></h1>\n`;
-    descListHeading += descList;
-    // now insert desc list tables if applicable/available
-    if (descListTables.length !== 0) {
-      descListTables.forEach((item) => {
-        descListHeading += item;
-      });
-    }
-    descListHeading += `<div> This template was generated with <span><a title=https://github.com/csihda/adamant href=https://github.com/csihda/adamant>ADAMANT v0.0.1</a></span> </div>`;
-    //console.log("created description list:\n", descListHeading);
-    setDescriptionList(descListHeading);
+    // create description list
+    let footnote = `<div> This template was generated with <span><a title=https://github.com/csihda/adamant href=https://github.com/csihda/adamant>ADAMANT v0.0.1</a></span> </div>`;
+    let descList = createDescriptionListFromJSON(
+      cleaned,
+      convSch,
+      convProp,
+      schema,
+      footnote,
+      true
+    );
+
+    setDescriptionList(descList);
 
     // validate the data first using ajv
     //let content = { ...jsonData };
@@ -1126,7 +1097,7 @@ const AdamantMain = () => {
       >
         <div style={{ paddingBottom: "5px" }}>
           <img
-            style={{ height: "150px", borderRadius: "5px" }}
+            style={{ height: "100px", borderRadius: "5px" }}
             alt="header"
             src={HeaderImage !== undefined ? HeaderImage : QPTDATLogo}
           />

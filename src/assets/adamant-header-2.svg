@@ -8,7 +8,7 @@
    version="1.1"
    id="svg5"
    inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
-   sodipodi:docname="adamant-header.svg"
+   sodipodi:docname="adamant-header-2.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -331,34 +331,19 @@
            id="g27">
           <g
              id="g29"
-             clip-path="url(#clipPath33-3)">
-            <path
-               d="m 602.16631,449.02683 19.98834,12.72821 -16.66613,16.96941 -18.59146,-14.40999 z"
-               style="fill:url(#linearGradient41);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.459502"
-               id="path43" />
-          </g>
+             clip-path="url(#clipPath33-3)" />
         </g>
         <g
            id="g45">
           <g
              id="g47"
-             clip-path="url(#clipPath51-0)">
-            <path
-               d="m 586.99815,464.45232 19.23935,49.35511 -1.54852,-34.21452 z"
-               style="fill:url(#linearGradient67);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.459502"
-               id="path69" />
-          </g>
+             clip-path="url(#clipPath51-0)" />
         </g>
         <g
            id="g71">
           <g
              id="g73"
-             clip-path="url(#clipPath77-8)">
-            <path
-               d="m 622.09033,461.74125 -15.81147,51.79508 -0.19759,-33.74583 z"
-               style="fill:url(#linearGradient93);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.459502"
-               id="path95" />
-          </g>
+             clip-path="url(#clipPath77-8)" />
         </g>
         <g
            id="g97">

@@ -37,7 +37,7 @@ const CreateELabFTWExperimentDialog = ({ getTagsELabFTW, eLabURL, setELabURL, se
         >
             <DialogTitle id="alert-dialog-title">
                 <div style={{ display: "inline-flex", width: "100%", verticalAlign: "middle" }}>
-                    <div style={{ width: "100%", alignSelf: "center" }}>
+                    <div style={{ fontSize: "30px", width: "100%", alignSelf: "center" }}>
                         Create eLabFTW Experiment
                     </div>
                     <IconButton onClick={() => handleCancelEdit()}><CloseIcon fontSize="large" color="secondary" /></IconButton>

@@ -9,7 +9,7 @@ import AnyOfKeywordPlaceHolder from './elements/AnyOfKeywordPlaceHolder';
 import FileUpload from './elements/FileUpload';
 
 
-const ElementRenderer = ({ withinObject, dataInputItems, setDataInputItems, withinArray, path, pathSchema, pathFormData, elementRequired, fieldkey, fieldIndex, edit, field: { maxItems, type, $id, id, title, contentEncoding, description, properties, required, enumerate, items, defaultValue, value, anyOf } }) => {
+const ElementRenderer = ({ withinObject, dataInputItems, setDataInputItems, withinArray, path, pathSchema, pathFormData, elementRequired, fieldkey, fieldIndex, edit, field: { minItems, maxItems, minimum, maximum, type, $id, id, title, contentEncoding, description, properties, required, enumerate, items, defaultValue, value, anyOf } }) => {
 
     switch (type) {
         case 'string':
@@ -56,6 +56,8 @@ const ElementRenderer = ({ withinObject, dataInputItems, setDataInputItems, with
             }
         case 'number':
             return (<NumberType
+                minimum={minimum}
+                maximum={maximum}
                 value={value}
                 withinArray={withinArray}
                 withinObject={withinObject}
@@ -76,6 +78,8 @@ const ElementRenderer = ({ withinObject, dataInputItems, setDataInputItems, with
             />)
         case 'integer':
             return (<IntegerType
+                minimum={minimum}
+                maximum={maximum}
                 value={value}
                 withinArray={withinArray}
                 withinObject={withinObject}
@@ -117,6 +121,7 @@ const ElementRenderer = ({ withinObject, dataInputItems, setDataInputItems, with
             return (<ArrayType
                 value={value}
                 maxItems={maxItems}
+                minItems={minItems}
                 oDataInputItems={dataInputItems}
                 oSetDataInputItems={setDataInputItems}
                 withinArray={withinArray}

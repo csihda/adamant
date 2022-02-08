@@ -1,6 +1,6 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import TextField from "@material-ui/core/TextField"
-import { makeStyles } from '@material-ui/core/styles';
+//import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import Divider from '@material-ui/core/Divider';
@@ -22,7 +22,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import AddIcon from "@material-ui/icons/AddBox";
 import getValue from './utils/getValue';
 
-const useStyles = makeStyles((theme) => ({
+/*const useStyles = makeStyles((theme) => ({
     root: {
         width: 'auto',
     },
@@ -30,12 +30,8 @@ const useStyles = makeStyles((theme) => ({
         fontSize: theme.typography.pxToRem(15),
         fontWeight: theme.typography.fontWeightRegular,
     },
-}));
+})); */
 
-const style = {
-    paddingTop: "10px",
-    paddingBottom: "10px",
-}
 
 const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_required, field_key, UISchema, path, pathFormData, openDialog, setOpenDialog, defaultValue }) => {
 
@@ -49,6 +45,52 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
     const [requiredChecked, setRequiredChecked] = useState(field_required === undefined ? false : field_required)
     const [enumChecked, setEnumChecked] = useState(enumerated === undefined ? false : enumerated)
     const [enumList, setEnumList] = useState(field_enumerate === undefined ? [] : field_enumerate);
+    const [arrayItemType, setArrayItemType] = useState(UISchema !== undefined ? UISchema["items"] : "string")
+    const [arrayMinMaxItem, setArrayMinMaxItem] = useState(["None", "None"])
+    const [numberMinMaxValue, setNumberMinMaxValue] = useState(["None", "None"])
+    const [arrayMinMaxHelperText, setArrayMinMaxHelperText] = useState("Set the minimum and maximum values of the items allowed for this array field.")
+    const [numberMinMaxValueHelperText, setNumberMinMaxValueHelpertext] = useState("Set the minimum and maximum values of this field.")
+
+    let arrayItemTypeList = ["string", "number", "integer"]
+    if (UISchema !== undefined) {
+        if (UISchema["items"] !== undefined) {
+            if (UISchema["items"]["type"] === "object") {
+                arrayItemTypeList = ["string", "number", "integer", "object"]
+            }
+        }
+    }
+
+
+    useEffect(() => {
+        // for array
+        if (UISchema !== undefined) {
+            if (UISchema["type"] === "array") {
+                let value = [...arrayMinMaxItem]
+                if (UISchema["minItems"] !== undefined) {
+                    value[0] = UISchema["minItems"]
+                }
+                if (UISchema["maxItems"] !== undefined) {
+                    value[1] = UISchema["maxItems"]
+                }
+                setArrayMinMaxItem(value)
+            }
+        }
+
+        // for numeric types
+        if (UISchema !== undefined) {
+            if (["number", "integer"].includes(UISchema["type"])) {
+                let value = [...numberMinMaxValue]
+                if (UISchema["minimum"] !== undefined) {
+                    value[0] = UISchema["minimum"]
+                }
+                if (UISchema["maximum"] !== undefined) {
+                    value[1] = UISchema["maximum"]
+                }
+                setNumberMinMaxValue(value)
+            }
+        }
+    }, [])
+
 
     let tempUISchema
     if (editOrAdd !== undefined && editOrAdd === "add") {
@@ -87,6 +129,22 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
     const handleUpdateSchemaOnClick = () => {
         // do this if add
         if (editOrAdd === "add") {
+            // update default value
+            if (defValue === undefined & defaultValue === undefined) {
+                // do nothing
+            } else if (defValue.toString().replace(/\s+/g, '') === "" & defaultValue === undefined) {
+                // do nothing
+            } else if (selectedType === "boolean" & defValue.toString().replace(/\s+/g, '') === "" & defaultValue === undefined) {
+                // do nothing
+            } else if (selectedType === "boolean" & defValue.toString().replace(/\s+/g, '') !== "" & defaultValue !== undefined) {
+                tempUISchema["defaultValue"] = (defValue === "true")
+            } else if (defValue.toString().replace(/\s+/g, '') === "") {
+                delete tempUISchema["defaultValue"]
+            }
+            else {
+                tempUISchema["defaultValue"] = defValue
+            };
+
             // check if fieldkey already exist
             if (checkIfFieldIDExist(convertedSchema, path, fieldkey)) {
                 alert("Field ID already exists!")
@@ -116,9 +174,42 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
             if (tempUISchema["type"] === "object") {
                 tempUISchema["properties"] = []
             }
+            // more validation keywords for array
             if (tempUISchema["type"] === "array") {
-                tempUISchema["items"] = {}
+                if (arrayItemType === "string") {
+                    tempUISchema["items"] = { "type": "string" }
+                }
+                if (arrayItemType === "integer") {
+                    tempUISchema["items"] = { "type": "integer" }
+                }
+                if (arrayItemType === "number") {
+                    tempUISchema["items"] = { "type": "number" }
+                }
+                if (arrayMinMaxItem[0] !== "None") {
+                    tempUISchema["minItems"] = arrayMinMaxItem[0]
+                } else {
+                    delete tempUISchema["minItems"]
+                }
+                if (arrayMinMaxItem[1] !== "None") {
+                    tempUISchema["maxItems"] = arrayMinMaxItem[1]
+                } else {
+                    delete delete tempUISchema["maxItems"]
+                }
             }
+            // more validation keywords for numeric types
+            if (["number", "integer"].includes(tempUISchema["type"])) {
+                if (numberMinMaxValue[0] !== "None") {
+                    tempUISchema["minimum"] = numberMinMaxValue[0]
+                } else {
+                    delete tempUISchema["minimum"]
+                }
+                if (numberMinMaxValue[1] !== "None") {
+                    tempUISchema["maximum"] = numberMinMaxValue[1]
+                } else {
+                    delete delete tempUISchema["maximum"]
+                }
+            }
+
             if (tempUISchema["type"] !== "string") {
                 setEnumChecked(false);
             }
@@ -222,12 +313,55 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
             if (tempUISchema["type"] === "object" & tempUISchema["properties"] === undefined) {
                 tempUISchema["properties"] = []
             }
-            if (tempUISchema["type"] === "array" & tempUISchema["items"] === undefined) {
-                tempUISchema["items"] = {}
+
+            // more validation keywords for array
+            if (tempUISchema["type"] === "array") {
+                if (arrayItemType === "string") {
+                    tempUISchema["items"] = { "type": "string" }
+                }
+                if (arrayItemType === "integer") {
+                    tempUISchema["items"] = { "type": "integer" }
+                }
+                if (arrayItemType === "number") {
+                    tempUISchema["items"] = { "type": "number" }
+                }
+                if (arrayMinMaxItem[0] !== "None") {
+                    tempUISchema["minItems"] = arrayMinMaxItem[0]
+                } else {
+                    delete tempUISchema["minItems"]
+                }
+                if (arrayMinMaxItem[1] !== "None") {
+                    tempUISchema["maxItems"] = arrayMinMaxItem[1]
+                } else {
+                    delete delete tempUISchema["maxItems"]
+                }
             }
+            // more validation keywords for numeric types
+            if (["number", "integer"].includes(tempUISchema["type"])) {
+                if (numberMinMaxValue[0] !== "None") {
+                    tempUISchema["minimum"] = numberMinMaxValue[0]
+                } else {
+                    delete tempUISchema["minimum"]
+                }
+                if (numberMinMaxValue[1] !== "None") {
+                    tempUISchema["maximum"] = numberMinMaxValue[1]
+                } else {
+                    delete delete tempUISchema["maximum"]
+                }
+            }
+
+
             if (!["string", "integer", "number"].includes(tempUISchema["type"])) {
                 setEnumChecked(false);
             }
+
+            // get rid of array-specific keywords if selectedType is not array
+            if (selectedType !== "array" & tempUISchema["items"] !== undefined) {
+                delete tempUISchema["items"]
+                delete tempUISchema["minItems"]
+                delete tempUISchema["maxItems"]
+            }
+
             const set = require("set-value");
             set(convertedSchema, path, tempUISchema)
             // update the required value
@@ -302,6 +436,154 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                 return setDefValue(event.target.value)
             case '$id':
                 return setFieldUri(event.target.value)
+            case 'itemType':
+                return setArrayItemType(event.target.value)
+            default:
+                return null;
+        }
+    }
+
+
+    // handleChange MinMax array item
+    const handleMinMaxArrayItem = (event, field) => {
+        let value = [...arrayMinMaxItem]
+        switch (field) {
+            case 'max':
+                value[1] = (Number.isNaN(parseInt(event.target.value.replace("None", ""))) ? "None" : parseInt(event.target.value.replace("None", "")))
+                value[1] = (value[1] === 0 ? "None" : value[1])
+                //console.log(value)
+                return setArrayMinMaxItem(value);
+            case 'min':
+                value[0] = (Number.isNaN(parseInt(event.target.value.replace("None", ""))) ? "None" : parseInt(event.target.value.replace("None", "")))
+                return setArrayMinMaxItem(value);
+            default:
+                return null;
+        }
+    }
+
+    const handleMinMaxArrayItemOnBlur = (event, keyword) => {
+        let value = [...arrayMinMaxItem]
+        switch (keyword) {
+            case 'min':
+                if (value[0] >= value[1]) {
+                    console.log("min value cannot be greater than max value")
+                    setArrayMinMaxHelperText(<div style={{ color: "#f44336" }}>minItems value cannot be greater or equal than maxItems value.</div>)
+                    value[0] = "None"
+                    return setArrayMinMaxItem(value);
+                } else {
+                    setArrayMinMaxHelperText("Set the minimum and maximum values of the items allowed for this array field.")
+                    return setArrayMinMaxItem(value);
+                }
+            case 'max':
+                if (value[0] >= value[1]) {
+                    console.log("min value cannot be greater than max value")
+                    setArrayMinMaxHelperText(<div style={{ color: "#f44336" }}>minItems value cannot be greater or equal than maxItems value.</div>)
+                    value[1] = "None"
+                    return setArrayMinMaxItem(value);
+                } else {
+                    setArrayMinMaxHelperText("Set the minimum and maximum values of the items allowed for this array field.")
+                    return setArrayMinMaxItem(value);
+                }
+            default:
+                return null;
+        }
+    }
+
+    // handleChange MinMax array item
+    const handleMinMaxValue = (event, minMax) => {
+        let value = [...numberMinMaxValue]
+        switch (minMax) {
+            case 'max-integer':
+                if (event.target.value.replace("None", "") === "-") {
+                    console.log(event.target.value)
+                    value[1] = event.target.value.replace("None", "")
+                    return setNumberMinMaxValue(value)
+                } else {
+                    value[1] = (Number.isNaN(parseInt(event.target.value.replace("None", ""))) ? "None" : parseInt(event.target.value.replace("None", "")))
+                    return setNumberMinMaxValue(value);
+                }
+            case 'min-integer':
+                if (event.target.value.replace("None", "") === "-") {
+                    console.log(event.target.value)
+                    value[0] = event.target.value.replace("None", "")
+                    return setNumberMinMaxValue(value)
+                } else {
+                    value[0] = (Number.isNaN(parseInt(event.target.value.replace("None", ""))) ? "None" : parseInt(event.target.value.replace("None", "")))
+                    return setNumberMinMaxValue(value);
+                }
+            // for now number is the same as integer
+            case 'max-number':
+                if (event.target.value.replace("None", "") === "-") {
+                    console.log(event.target.value)
+                    value[1] = event.target.value.replace("None", "")
+                    return setNumberMinMaxValue(value)
+                } else {
+                    value[1] = (Number.isNaN(parseInt(event.target.value.replace("None", ""))) ? "None" : parseInt(event.target.value.replace("None", "")))
+                    return setNumberMinMaxValue(value);
+                }
+            case 'min-number':
+                if (event.target.value.replace("None", "") === "-") {
+                    console.log(event.target.value)
+                    value[0] = event.target.value.replace("None", "")
+                    return setNumberMinMaxValue(value)
+                } else {
+                    value[0] = (Number.isNaN(parseInt(event.target.value.replace("None", ""))) ? "None" : parseInt(event.target.value.replace("None", "")))
+                    return setNumberMinMaxValue(value);
+                }
+            default:
+                return null;
+        }
+    }
+
+    const handleMinMaxValueOnBlur = (event, minMax) => {
+        let value = [...numberMinMaxValue]
+        switch (minMax) {
+            case 'min-integer':
+                if (value[0] >= value[1]) {
+                    console.log("min value cannot be greater than max value")
+                    setNumberMinMaxValueHelpertext(<div style={{ color: "#f44336" }}>Min. value cannot be greater or equal than max. value.</div>)
+                    value[0] = "None"
+                    return setNumberMinMaxValue(value);
+                } else {
+                    setNumberMinMaxValueHelpertext("Set the minimum and maximum values of this field.")
+                    return setNumberMinMaxValue(value);
+                }
+            case 'min-number':
+                if (value[0] >= value[1]) {
+                    console.log("min value cannot be greater than max value")
+                    setNumberMinMaxValueHelpertext(<div style={{ color: "#f44336" }}>Min. value cannot be greater or equal than max. value.</div>)
+                    value[0] = "None"
+                    return setNumberMinMaxValue(value);
+                } else if (value.includes("None")) {
+                    return setNumberMinMaxValueHelpertext("Set the minimum and maximum values of this field.")
+                }
+                else {
+                    setNumberMinMaxValueHelpertext("Set the minimum and maximum values of this field.")
+                    return setNumberMinMaxValue(value);
+                }
+            case 'max-integer':
+                if (value[0] >= value[1]) {
+                    console.log("min value cannot be greater than max value")
+                    setNumberMinMaxValueHelpertext(<div style={{ color: "#f44336" }}>Min. value cannot be greater or equal than max. value.</div>)
+                    value[1] = "None"
+                    return setNumberMinMaxValue(value);
+                } else {
+                    setNumberMinMaxValueHelpertext("Set the minimum and maximum values of this field.")
+                    return setNumberMinMaxValue(value);
+                }
+            case 'max-number':
+                if (value[0] >= value[1]) {
+                    console.log("min value cannot be greater than max value")
+                    setNumberMinMaxValueHelpertext(<div style={{ color: "#f44336" }}>Min. value cannot be greater or equal than max. value.</div>)
+                    value[1] = "None"
+                    return setNumberMinMaxValue(value);
+                } else if (value.includes("None")) {
+                    return setNumberMinMaxValueHelpertext("Set the minimum and maximum values of this field.")
+                }
+                else {
+                    setNumberMinMaxValueHelpertext("Set the minimum and maximum values of this field.")
+                    return setNumberMinMaxValue(value);
+                }
             default:
                 return null;
         }
@@ -412,18 +694,57 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                                             </option>
                                         ))}
                                     </TextField>
+                                    {["number", "integer"].includes(selectedType) ?
+                                        <>
+                                            <div style={{ display: "flex" }}>
+                                                <TextField onFocus={() => setNumberMinMaxValueHelpertext("Set the minimum and maximum values of this field.")} value={numberMinMaxValue[0]} onBlur={(event) => { handleMinMaxValueOnBlur(event, "min-" + selectedType) }} onChange={event => handleMinMaxValue(event, "min-" + selectedType)} margin="normal" fullWidth variant='outlined' label="Minimum Value" />
+                                                <div style={{ paddingLeft: "10px" }}></div>
+                                                <TextField onFocus={() => setNumberMinMaxValueHelpertext("Set the minimum and maximum values of this field.")} value={numberMinMaxValue[1]} onBlur={(event) => { handleMinMaxValueOnBlur(event, "max-" + selectedType) }} onChange={event => handleMinMaxValue(event, "max-" + selectedType)} margin="normal" fullWidth variant='outlined' label="Maximum Value" />
+                                            </div>
+                                            <div style={{ color: "gray", fontSize: "12px", paddingLeft: "11px", paddingRight: "11px" }}>{numberMinMaxValueHelperText}</div>
+                                        </>
+                                        : null}
                                     {["string", "integer", "number"].includes(selectedType) ?
                                         <>
                                             <FormControlLabel control={<Checkbox onChange={() => handleEnumBoxOnChange()} checked={enumChecked} />} label="Enumerated. Choose from an available list of inputs." />
-                                            <div style={{ marginTop: "10px", marginBottom: "10px" }}>
-                                                {enumChecked ? <TextField defaultValue={enumList !== undefined ? enumList : ""} onChange={handleOnChangeListField} variant="outlined" fullWidth={true} label="Enumerate List" multiline rows={4} helperText="A list of inputs separated by commas, e,g.: item 1, item 2, item 3. Make sure that the item data type matches the field input data type. Invalid items will be not saved." /> : null}
+                                            <div style={{ marginLeft: "32px", marginTop: "0px", marginBottom: "10px" }}>
+                                                {enumChecked ? <TextField defaultValue={enumList !== undefined ? enumList : ""} onChange={handleOnChangeListField} variant="outlined" fullWidth={true} label="Enumerate List" multiline rows={2} helperText="A list of inputs separated by commas, e,g.: item 1, item 2, item 3. Make sure that the item data type matches the field input data type. Invalid items will be not saved." /> : <Divider />}
                                             </div>
                                         </> : null}
                                 </FormControl>
                                 <div style={{ paddingBottom: "10px" }}>
                                     <FormGroup>
                                         {selectedType === "array" ?
-                                            <FormControlLabel control={<Checkbox onChange={() => handleCheckBoxOnChange()} checked={requiredChecked} />} label="Required. Checked means the field must be filled." />
+                                            <>
+                                                <TextField
+                                                    margin="normal"
+                                                    helperText={'Data type of the array items.'}
+                                                    onChange={event => handleChangeUISchema(event, "itemType")}
+                                                    style={{ marginTop: "10px" }}
+                                                    defaultValue={tempUISchema["items"] !== undefined ? tempUISchema["items"]["type"] : "string"}
+                                                    select
+                                                    fullWidth={true}
+                                                    id={field_key}
+                                                    label={"Item Data Type"}
+                                                    variant="outlined"
+                                                    SelectProps={{
+                                                        native: true,
+                                                    }}
+                                                >
+                                                    {arrayItemTypeList.map((content, index) => (
+                                                        <option key={index} value={content}>
+                                                            {content}
+                                                        </option>
+                                                    ))}
+                                                </TextField>
+                                                <div style={{ display: "flex" }}>
+                                                    <TextField value={arrayMinMaxItem[0]} onChange={event => handleMinMaxArrayItem(event, "min")} onBlur={event => { handleMinMaxArrayItemOnBlur(event, "min") }} margin="normal" fullWidth variant='outlined' label="Min. Array Items" />
+                                                    <div style={{ paddingLeft: "10px" }}></div>
+                                                    <TextField value={arrayMinMaxItem[1]} onChange={event => handleMinMaxArrayItem(event, "max")} onBlur={event => { handleMinMaxArrayItemOnBlur(event, "max") }} margin="normal" fullWidth variant='outlined' label="Max. Array items" />
+                                                </div>
+                                                <div style={{ color: "gray", fontSize: "12px", paddingLeft: "11px", paddingRight: "11px" }}>{arrayMinMaxHelperText}</div>
+                                                {/*<FormControlLabel control={<Checkbox onChange={() => handleCheckBoxOnChange()} checked={requiredChecked} />} label="Required. Checked means the field must be filled." />*/}
+                                            </>
                                             : null}
                                         {selectedType !== "object" & selectedType !== "array" & selectedType !== "boolean" ?
                                             <>

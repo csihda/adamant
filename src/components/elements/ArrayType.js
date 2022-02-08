@@ -68,7 +68,7 @@ const AccordionSummary = withStyles({
     expanded: {},
 })(MuiAccordionSummary);
 
-const ArrayType = ({ maxItems, oSetDataInputItems, oDataInputItems, withinObject, withinArray, field_uri, value, pathFormData, path, pathSchema, field_required, field_key, field_index, edit, field_label, field_description, field_items, field_prefixItems }) => {
+const ArrayType = ({ maxItems, minItems, oSetDataInputItems, oDataInputItems, withinObject, withinArray, field_uri, value, pathFormData, path, pathSchema, field_required, field_key, field_index, edit, field_label, field_description, field_items, field_prefixItems }) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [expand, setExpand] = useState(true);
     const { updateParent, convertedSchema, handleDataInput, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
@@ -346,10 +346,12 @@ const ArrayType = ({ maxItems, oSetDataInputItems, oDataInputItems, withinObject
     // construct UI schema
     let UISchema = {
         "fieldKey": field_key,
+        "$id": field_uri,
         "title": field_label,
         "description": field_description,
         "items": field_items,
-        "$id": field_uri,
+        "minItems": minItems,
+        "maxItems": maxItems,
         "type": "array",
         "value": value
     }

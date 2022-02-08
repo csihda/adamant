@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const NumberType = ({ field_uri, value, dataInputItems, setDataInputItems, withinArray, withinObject, path, pathFormData, defaultValue, field_required, field_index, edit, field_key, field_label, field_description, field_enumerate }) => {
+const NumberType = ({ minimum, maximum, field_uri, value, dataInputItems, setDataInputItems, withinArray, withinObject, path, pathFormData, defaultValue, field_required, field_index, edit, field_key, field_label, field_description, field_enumerate }) => {
     const [descriptionText, setDescriptionText] = useState(field_description !== undefined ? field_description : "");
     const [openDialog, setOpenDialog] = useState(false);
     const { updateParent, convertedSchema, handleDataInput, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
@@ -69,6 +69,8 @@ const NumberType = ({ field_uri, value, dataInputItems, setDataInputItems, withi
         "$id": field_uri,
         "type": "number",
         "value": value,
+        "minimum": minimum,
+        "maximum": maximum
     }
 
     // handle delete field UI

@@ -2,13 +2,13 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="175.5665mm"
+   width="195.1869mm"
    height="48.121658mm"
-   viewBox="0 0 175.5665 48.121658"
+   viewBox="0 0 195.18691 48.121658"
    version="1.1"
    id="svg5"
    inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
-   sodipodi:docname="adamant-header.svg"
+   sodipodi:docname="adamant-header-3.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -24,13 +24,13 @@
      inkscape:document-units="mm"
      showgrid="false"
      inkscape:zoom="0.72337262"
-     inkscape:cx="190.08184"
-     inkscape:cy="174.18409"
-     inkscape:window-width="1482"
-     inkscape:window-height="1030"
-     inkscape:window-x="3110"
-     inkscape:window-y="236"
-     inkscape:window-maximized="0"
+     inkscape:cx="324.17594"
+     inkscape:cy="-50.458089"
+     inkscape:window-width="2400"
+     inkscape:window-height="1271"
+     inkscape:window-x="2391"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
      inkscape:current-layer="layer1" />
   <defs
      id="defs2">
@@ -300,6 +300,46 @@
          clip-rule="evenodd"
          id="path125-8" />
     </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath1465">
+      <path
+         d="M 0,1.8311e-4 H 878.76 V 878.76018 H 0 Z"
+         clip-rule="evenodd"
+         id="path1463" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath1479">
+      <path
+         d="M 1.3095e-5,0 H 878.76001 V 878.76 H 1.3095e-5 Z"
+         clip-rule="evenodd"
+         id="path1477" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath1503">
+      <path
+         d="M 1.3095e-5,0 H 878.76001 V 878.76 H 1.3095e-5 Z"
+         clip-rule="evenodd"
+         id="path1501" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath1515">
+      <path
+         d="M 1.3095e-5,0 H 878.76001 V 878.76 H 1.3095e-5 Z"
+         clip-rule="evenodd"
+         id="path1513" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath1527">
+      <path
+         d="M 1.3095e-5,0 H 878.76001 V 878.76 H 1.3095e-5 Z"
+         clip-rule="evenodd"
+         id="path1525" />
+    </clipPath>
   </defs>
   <g
      inkscape:label="Layer 1"
@@ -331,34 +371,19 @@
            id="g27">
           <g
              id="g29"
-             clip-path="url(#clipPath33-3)">
-            <path
-               d="m 602.16631,449.02683 19.98834,12.72821 -16.66613,16.96941 -18.59146,-14.40999 z"
-               style="fill:url(#linearGradient41);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.459502"
-               id="path43" />
-          </g>
+             clip-path="url(#clipPath33-3)" />
         </g>
         <g
            id="g45">
           <g
              id="g47"
-             clip-path="url(#clipPath51-0)">
-            <path
-               d="m 586.99815,464.45232 19.23935,49.35511 -1.54852,-34.21452 z"
-               style="fill:url(#linearGradient67);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.459502"
-               id="path69" />
-          </g>
+             clip-path="url(#clipPath51-0)" />
         </g>
         <g
            id="g71">
           <g
              id="g73"
-             clip-path="url(#clipPath77-8)">
-            <path
-               d="m 622.09033,461.74125 -15.81147,51.79508 -0.19759,-33.74583 z"
-               style="fill:url(#linearGradient93);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.459502"
-               id="path95" />
-          </g>
+             clip-path="url(#clipPath77-8)" />
         </g>
         <g
            id="g97">
@@ -405,6 +430,106 @@
                  sodipodi:role="line"
                  id="tspan129">A JSON schema form renderer and editor</tspan></text>
           </g>
+        </g>
+      </g>
+    </g>
+    <g
+       id="g1457"
+       inkscape:label="newlogo"
+       transform="matrix(0.28329454,0,0,-0.32735584,160.16775,274.51165)">
+      <g
+         id="g1459">
+        <g
+           id="g1461"
+           clip-path="url(#clipPath1465)" />
+      </g>
+      <path
+         d="M 177.24,384.72 H 316.8 v 118.8 H 177.24 Z"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path1469" />
+      <path
+         d="M 177.24,384.72 H 316.8 v 118.8 H 177.24 Z"
+         style="fill:none;stroke:#ffffff;stroke-width:0.96;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+         id="path1471" />
+      <g
+         id="g1473">
+        <g
+           id="g1475"
+           clip-path="url(#clipPath1479)">
+          <text
+             transform="matrix(1,0,0,-1,177.26,411.82)"
+             style="font-variant:normal;font-weight:600;font-size:116.06px;font-family:'Yu Gothic UI';-inkscape-font-specification:YuGothicUI-Semibold;writing-mode:lr-tb;fill:#002658;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1483"><tspan
+               x="0 38.531921 102.36492"
+               y="0"
+               sodipodi:role="line"
+               id="tspan1481">{ }</tspan></text>
+        </g>
+      </g>
+      <path
+         d="m 216.48,462.48 h 60.72 v 24.24 h -60.72 z"
+         style="fill:#147800;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path1485" />
+      <path
+         d="m 216.48,462.48 h 60.72 v 24.24 h -60.72 z"
+         style="fill:none;stroke:#147800;stroke-width:0.96;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+         id="path1487" />
+      <path
+         d="m 216.48,430.32 h 60.72 v 24.12 h -60.72 z"
+         style="fill:#9b0000;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path1489" />
+      <path
+         d="m 216.48,430.32 h 60.72 v 24.12 h -60.72 z"
+         style="fill:none;stroke:#9b0000;stroke-width:0.96;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+         id="path1491" />
+      <path
+         d="M 216.48,399.36 H 277.2 V 423.6 H 216.48 Z"
+         style="fill:#002658;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path1493" />
+      <path
+         d="M 216.48,399.36 H 277.2 V 423.6 H 216.48 Z"
+         style="fill:none;stroke:#002658;stroke-width:0.96;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+         id="path1495" />
+      <g
+         id="g1497">
+        <g
+           id="g1499"
+           clip-path="url(#clipPath1503)">
+          <text
+             transform="matrix(1,0,0,-1,261.1,474.86)"
+             style="font-variant:normal;font-weight:normal;font-size:36px;font-family:'Segoe UI Symbol';-inkscape-font-specification:SegoeUISymbol;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1507"><tspan
+               x="0"
+               y="0"
+               id="tspan1505">✓</tspan></text>
+        </g>
+      </g>
+      <g
+         id="g1509">
+        <g
+           id="g1511"
+           clip-path="url(#clipPath1515)">
+          <text
+             transform="matrix(1,0,0,-1,261.1,442.73)"
+             style="font-variant:normal;font-weight:normal;font-size:36.024px;font-family:'Segoe UI Symbol';-inkscape-font-specification:SegoeUISymbol;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1519"><tspan
+               x="0"
+               y="0"
+               id="tspan1517">✓</tspan></text>
+        </g>
+      </g>
+      <g
+         id="g1521">
+        <g
+           id="g1523"
+           clip-path="url(#clipPath1527)">
+          <text
+             transform="matrix(1,0,0,-1,261.1,411.38)"
+             style="font-variant:normal;font-weight:normal;font-size:36px;font-family:'Segoe UI Symbol';-inkscape-font-specification:SegoeUISymbol;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1531"><tspan
+               x="0"
+               y="0"
+               id="tspan1529">✓</tspan></text>
         </g>
       </g>
     </g>

@@ -1,17 +1,17 @@
-const convData2DescList = (convDataProp) => {
+const prepareDataForDescList = (convDataProp) => {
     let someObject = {};
     convDataProp.forEach((item) => {
         const fieldkey = item["fieldKey"];
         const type = item["type"];
 
         if (type === "object") {
-            someObject[fieldkey] = convData2DescList(item["properties"])
+            someObject[fieldkey] = prepareDataForDescList(item["properties"])
         } else {
             if (item["value"] !== undefined) {
                 // for now skip value that has object type in it
                 if (Array.isArray(item["value"])) {
                     if (typeof (item["value"][0]) === "object") {
-                        console.log("convData2DescList is skipped for this field:", item["title"])
+                        console.log("prepareDataForDescList is skipped for this field:", item["title"])
                     }
                     else {
                         someObject[fieldkey] = { value: item["value"] }
@@ -31,4 +31,4 @@ const convData2DescList = (convDataProp) => {
     return someObject;
 };
 
-export default convData2DescList;
+export default prepareDataForDescList;

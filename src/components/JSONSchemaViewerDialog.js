@@ -34,7 +34,7 @@ const JSONSchemaViewerDialog = ({ openSchemaViewer, setOpenSchemaViewer, jsonsch
         >
             <DialogTitle id="alert-dialog-title">
                 <div style={{ display: "inline-flex", width: "100%", verticalAlign: "middle" }}>
-                    <div style={{ width: "100%", alignSelf: "center" }}>
+                    <div style={{ fontSize: "30px", width: "100%", alignSelf: "center" }}>
                         JSON Schema viewer
                     </div>
                     <IconButton onClick={() => setOpenSchemaViewer(false)}><CloseIcon fontSize="large" color="secondary" /></IconButton>

@@ -30,7 +30,7 @@ const style = {
 }
 
 
-const IntegerType = ({ field_uri, value, dataInputItems, setDataInputItems, withinArray, withinObject, defaultValue, path, pathFormData, field_required, field_index, edit, field_key, field_label, field_description, field_enumerate }) => {
+const IntegerType = ({ minimum, maximum, field_uri, value, dataInputItems, setDataInputItems, withinArray, withinObject, defaultValue, path, pathFormData, field_required, field_index, edit, field_key, field_label, field_description, field_enumerate }) => {
     const [descriptionText, setDescriptionText] = useState(field_description !== undefined ? field_description : "");
     const [openDialog, setOpenDialog] = useState(false);
     const { updateParent, convertedSchema, handleDataInput, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
@@ -72,6 +72,8 @@ const IntegerType = ({ field_uri, value, dataInputItems, setDataInputItems, with
         "description": field_description,
         "$id": field_uri,
         "type": "integer",
+        "minimum": minimum,
+        "maximum": maximum,
         "value": value
     }
 

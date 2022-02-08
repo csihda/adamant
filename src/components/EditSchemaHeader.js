@@ -184,7 +184,7 @@ const EditSchemaHeader = ({ schemaVersion, title, description, schemaID, openDia
                     <div>
                         <FormControl component="widget-type">
                             <FormLabel style={{ color: "#01579b" }} component="legend">Basic Descriptors:</FormLabel>
-                            <TextField select margin='normal' onChange={event => handleChangeUISchema(event, "version")} style={{ marginTop: "20px" }} defaultValue={schemaVersion} variant="outlined" fullWidth={true} label={"$schema"} SelectProps={{
+                            <TextField select helperText={"Specification version for this schema. The latest available version is recommended."} margin='normal' onChange={event => handleChangeUISchema(event, "version")} style={{ marginTop: "20px" }} defaultValue={schemaVersion} variant="outlined" fullWidth={true} label={"$schema"} SelectProps={{
                                 native: true,
                             }}> {
                                     allowedSchemaDrafts.map((content, index) => (
@@ -194,9 +194,9 @@ const EditSchemaHeader = ({ schemaVersion, title, description, schemaID, openDia
                                     ))
                                 }
                             </TextField>
-                            <TextField margin='normal' onChange={event => handleChangeUISchema(event, "id")} style={{ marginTop: "10px" }} defaultValue={schemaID} variant="outlined" fullWidth={true} label={"Schema ID"} />
-                            <TextField margin='normal' onChange={event => handleChangeUISchema(event, "title")} style={{ marginTop: "10px" }} defaultValue={title} variant="outlined" fullWidth={true} label={"Schema Title"} />
-                            <TextField margin='normal' onChange={event => handleChangeUISchema(event, "description")} style={{ marginTop: "10px" }} defaultValue={description} variant="outlined" fullWidth={true} label={"Schema Description"} multiline rows={3} />
+                            <TextField margin='normal' onChange={event => handleChangeUISchema(event, "id")} style={{ marginTop: "10px" }} defaultValue={schemaID} variant="outlined" fullWidth={true} label={"Schema ID"} helperText={"ID or URI for this schema if available."} />
+                            <TextField margin='normal' onChange={event => handleChangeUISchema(event, "title")} style={{ marginTop: "10px" }} defaultValue={title} variant="outlined" fullWidth={true} label={"Schema Title"} helperText={"Title of the schema."} />
+                            <TextField margin='normal' onChange={event => handleChangeUISchema(event, "description")} style={{ marginTop: "10px" }} defaultValue={description} variant="outlined" fullWidth={true} label={"Schema Description"} multiline rows={3} helperText="Description of the schema. Be more descriptive won't hurt." />
                         </FormControl>
                     </div>
                 </DialogContentText>
