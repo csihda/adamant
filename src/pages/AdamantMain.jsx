@@ -570,13 +570,14 @@ const AdamantMain = () => {
     setConvertedSchema(convSchemaData);
     //console.log(convSchemaData);
 
-    // convert to form data
-    console.log(
-      "Current form data (convData):",
-      convData2FormData(
-        JSON.parse(JSON.stringify(convSchemaData["properties"]))
-      )
+    let data = convData2FormData(
+      JSON.parse(JSON.stringify(convSchemaData["properties"]))
     );
+
+    setJsonData(data);
+
+    // convert to form data
+    console.log("Current form data (convData):", data);
 
     // unconverted
     //console.log("Current form data (unconverted convData):", convSchemaData);
@@ -1032,6 +1033,12 @@ const AdamantMain = () => {
     let content = convData2FormData(
       JSON.parse(JSON.stringify(convSchemaData["properties"]))
     );
+    // get rid of empty values in content
+    content = removeEmpty(content);
+    if (content === undefined) {
+      content = {};
+    }
+    console.log("content", content);
     let contentSchema = { ...schema };
 
     //console.log("content", content);
@@ -1040,6 +1047,7 @@ const AdamantMain = () => {
     // validate jsonData against its schema before submission
     //
     const [valid, validation] = validateAgainstSchema(content, contentSchema);
+    console.log(content);
     if (!valid | (Object.keys(content).length === 0)) {
       let errorMessages = "";
       if (validation.errors !== null) {

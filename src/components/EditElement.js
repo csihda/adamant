@@ -762,15 +762,25 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                                         {selectedType !== "object" & selectedType !== "array" & selectedType !== "boolean" ?
                                             <>
                                                 <FormControlLabel control={<Checkbox onChange={() => handleCheckBoxOnChange()} checked={requiredChecked} />} label="Required. Checked means the field must be filled." />
+                                                <div style={{ paddingTop: "15px", paddingBottom: "0px" }}>
+                                                    <FormControl component="misc">
+                                                        <FormLabel style={{ color: "#01579b" }} component="legend">Misc.:</FormLabel>
+                                                    </FormControl>
+                                                </div>
                                                 <TextField margin='normal' onChange={event => handleChangeUISchema(event, "defaultValue")} style={{ marginTop: "10px" }} defaultValue={defaultValue} variant="outlined" fullWidth={true} label={"Field Default Value"} helperText="Initial value of the field." />
                                             </>
                                             : null}
                                         {selectedType === "boolean" ?
                                             <>
+                                                <div style={{ paddingTop: "15px", paddingBottom: "0px" }}>
+                                                    <FormControl component="misc">
+                                                        <FormLabel style={{ color: "#01579b" }} component="legend">Misc.:</FormLabel>
+                                                    </FormControl>
+                                                </div>
                                                 <TextField
                                                     margin='normal'
                                                     onChange={event => handleChangeUISchema(event, "defaultValue")}
-                                                    style={{ marginTop: "20px" }}
+                                                    style={{ marginTop: "10px" }}
                                                     defaultValue={defaultValue !== undefined ? defaultValue : ""}
                                                     select
                                                     fullWidth={true}

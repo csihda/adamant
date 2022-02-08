@@ -24,7 +24,7 @@ import EditElement from "./EditElement";
 
 const checkFormDataValidity = (file) => {
     let validity = false
-    let message = `INVALID TYPE!\n Form data must be of a json file type.`
+    let message = <><div><strong>INVALID TYPE!</strong></div><div> Form data must be of a json file type.</div></>
     if (file[0].type === "application/json") {
         validity = true;
         message = "Form data is of a valid file type."
@@ -59,7 +59,7 @@ const FormRenderer = ({ revertAllChanges, schema, edit, originalSchema }) => {
             let validity = checkFormDataValidity(acceptedFile);
             if (validity[0] === false) {
                 toast.error(
-                    <div><strong>{validity[1]}</strong></div>,
+                    validity[1],
                     {
                         position: "top-right",
                         autoClose: 5000,
