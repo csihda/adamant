@@ -166,7 +166,7 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
 
             // check if fieldkey already exist
             if (checkIfFieldIDExist(convertedSchema, path, fieldkey)) {
-                alert("Field ID already exists!")
+                alert("Field Keyword already exists!")
                 return
             }
 
@@ -181,12 +181,12 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
             if (description !== undefined) { tempUISchema["description"] = description }
 
             if (fieldkey === undefined) {
-                alert("Field ID must be defined!")
+                alert("Field Keyword must be defined!")
                 return
             }
 
             if (typeof (fieldkey) === "string" & fieldkey.replace(/\s+/g, '') === "") {
-                alert("Field ID must be defined!")
+                alert("Field Keyword must be defined!")
                 return
             }
 
@@ -787,7 +787,7 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                             <div>
                                 <FormControl component="widget-type">
                                     <FormLabel style={{ color: "#01579b" }} component="legend">Basic Descriptors:</FormLabel>
-                                    <TextField margin="normal" required onChange={event => handleChangeUISchema(event, "fieldKey")} style={{ marginTop: "20px" }} defaultValue={field_key} variant="outlined" fullWidth={true} label={"Field Keyword"} helperText='A unique json keyword for this field. Usually short and no spaces (use "_" instead). Spaces are replaced automatically with "_" upon saving.' />
+                                    <TextField margin="normal" required onChange={event => handleChangeUISchema(event, "fieldKey")} style={{ marginTop: "20px" }} defaultValue={field_key} variant="outlined" fullWidth={true} label={"Field Keyword"} helperText='A unique json keyword for this field. Usually short and has no spaces (use "_" instead). Spaces are replaced automatically with "_" upon saving.' />
                                     <TextField margin="normal" onChange={event => handleChangeUISchema(event, "$id")} style={{ marginTop: "10px" }} defaultValue={field_uri} variant="outlined" fullWidth={true} label={"Field ID/URI"} helperText='ID or URI for this field if available.' />
                                     <TextField margin="normal" onChange={event => handleChangeUISchema(event, "title")} style={{ marginTop: "10px" }} defaultValue={tempUISchema["title"]} variant="outlined" fullWidth={true} label={"Field Title"} helperText='Label or title of the field. For a field that requires a unit, the unit can be placed within a square bracket, e,g., "Chamber Pressure [Pa]".' />
                                     <TextField margin="normal" onChange={event => handleChangeUISchema(event, "description")} style={{ marginTop: "10px" }} defaultValue={tempUISchema["description"]} variant="outlined" fullWidth={true} label={"Field Description"} multiline rows={3} helperText='A detailed description of the field, how the input should be formated, etc.' />
