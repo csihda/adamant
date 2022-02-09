@@ -4,7 +4,7 @@ import { useDropzone } from "react-dropzone";
 //import QPTDATLogo from "../assets/header-image.png";
 import FormRenderer from "../components/FormRenderer";
 import Button from "@material-ui/core/Button";
-import { TextField } from "@material-ui/core";
+import { IconButton, TextField } from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import { FormContext } from "../FormContext";
 import array2object from "../components/utils/array2object";
@@ -32,6 +32,8 @@ import FormReviewBeforeSubmit from "../components/FormReviewBeforeSubmit";
 import changeKeywords from "../components/utils/changeKeywords";
 import QPTDATLogo from "../assets/adamant-header-5.svg";
 import createDescriptionListFromJSON from "../components/utils/createDescriptionListFromJSON";
+import HelpIcon from "@material-ui/icons/HelpOutlineRounded";
+import { Tooltip } from "@material-ui/core";
 
 // function that receive the schema and convert it to Form/json data blueprint
 // also to already put the default value to this blueprint
@@ -1112,12 +1114,16 @@ const AdamantMain = () => {
             <div
               style={{
                 display: "flex",
-                width: "100%",
                 textAlign: "left",
                 padding: "10px 10px 0px 10px",
               }}
             >
-              <Button variant="contained" color="primary" {...getRootProps()}>
+              <Button
+                style={{ width: "100%" }}
+                variant="contained"
+                color="primary"
+                {...getRootProps()}
+              >
                 <input {...getInputProps()} />
                 {isDragActive ? "Drop here" : "Browse Schema"}
               </Button>
@@ -1133,7 +1139,7 @@ const AdamantMain = () => {
               </div>
               <TextField
                 onChange={(event) => handleSelectSchemaOnChange(event)}
-                style={{ width: "220px", marginLeft: "10px" }}
+                style={{ width: "100%", marginLeft: "10px" }}
                 fullWidth={false}
                 value={selectedSchemaName}
                 select
@@ -1161,6 +1167,7 @@ const AdamantMain = () => {
               <Button
                 onClick={() => createSchemaFromScratch()}
                 style={{
+                  width: "100%",
                   marginLeft: "10px",
                   marginRight: "10px",
                 }}
@@ -1169,6 +1176,31 @@ const AdamantMain = () => {
               >
                 CREATE FROM SCRATCH
               </Button>
+              <div
+                style={{
+                  paddingLeft: "10px",
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "right",
+                  alignItems: "center",
+                }}
+              >
+                <Tooltip
+                  placement="top"
+                  title="Wondering how to use this tool?"
+                >
+                  <Button
+                    onClick={() => {
+                      window.open(
+                        "https://github.com/csihda/adamant",
+                        "_blank" // <- This is what makes it open in a new window.
+                      );
+                    }}
+                  >
+                    <HelpIcon />
+                  </Button>
+                </Tooltip>
+              </div>
             </div>
           ) : null}
         </div>
