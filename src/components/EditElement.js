@@ -48,6 +48,8 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
     const [arrayItemType, setArrayItemType] = useState("string")
     const [arrayMinMaxItem, setArrayMinMaxItem] = useState(["None", "None"])
     const [numberMinMaxValue, setNumberMinMaxValue] = useState(["None", "None"])
+    const [charMinMaxLengthValue, setCharMinMaxLengthValue] = useState(["None", "None"])
+    const [charMinMaxHelperText, setCharMinMaxHelperText] = useState("Set the minimum and maximum length allowed for this string input.")
     const [arrayMinMaxHelperText, setArrayMinMaxHelperText] = useState("Set the minimum and maximum values of the items allowed for this array field.")
     const [numberMinMaxValueHelperText, setNumberMinMaxValueHelpertext] = useState("Set the minimum and maximum values of this field.")
 
@@ -92,6 +94,20 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                 setNumberMinMaxValue(value)
             }
         }
+
+        // for string type
+        if (UISchema !== undefined) {
+            if (UISchema["type"] === "string") {
+                let value = [...charMinMaxLengthValue]
+                if (UISchema["minLength"] !== undefined) {
+                    value[0] = UISchema["minLength"]
+                }
+                if (UISchema["maxLength"] !== undefined) {
+                    value[1] = UISchema["maxLength"]
+                }
+                setCharMinMaxLengthValue(value)
+            }
+        }
     }, [])
 
 
@@ -115,13 +131,13 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
 
     let notImplemented = false;
     if (UISchema !== undefined) {
-        if (!["string", "number", "integer", "object", "array", "boolean"].includes(UISchema["type"])) {
+        if (!["string", "number", "integer", "object", "array", "boolean", "fileupload (string)"].includes(UISchema["type"])) {
             notImplemented = true;
         }
     }
 
 
-    const datatypes = ["string", "number", "integer", "object", "array", "boolean"]
+    const datatypes = ["string", "number", "integer", "object", "array", "boolean", "fileupload (string)"]
 
 
     const handleOnChangeListField = (event) => {
@@ -212,9 +228,39 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                     delete delete tempUISchema["maximum"]
                 }
             }
+            // more validation keywords for string
+            if (tempUISchema["type"] === "string") {
+                if (charMinMaxLengthValue[0] !== "None") {
+                    tempUISchema["minLength"] = charMinMaxLengthValue[0]
+                } else {
+                    delete tempUISchema["minLength"]
+                }
+                if (charMinMaxLengthValue[1] !== "None") {
+                    tempUISchema["maxLength"] = charMinMaxLengthValue[1]
+                } else {
+                    delete delete tempUISchema["maxLength"]
+                }
+            }
 
             if (tempUISchema["type"] !== "string") {
                 setEnumChecked(false);
+            }
+
+            // for fileupload
+            if (selectedType === "fileupload (string)") {
+                // set type to string
+                tempUISchema["type"] = "string"
+                // set the encoding type
+                tempUISchema["contentEncoding"] = "base64"
+                // delete all unrelated keywords
+                delete tempUISchema["items"]
+                delete tempUISchema["minItems"]
+                delete tempUISchema["maxItems"]
+                delete tempUISchema["maxLength"]
+                delete tempUISchema["minLength"]
+                delete tempUISchema["enumerate"]
+                delete tempUISchema["enum"]
+                delete tempUISchema["properties"]
             }
 
             if (path !== undefined) {
@@ -352,6 +398,19 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                     delete delete tempUISchema["maximum"]
                 }
             }
+            // more validation keywords for string
+            if (tempUISchema["type"] === "string") {
+                if (charMinMaxLengthValue[0] !== "None") {
+                    tempUISchema["minLength"] = charMinMaxLengthValue[0]
+                } else {
+                    delete tempUISchema["minLength"]
+                }
+                if (charMinMaxLengthValue[1] !== "None") {
+                    tempUISchema["maxLength"] = charMinMaxLengthValue[1]
+                } else {
+                    delete tempUISchema["maxLength"]
+                }
+            }
 
 
             if (!["string", "integer", "number"].includes(tempUISchema["type"])) {
@@ -363,6 +422,23 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                 delete tempUISchema["items"]
                 delete tempUISchema["minItems"]
                 delete tempUISchema["maxItems"]
+            }
+
+            // for fileupload
+            if (selectedType === "fileupload (string)") {
+                // set type to string
+                tempUISchema["type"] = "string"
+                // set the encoding type
+                tempUISchema["contentEncoding"] = "base64"
+                // delete all unrelated keywords
+                delete tempUISchema["items"]
+                delete tempUISchema["minItems"]
+                delete tempUISchema["maxItems"]
+                delete tempUISchema["maxLength"]
+                delete tempUISchema["minLength"]
+                delete tempUISchema["enumerate"]
+                delete tempUISchema["enum"]
+                delete tempUISchema["properties"]
             }
 
             const set = require("set-value");
@@ -592,6 +668,50 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
         }
     }
 
+    // handleChange MinMax length for string
+    const handleMinMaxCharLength = (event, field) => {
+        let value = [...charMinMaxLengthValue]
+        switch (field) {
+            case 'maxLength':
+                value[1] = (Number.isNaN(parseInt(event.target.value.replace("None", ""))) ? "None" : parseInt(event.target.value.replace("None", "")))
+                value[1] = (value[1] === 0 ? "None" : value[1])
+                //console.log(value)
+                return setCharMinMaxLengthValue(value);
+            case 'minLength':
+                value[0] = (Number.isNaN(parseInt(event.target.value.replace("None", ""))) ? "None" : parseInt(event.target.value.replace("None", "")))
+                return setCharMinMaxLengthValue(value);
+            default:
+                return null;
+        }
+    }
+    const handleMinMaxCharLengthOnBlur = (event, keyword) => {
+        let value = [...charMinMaxLengthValue]
+        switch (keyword) {
+            case 'minLength':
+                if (value[0] >= value[1]) {
+                    console.log("min value cannot be greater than max value")
+                    setCharMinMaxHelperText(<div style={{ color: "#f44336" }}>minLength value cannot be greater or equal than maxLength value.</div>)
+                    value[0] = "None"
+                    return setCharMinMaxLengthValue(value);
+                } else {
+                    setCharMinMaxHelperText("Set the minimum and maximum length allowed for this string input.")
+                    return setCharMinMaxLengthValue(value);
+                }
+            case 'maxLength':
+                if (value[0] >= value[1]) {
+                    console.log("min value cannot be greater than max value")
+                    setCharMinMaxHelperText(<div style={{ color: "#f44336" }}>minLength value cannot be greater or equal than maxLength value.</div>)
+                    value[1] = "None"
+                    return setCharMinMaxLengthValue(value);
+                } else {
+                    setCharMinMaxHelperText("Set the minimum and maximum length allowed for this string input.")
+                    return setCharMinMaxLengthValue(value);
+                }
+            default:
+                return null;
+        }
+    }
+
     // cancel editing
     const handleCancelEdit = () => {
         if (editOrAdd !== undefined && editOrAdd === "add") {
@@ -710,16 +830,16 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                                     {selectedType === "string" ?
                                         <>
                                             <div style={{ display: "flex" }}>
-                                                <TextField margin="normal" fullWidth variant='outlined' label="Minimum Character Number" />
+                                                <TextField onFocus={() => setCharMinMaxHelperText("Set the minimum and maximum length allowed for this string input.")} value={charMinMaxLengthValue[0]} onBlur={(event) => { handleMinMaxCharLengthOnBlur(event, "minLength") }} onChange={event => handleMinMaxCharLength(event, "minLength")} margin="normal" fullWidth variant='outlined' label="Minimum Character Length" />
                                                 <div style={{ paddingLeft: "10px" }}></div>
-                                                <TextField margin="normal" fullWidth variant='outlined' label="Maximum Character Number" />
+                                                <TextField onFocus={() => setCharMinMaxHelperText("Set the minimum and maximum length allowed for this string input.")} value={charMinMaxLengthValue[1]} onBlur={(event) => { handleMinMaxCharLengthOnBlur(event, "maxLength") }} onChange={event => handleMinMaxCharLength(event, "maxLength")} margin="normal" fullWidth variant='outlined' label="Maximum Character Length" />
                                             </div>
-                                            <div style={{ color: "gray", fontSize: "12px", paddingLeft: "11px", paddingRight: "11px" }}>Minimum and maximum allowed number of characters for this field.</div>
+                                            <div style={{ color: "gray", fontSize: "12px", paddingLeft: "11px", paddingRight: "11px" }}>{charMinMaxHelperText}</div>
                                         </>
                                         : null}
                                     {["string", "integer", "number"].includes(selectedType) ?
                                         <>
-                                            <FormControlLabel control={<Checkbox onChange={() => handleEnumBoxOnChange()} checked={enumChecked} />} label="Enumerated. Choose from an available list of inputs." />
+                                            <FormControlLabel control={<Checkbox onChange={() => handleEnumBoxOnChange()} checked={enumChecked} />} label="Enumerated. Provide a list of possible inputs for this field." />
                                             <div style={{ marginLeft: "32px", marginTop: "0px", marginBottom: "10px" }}>
                                                 {enumChecked ? <TextField defaultValue={enumList !== undefined ? enumList : ""} onChange={handleOnChangeListField} variant="outlined" fullWidth={true} label="Enumerate List" multiline rows={2} helperText="A list of inputs separated by commas, e,g.: item 1, item 2, item 3. Make sure that the item data type matches the field input data type. Invalid items will be not saved." /> : <Divider />}
                                             </div>
@@ -767,7 +887,7 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                                                         <FormLabel style={{ color: "#01579b" }} component="legend">Misc.:</FormLabel>
                                                     </FormControl>
                                                 </div>
-                                                <TextField margin='normal' onChange={event => handleChangeUISchema(event, "defaultValue")} style={{ marginTop: "10px" }} defaultValue={defaultValue} variant="outlined" fullWidth={true} label={"Field Default Value"} helperText="Initial value of the field." />
+                                                {selectedType === "fileupload (string)" ? null : <TextField margin='normal' onChange={event => handleChangeUISchema(event, "defaultValue")} style={{ marginTop: "10px" }} defaultValue={defaultValue} variant="outlined" fullWidth={true} label={"Field Default Value"} helperText="Initial value of the field." />}
                                             </>
                                             : null}
                                         {selectedType === "boolean" ?

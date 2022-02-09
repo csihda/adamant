@@ -71,9 +71,14 @@ const FileUpload = ({ contentEncoding, withinObject, field_uri, dataInputItems, 
     //const [required, setRequired] = useState(false)
     const classes = useStyles();
 
+    // define a list of renderable media file types
     let renderableMediaFileTypes = ["image/jpeg", "image/png", "image/bmp", "image/tiff", "image/svg+xml"]
 
-
+    // visualize that the field is required
+    let fieldLabel = field_label;
+    if (field_required !== undefined) {
+        fieldLabel += "*"
+    }
 
     // clean up empty strings in the paths
     path = path.split(".")
@@ -254,7 +259,7 @@ const FileUpload = ({ contentEncoding, withinObject, field_uri, dataInputItems, 
         "title": field_label,
         "description": field_description,
         "$id": field_uri,
-        "type": "string",
+        "type": "fileupload (string)",
         "value": value,
     }
 
@@ -298,7 +303,7 @@ const FileUpload = ({ contentEncoding, withinObject, field_uri, dataInputItems, 
             }} style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', alignItems: "center", width: '100%' }}>
                 <div style={{ paddingLeft: "15px", width: "100%" }}>
                     <FormControl >
-                        <FormLabel style={{ paddingBottom: "10px", color: `${inputError ? "red" : ""}` }}>{field_label === undefined ? "" : field_label + ":"}</FormLabel>
+                        <FormLabel style={{ paddingBottom: "10px", color: `${inputError ? "red" : ""}` }}>{fieldLabel === undefined ? + "" : fieldLabel + ":"}</FormLabel>
                         {renderingInProgress ? <Box sx={{ width: '225px' }}>
                             <LinearProgress />
                         </Box> : null}

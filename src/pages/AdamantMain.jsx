@@ -30,7 +30,7 @@ import fillValueWithEmptyString from "../components/utils/fillValueWithEmptyStri
 import convData2FormData from "../components/utils/convData2FormData";
 import FormReviewBeforeSubmit from "../components/FormReviewBeforeSubmit";
 import changeKeywords from "../components/utils/changeKeywords";
-import QPTDATLogo from "../assets/adamant-header-4.svg";
+import QPTDATLogo from "../assets/adamant-header-5.svg";
 import createDescriptionListFromJSON from "../components/utils/createDescriptionListFromJSON";
 
 // function that receive the schema and convert it to Form/json data blueprint

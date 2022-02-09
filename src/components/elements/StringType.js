@@ -28,7 +28,7 @@ const style = {
 }
 
 
-const StringType = ({ withinObject, field_uri, dataInputItems, setDataInputItems, withinArray, path, pathFormData, field_required, field_index, edit, field_key, field_label, field_description, field_enumerate, defaultValue, value }) => {
+const StringType = ({ minLength, maxLength, withinObject, field_uri, dataInputItems, setDataInputItems, withinArray, path, pathFormData, field_required, field_index, edit, field_key, field_label, field_description, field_enumerate, defaultValue, value }) => {
 
 
     //const [descriptionText, setDescriptionText] = useState(field_description);
@@ -100,6 +100,8 @@ const StringType = ({ withinObject, field_uri, dataInputItems, setDataInputItems
         "description": field_description,
         "$id": field_uri,
         "type": "string",
+        "minLength": minLength,
+        "maxLength": maxLength,
         "value": value,
     }
 
