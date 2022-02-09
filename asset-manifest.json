@@ -1,25 +1,25 @@
 {
   "files": {
     "main.css": "/adamant/static/css/main.9ec9fc5a.chunk.css",
-    "main.js": "/adamant/static/js/main.fb8b7bcb.chunk.js",
-    "main.js.map": "/adamant/static/js/main.fb8b7bcb.chunk.js.map",
+    "main.js": "/adamant/static/js/main.7f6dcfd3.chunk.js",
+    "main.js.map": "/adamant/static/js/main.7f6dcfd3.chunk.js.map",
     "runtime-main.js": "/adamant/static/js/runtime-main.f1fe3efa.js",
     "runtime-main.js.map": "/adamant/static/js/runtime-main.f1fe3efa.js.map",
     "static/css/2.f4c56af9.chunk.css": "/adamant/static/css/2.f4c56af9.chunk.css",
-    "static/js/2.a653d630.chunk.js": "/adamant/static/js/2.a653d630.chunk.js",
-    "static/js/2.a653d630.chunk.js.map": "/adamant/static/js/2.a653d630.chunk.js.map",
+    "static/js/2.362b76f5.chunk.js": "/adamant/static/js/2.362b76f5.chunk.js",
+    "static/js/2.362b76f5.chunk.js.map": "/adamant/static/js/2.362b76f5.chunk.js.map",
     "index.html": "/adamant/index.html",
     "static/css/2.f4c56af9.chunk.css.map": "/adamant/static/css/2.f4c56af9.chunk.css.map",
     "static/css/main.9ec9fc5a.chunk.css.map": "/adamant/static/css/main.9ec9fc5a.chunk.css.map",
-    "static/js/2.a653d630.chunk.js.LICENSE.txt": "/adamant/static/js/2.a653d630.chunk.js.LICENSE.txt",
+    "static/js/2.362b76f5.chunk.js.LICENSE.txt": "/adamant/static/js/2.362b76f5.chunk.js.LICENSE.txt",
     "static/media/adamant-header-5.64662948.svg": "/adamant/static/media/adamant-header-5.64662948.svg",
     "static/media/json-file-svgrepo-com.805d27de.svg": "/adamant/static/media/json-file-svgrepo-com.805d27de.svg"
   },
   "entrypoints": [
     "static/js/runtime-main.f1fe3efa.js",
     "static/css/2.f4c56af9.chunk.css",
-    "static/js/2.a653d630.chunk.js",
+    "static/js/2.362b76f5.chunk.js",
     "static/css/main.9ec9fc5a.chunk.css",
-    "static/js/main.fb8b7bcb.chunk.js"
+    "static/js/main.7f6dcfd3.chunk.js"
   ]
 }
