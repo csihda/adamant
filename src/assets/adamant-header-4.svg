@@ -2,9 +2,9 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="196.28419mm"
+   width="204.71115mm"
    height="48.121658mm"
-   viewBox="0 0 196.2842 48.121658"
+   viewBox="0 0 204.71115 48.121658"
    version="1.1"
    id="svg5"
    inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
@@ -23,9 +23,9 @@
      inkscape:pagecheckerboard="0"
      inkscape:document-units="mm"
      showgrid="false"
-     inkscape:zoom="0.72337262"
-     inkscape:cx="180.40495"
-     inkscape:cy="69.811877"
+     inkscape:zoom="1.4467452"
+     inkscape:cx="554.00217"
+     inkscape:cy="115.77712"
      inkscape:window-width="2400"
      inkscape:window-height="1271"
      inkscape:window-x="2391"
@@ -58,7 +58,7 @@
        gradientUnits="userSpaceOnUse"
        spreadMethod="pad"
        id="linearGradient41"
-       gradientTransform="matrix(0.50325648,0,0,0.50325648,304.94556,266.72776)">
+       gradientTransform="matrix(0.45950209,0,0,0.45950209,329.60346,282.00241)">
       <stop
          style="stop-opacity:1;stop-color:#004aac"
          offset="0"
@@ -88,7 +88,7 @@
        gradientUnits="userSpaceOnUse"
        spreadMethod="pad"
        id="linearGradient67"
-       gradientTransform="matrix(0.50325648,0,0,0.50325648,304.94556,266.72776)">
+       gradientTransform="matrix(0.45950209,0,0,0.45950209,329.60346,282.00241)">
       <stop
          style="stop-opacity:1;stop-color:#0e8100"
          offset="0"
@@ -134,7 +134,7 @@
        gradientUnits="userSpaceOnUse"
        spreadMethod="pad"
        id="linearGradient93"
-       gradientTransform="matrix(0.50325648,0,0,0.50325648,304.94556,266.72776)">
+       gradientTransform="matrix(0.45950209,0,0,0.45950209,329.60346,282.00241)">
       <stop
          style="stop-opacity:1;stop-color:#a70000"
          offset="0"
@@ -302,262 +302,54 @@
     </clipPath>
     <clipPath
        clipPathUnits="userSpaceOnUse"
-       id="clipPath1465">
+       id="clipPath1035">
       <path
          d="M 0,1.8311e-4 H 878.76 V 878.76018 H 0 Z"
          clip-rule="evenodd"
-         id="path1463" />
+         id="path1033" />
     </clipPath>
     <clipPath
        clipPathUnits="userSpaceOnUse"
-       id="clipPath1479">
+       id="clipPath1049">
       <path
          d="M 1.3095e-5,0 H 878.76001 V 878.76 H 1.3095e-5 Z"
          clip-rule="evenodd"
-         id="path1477" />
+         id="path1047" />
     </clipPath>
     <clipPath
        clipPathUnits="userSpaceOnUse"
-       id="clipPath1503">
+       id="clipPath1073">
       <path
          d="M 1.3095e-5,0 H 878.76001 V 878.76 H 1.3095e-5 Z"
          clip-rule="evenodd"
-         id="path1501" />
+         id="path1071" />
     </clipPath>
     <clipPath
        clipPathUnits="userSpaceOnUse"
-       id="clipPath1515">
+       id="clipPath1085">
       <path
          d="M 1.3095e-5,0 H 878.76001 V 878.76 H 1.3095e-5 Z"
          clip-rule="evenodd"
-         id="path1513" />
+         id="path1083" />
     </clipPath>
     <clipPath
        clipPathUnits="userSpaceOnUse"
-       id="clipPath1527">
+       id="clipPath1097">
       <path
          d="M 1.3095e-5,0 H 878.76001 V 878.76 H 1.3095e-5 Z"
          clip-rule="evenodd"
-         id="path1525" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath23-58">
-      <path
-         d="M 0,1.8311e-4 H 878.76 V 878.76018 H 0 Z"
-         clip-rule="evenodd"
-         id="path21-1" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath33-04">
-      <path
-         d="M 9.3e-7,878.76 H 878.76 V 2.4414e-4 L 1.5667e-5,1.8311e-4"
-         clip-rule="evenodd"
-         id="path31-5" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath51-7">
-      <path
-         d="M -7.577e-5,878.76 H 878.76 V 1.2207e-4 H -5.5291e-5"
-         clip-rule="evenodd"
-         id="path49-8" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath77-7">
-      <path
-         d="M -7.3194e-5,878.76 H 878.76 V 1.2207e-4 H -2.9502e-5"
-         clip-rule="evenodd"
-         id="path75-5" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath103-6">
-      <path
-         d="M 1.3095e-5,0 H 878.76001 V 878.76 H 1.3095e-5 Z"
-         clip-rule="evenodd"
-         id="path101-8" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath115-1">
-      <path
-         d="M 1.3095e-5,0 H 878.76001 V 878.76 H 1.3095e-5 Z"
-         clip-rule="evenodd"
-         id="path113-6" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath127-9">
-      <path
-         d="M 1.3095e-5,0 H 878.76001 V 878.76 H 1.3095e-5 Z"
-         clip-rule="evenodd"
-         id="path125-57" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath23-8-8">
-      <path
-         d="M 0,1.8311e-4 H 878.76 V 878.76018 H 0 Z"
-         clip-rule="evenodd"
-         id="path21-8-6" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath33-0-9">
-      <path
-         d="M 9.3e-7,878.76 H 878.76 V 2.4414e-4 L 1.5667e-5,1.8311e-4"
-         clip-rule="evenodd"
-         id="path31-3-7" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath51-6-5">
-      <path
-         d="M -7.577e-5,878.76 H 878.76 V 1.2207e-4 H -5.5291e-5"
-         clip-rule="evenodd"
-         id="path49-1-7" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath77-1-2">
-      <path
-         d="M -7.3194e-5,878.76 H 878.76 V 1.2207e-4 H -2.9502e-5"
-         clip-rule="evenodd"
-         id="path75-0-9" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath103-3-1">
-      <path
-         d="M 1.3095e-5,0 H 878.76001 V 878.76 H 1.3095e-5 Z"
-         clip-rule="evenodd"
-         id="path101-3-7" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath115-5-5">
-      <path
-         d="M 1.3095e-5,0 H 878.76001 V 878.76 H 1.3095e-5 Z"
-         clip-rule="evenodd"
-         id="path113-2-8" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath127-1-6">
-      <path
-         d="M 1.3095e-5,0 H 878.76001 V 878.76 H 1.3095e-5 Z"
-         clip-rule="evenodd"
-         id="path125-5-8" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath23-5-4">
-      <path
-         d="M 0,1.8311e-4 H 878.76 V 878.76018 H 0 Z"
-         clip-rule="evenodd"
-         id="path21-5-7" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath33-3-0">
-      <path
-         d="M 9.3e-7,878.76 H 878.76 V 2.4414e-4 L 1.5667e-5,1.8311e-4"
-         clip-rule="evenodd"
-         id="path31-2-1" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath51-0-7">
-      <path
-         d="M -7.577e-5,878.76 H 878.76 V 1.2207e-4 H -5.5291e-5"
-         clip-rule="evenodd"
-         id="path49-6-1" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath77-8-3">
-      <path
-         d="M -7.3194e-5,878.76 H 878.76 V 1.2207e-4 H -2.9502e-5"
-         clip-rule="evenodd"
-         id="path75-06-6" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath103-2-7">
-      <path
-         d="M 1.3095e-5,0 H 878.76001 V 878.76 H 1.3095e-5 Z"
-         clip-rule="evenodd"
-         id="path101-7-6" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath115-4-4">
-      <path
-         d="M 1.3095e-5,0 H 878.76001 V 878.76 H 1.3095e-5 Z"
-         clip-rule="evenodd"
-         id="path113-4-5" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath127-5-3">
-      <path
-         d="M 1.3095e-5,0 H 878.76001 V 878.76 H 1.3095e-5 Z"
-         clip-rule="evenodd"
-         id="path125-8-5" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath3230">
-      <path
-         d="M 0,1.8311e-4 H 878.76 V 878.76018 H 0 Z"
-         clip-rule="evenodd"
-         id="path3228" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath3244">
-      <path
-         d="M 1.3095e-5,0 H 878.76001 V 878.76 H 1.3095e-5 Z"
-         clip-rule="evenodd"
-         id="path3242" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath3268">
-      <path
-         d="M 1.3095e-5,0 H 878.76001 V 878.76 H 1.3095e-5 Z"
-         clip-rule="evenodd"
-         id="path3266" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath3280">
-      <path
-         d="M 1.3095e-5,0 H 878.76001 V 878.76 H 1.3095e-5 Z"
-         clip-rule="evenodd"
-         id="path3278" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath3292">
-      <path
-         d="M 1.3095e-5,0 H 878.76001 V 878.76 H 1.3095e-5 Z"
-         clip-rule="evenodd"
-         id="path3290" />
+         id="path1095" />
     </clipPath>
   </defs>
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-54.864533,-102.43539)">
+     transform="translate(47.183496,-127.73104)">
     <g
        inkscape:label="Layer 1"
        id="layer1-0"
-       transform="translate(79.328517,48.748596)">
+       transform="translate(-22.719512,74.044248)">
       <rect
          style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke-width:0.240685"
          id="rect436"
@@ -642,124 +434,111 @@
       </g>
     </g>
     <g
-       id="g1457"
+       id="g1027"
        inkscape:label="newlogo"
-       transform="matrix(0.28329454,0,0,-0.32735584,161.26504,275.79182)">
+       transform="matrix(0.35277777,0,0,-0.35277777,45.59833,310.25068)">
       <g
-         id="g1459">
+         id="g1029">
         <g
-           id="g1461"
-           clip-path="url(#clipPath1465)" />
+           id="g1031"
+           clip-path="url(#clipPath1035)" />
       </g>
       <path
          d="M 177.24,384.72 H 316.8 v 118.8 H 177.24 Z"
          style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
-         id="path1469" />
+         id="path1039" />
       <path
          d="M 177.24,384.72 H 316.8 v 118.8 H 177.24 Z"
          style="fill:none;stroke:#ffffff;stroke-width:0.96;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
-         id="path1471" />
+         id="path1041" />
       <g
-         id="g1473">
+         id="g1043">
         <g
-           id="g1475"
-           clip-path="url(#clipPath1479)">
+           id="g1045"
+           clip-path="url(#clipPath1049)">
           <text
-             transform="scale(0.93585254,-1.0685444)"
-             style="font-variant:normal;font-weight:600;font-size:118.957px;font-family:'Yu Gothic UI';-inkscape-font-specification:YuGothicUI-Semibold;writing-mode:lr-tb;fill:#002658;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.02497"
-             id="text1483"
-             x="186.88806"
-             y="-387.5719"><tspan
-               x="186.88806 226.38196 291.80856"
-               y="-387.5719"
+             transform="matrix(1,0,0,-1,177.26,411.82)"
+             style="font-variant:normal;font-weight:600;font-size:116.06px;font-family:'Yu Gothic UI';-inkscape-font-specification:YuGothicUI-Semibold;writing-mode:lr-tb;fill:#002658;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             id="text1053"><tspan
+               x="0 38.531921 102.36492"
+               y="0"
                sodipodi:role="line"
-               id="tspan1481"
-               style="stroke-width:1.02497">{ }</tspan></text>
+               id="tspan1051">{ }</tspan></text>
+        </g>
+      </g>
+      <path
+         d="m 216.48,462.48 h 60.72 v 24.24 h -60.72 z"
+         style="fill:#147800;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path1055" />
+      <path
+         d="m 216.48,462.48 h 60.72 v 24.24 h -60.72 z"
+         style="fill:none;stroke:#147800;stroke-width:0.96;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+         id="path1057" />
+      <path
+         d="m 216.48,430.32 h 60.72 v 24.12 h -60.72 z"
+         style="fill:#9b0000;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path1059" />
+      <path
+         d="m 216.48,430.32 h 60.72 v 24.12 h -60.72 z"
+         style="fill:none;stroke:#9b0000;stroke-width:0.96;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+         id="path1061" />
+      <path
+         d="M 216.48,399.36 H 277.2 V 423.6 H 216.48 Z"
+         style="fill:#002658;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         id="path1063" />
+      <path
+         d="M 216.48,399.36 H 277.2 V 423.6 H 216.48 Z"
+         style="fill:none;stroke:#002658;stroke-width:0.96;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+         id="path1065" />
+      <g
+         id="g1067">
+        <g
+           id="g1069"
+           clip-path="url(#clipPath1073)">
+          <text
+             transform="scale(1,-1)"
+             style="font-variant:normal;font-weight:normal;font-size:40.8049px;font-family:'Segoe UI Symbol';-inkscape-font-specification:SegoeUISymbol;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.13347"
+             id="text1077"
+             x="256.37946"
+             y="-480.35614"><tspan
+               x="256.37946"
+               y="-480.35614"
+               id="tspan1075"
+               style="stroke-width:1.13347">✓</tspan></text>
         </g>
       </g>
       <g
-         id="g1497">
+         id="g1079">
         <g
-           id="g1499"
-           clip-path="url(#clipPath1503)" />
+           id="g1081"
+           clip-path="url(#clipPath1085)">
+          <text
+             transform="scale(1,-1)"
+             style="font-variant:normal;font-weight:normal;font-size:40.8321px;font-family:'Segoe UI Symbol';-inkscape-font-specification:SegoeUISymbol;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.13347"
+             id="text1089"
+             x="256.37946"
+             y="-443.93774"><tspan
+               x="256.37946"
+               y="-443.93774"
+               id="tspan1087"
+               style="stroke-width:1.13347">✓</tspan></text>
+        </g>
       </g>
       <g
-         id="g1509">
+         id="g1091">
         <g
-           id="g1511"
-           clip-path="url(#clipPath1515)" />
-      </g>
-      <g
-         id="g1521">
-        <g
-           id="g1523"
-           clip-path="url(#clipPath1527)" />
-      </g>
-    </g>
-    <g
-       inkscape:label="Layer 1"
-       id="layer1-0-6"
-       transform="matrix(1.4558042,0,0,1.3361039,33.913725,40.904135)">
-      <g
-         id="g15-7"
-         inkscape:label="adamant-header-image"
-         transform="matrix(0.35277777,0,0,-0.35277777,-79.321583,236.9392)">
-        <g
-           id="g17-0">
-          <g
-             id="g19-3"
-             clip-path="url(#clipPath23-5-4)" />
-        </g>
-        <g
-           id="g27-8">
-          <g
-             id="g29-4"
-             clip-path="url(#clipPath33-3-0)">
-            <path
-               d="m 603.4622,449.65647 21.89166,13.9402 -18.2531,18.58526 -20.36177,-15.78212 z"
-               style="fill:url(#linearGradient41);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.503256"
-               id="path43" />
-          </g>
-        </g>
-        <g
-           id="g45-0">
-          <g
-             id="g47-4"
-             clip-path="url(#clipPath51-0-7)">
-            <path
-               d="m 586.84971,466.55079 21.07135,54.05477 -1.69598,-37.47247 z"
-               style="fill:url(#linearGradient67);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.503256"
-               id="path69" />
-          </g>
-        </g>
-        <g
-           id="g71-9">
-          <g
-             id="g73-6"
-             clip-path="url(#clipPath77-8-3)">
-            <path
-               d="m 625.28341,463.58157 -17.31705,56.72708 -0.21641,-36.95916 z"
-               style="fill:url(#linearGradient93);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.503256"
-               id="path95" />
-          </g>
-        </g>
-        <g
-           id="g97-5">
-          <g
-             id="g99-0"
-             clip-path="url(#clipPath103-2-7)" />
-        </g>
-        <g
-           id="g109-0">
-          <g
-             id="g111-3"
-             clip-path="url(#clipPath115-4-4)" />
-        </g>
-        <g
-           id="g121-9">
-          <g
-             id="g123-4"
-             clip-path="url(#clipPath127-5-3)" />
+           id="g1093"
+           clip-path="url(#clipPath1097)">
+          <text
+             transform="scale(1,-1)"
+             style="font-variant:normal;font-weight:normal;font-size:40.8049px;font-family:'Segoe UI Symbol';-inkscape-font-specification:SegoeUISymbol;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.13347"
+             id="text1101"
+             x="256.37946"
+             y="-408.40347"><tspan
+               x="256.37946"
+               y="-408.40347"
+               id="tspan1099"
+               style="stroke-width:1.13347">✓</tspan></text>
         </g>
       </g>
     </g>
