@@ -34,6 +34,7 @@ const StringType = ({ adamant_field_error, adamant_error_description, minLength,
     const [fieldEnumerate, setFieldEnumerate] = useState()
     //const [required, setRequired] = useState(false)
     const classes = useStyles();
+    console.log(descriptionText)
 
     const handleOnChange = (event) => {
         setFieldValue(event.target.value)
@@ -46,8 +47,8 @@ const StringType = ({ adamant_field_error, adamant_error_description, minLength,
 
     // for visual feedback on the field after validation
     useEffect(() => {
-        setInputError(adamant_field_error)
-        setDescriptionText(adamant_error_description)
+        setInputError(adamant_field_error !== undefined ? adamant_field_error : false)
+        setDescriptionText(adamant_error_description !== undefined ? adamant_error_description : field_description !== undefined ? field_description : "")
     }, [adamant_error_description, adamant_field_error])
 
     // set stuff back to normal onFocus

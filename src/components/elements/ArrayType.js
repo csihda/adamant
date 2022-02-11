@@ -79,8 +79,8 @@ const ArrayType = ({ adamant_field_error, adamant_error_description, maxItems, m
 
     // for visual feedback on the field after validation
     useEffect(() => {
-        setInputError(adamant_field_error)
-        setDescriptionText(adamant_error_description)
+        setInputError(adamant_field_error !== undefined ? adamant_field_error : false)
+        setDescriptionText(adamant_error_description !== undefined ? adamant_error_description : field_description !== undefined ? field_description : "")
     }, [adamant_error_description, adamant_field_error])
 
     // clean up empty strings in the paths

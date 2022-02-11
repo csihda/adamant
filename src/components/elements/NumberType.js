@@ -36,8 +36,8 @@ const NumberType = ({ adamant_error_description, adamant_field_error, minimum, m
 
     // for visual feedback on the field after validation
     useEffect(() => {
-        setInputError(adamant_field_error)
-        setDescriptionText(adamant_error_description)
+        setInputError(adamant_field_error !== undefined ? adamant_field_error : false)
+        setDescriptionText(adamant_error_description !== undefined ? adamant_error_description : field_description !== undefined ? field_description : "")
     }, [adamant_error_description, adamant_field_error])
 
 
