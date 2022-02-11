@@ -684,7 +684,7 @@ const AdamantMain = () => {
     let sha256_hash = CryptoJS.SHA256(JSON.stringify(content));
 
     let a = document.createElement("a");
-    let file = new Blob([JSON.stringify(content)], {
+    let file = new Blob([JSON.stringify(content,null,2)], {
       type: "application/json",
     });
     a.href = URL.createObjectURL(file);
@@ -739,7 +739,7 @@ const AdamantMain = () => {
     let sha256_hash = CryptoJS.SHA256(JSON.stringify(content));
 
     let a = document.createElement("a");
-    let file = new Blob([JSON.stringify(content)], {
+    let file = new Blob([JSON.stringify(content, null, 2)], {
       type: "application/json",
     });
     a.href = URL.createObjectURL(file);

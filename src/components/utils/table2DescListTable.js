@@ -33,19 +33,24 @@ const table2DescListTable = (table) => {
             if (table["value"][index][item] === undefined) {
                 descListTable += `<td style="text-align: left;">n/a</td>\n`
             } else {
-                if (table["value"][index][item].startsWith("data:") & table["value"][index][item].includes("base64")) {
-                    //console.log(table["fieldKey"] + "-" + (index + 1))
-                    let extension = table["value"][index][item].split(";")[0].replace("data:", "")
-                    extension = Object.keys(listMimeTypes).find(key => listMimeTypes[key] === extension)
-                    let fileName = table["fieldKey"] + "-" + (index + 1) + extension
-                    console.log(fileName)
-                    descListTable += `<td style="text-align: left;">See attachment (${fileName})</td>\n`
-                }
-                else if (table["value"][index][item].trim() === "") {
-                    descListTable += `<td style="text-align: left;">n/a</td>\n`
+                if (typeof table["value"][index][item] === "string"){
+                    if (table["value"][index][item].startsWith("data:") & table["value"][index][item].includes("base64")) {
+                        //console.log(table["fieldKey"] + "-" + (index + 1))
+                        let extension = table["value"][index][item].split(";")[0].replace("data:", "")
+                        extension = Object.keys(listMimeTypes).find(key => listMimeTypes[key] === extension)
+                        let fileName = table["fieldKey"] + "-" + (index + 1) + extension
+                        console.log(fileName)
+                        descListTable += `<td style="text-align: left;">See attachment (${fileName})</td>\n`
+                    }
+                    else if (table["value"][index][item].trim() === "") {
+                        descListTable += `<td style="text-align: left;">n/a</td>\n`
+                    }
+                    else {
+                        descListTable += `<td style="text-align: left;">${table["value"][index][item].trim()}</td>\n`
+                    }
                 }
                 else {
-                    descListTable += `<td style="text-align: left;">${table["value"][index][item].trim()}</td>\n`
+                    descListTable += `<td style="text-align: left;">${table["value"][index][item]}</td>\n`
                 }
             }
         })
