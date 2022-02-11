@@ -281,12 +281,14 @@ const FileUpload = ({ adamant_field_error, adamant_error_description, contentEnc
 
     return (
         <>
-            <div onMouseLeave={() => {
+            <div onClick={() => {
                 if (adamant_error_description !== undefined && adamant_field_error !== undefined) {
                     set(convertedSchema, path + ".adamant_error_description", (field_description !== undefined ? field_description : ""))
                     set(convertedSchema, path + ".adamant_field_error", false)
                     setInputError(false)
                     setDescriptionText(field_description !== undefined ? field_description : "")
+
+                    updateParent(convertedSchema)
                 }
                 if (inputError === true) {
                     setInputError(false)

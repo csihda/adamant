@@ -52,6 +52,7 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
     const [charMinMaxHelperText, setCharMinMaxHelperText] = useState("Set the minimum and maximum length allowed for this string input.")
     const [arrayMinMaxHelperText, setArrayMinMaxHelperText] = useState("Set the minimum and maximum values of the items allowed for this array field.")
     const [numberMinMaxValueHelperText, setNumberMinMaxValueHelpertext] = useState("Set the minimum and maximum values of this field.")
+    const [arrayUniqueItems, setArrayUniqueItems] = useState(UISchema !== undefined ? (UISchema["uniqueItems"] !== undefined ? UISchema["uniqueItems"] : false) : false)
 
     let arrayItemTypeList = ["string", "number", "integer"]
     if (UISchema !== undefined) {
@@ -76,6 +77,12 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                 }
                 if (UISchema["items"] === undefined) {
                     UISchema["items"] = { "type": "string" }
+                }
+                if (arrayUniqueItems) {
+                    UISchema["uniqueItems"] = arrayUniqueItems
+                }
+                else {
+                    delete UISchema["uniqueItems"]
                 }
                 setArrayMinMaxItem(value)
             }
@@ -136,13 +143,9 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
         }
     }
 
-    let datatypes
-    if (schemaSpecification !== "http://json-schema.org/draft-07/schema#") {
-        datatypes = ["string", "number", "integer", "object", "array", "boolean"]
 
-    } else {
-        datatypes = ["string", "number", "integer", "object", "array", "boolean", "fileupload (string)"]
-    }
+    let datatypes = ["string", "number", "integer", "object", "array", "boolean", "fileupload (string)"]
+
 
 
     const handleOnChangeListField = (event) => {
@@ -219,6 +222,13 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                 } else {
                     delete delete tempUISchema["maxItems"]
                 }
+
+                if (arrayUniqueItems) {
+                    tempUISchema["uniqueItems"] = arrayUniqueItems
+                }
+                else {
+                    delete tempUISchema["uniqueItems"]
+                }
             }
             // more validation keywords for numeric types
             if (["number", "integer"].includes(tempUISchema["type"])) {
@@ -263,6 +273,10 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
 
             if (tempUISchema["type"] !== "string") {
                 setEnumChecked(false);
+            }
+
+            if (selectedType === "fileupload (string)" && schemaSpecification === "http://json-schema.org/draft-04/schema#") {
+                delete tempUISchema["contentEncoding"]
             }
 
             // for fileupload
@@ -405,9 +419,23 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                 } else {
                     delete delete tempUISchema["maxItems"]
                 }
+
+                if (arrayUniqueItems) {
+                    tempUISchema["uniqueItems"] = arrayUniqueItems
+                }
+                else {
+                    delete tempUISchema["uniqueItems"]
+                }
             }
             // more validation keywords for numeric types
             if (["number", "integer"].includes(tempUISchema["type"])) {
+                // delete all unrelated keywords
+                delete tempUISchema["items"]
+                delete tempUISchema["minItems"]
+                delete tempUISchema["maxItems"]
+                delete tempUISchema["properties"]
+                delete tempUISchema["maximum"]
+                delete tempUISchema["minimum"]
                 if (numberMinMaxValue[0] !== "None") {
                     tempUISchema["minimum"] = numberMinMaxValue[0]
                 } else {
@@ -421,6 +449,13 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
             }
             // more validation keywords for string
             if (tempUISchema["type"] === "string") {
+                // delete all unrelated keywords
+                delete tempUISchema["items"]
+                delete tempUISchema["minItems"]
+                delete tempUISchema["maxItems"]
+                delete tempUISchema["properties"]
+                delete tempUISchema["maximum"]
+                delete tempUISchema["minimum"]
                 if (charMinMaxLengthValue[0] !== "None") {
                     tempUISchema["minLength"] = charMinMaxLengthValue[0]
                 } else {
@@ -436,6 +471,11 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
 
             if (!["string", "integer", "number"].includes(tempUISchema["type"])) {
                 setEnumChecked(false);
+            }
+
+            if (selectedType === "fileupload (string)" && schemaSpecification === "http://json-schema.org/draft-04/schema#") {
+                console.log("hahaha")
+                delete tempUISchema["contentEncoding"]
             }
 
             // get rid of array-specific keywords if selectedType is not array
@@ -460,6 +500,8 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                 delete tempUISchema["enumerate"]
                 delete tempUISchema["enum"]
                 delete tempUISchema["properties"]
+                delete tempUISchema["maximum"]
+                delete tempUISchema["minimum"]
             }
 
             const set = require("set-value");
@@ -757,6 +799,12 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
         setEnumChecked(prev => !prev)
     }
 
+    // handle change uniqueItems check box
+    const handleUniqueItemsCheckBoxOnChange = () => {
+        setArrayUniqueItems(prev => !prev)
+    }
+
+
     return (
         <>
             {notImplemented ?
@@ -896,7 +944,8 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                                                     <div style={{ paddingLeft: "10px" }}></div>
                                                     <TextField value={arrayMinMaxItem[1]} onChange={event => handleMinMaxArrayItem(event, "max")} onBlur={event => { handleMinMaxArrayItemOnBlur(event, "max") }} margin="normal" fullWidth variant='outlined' label="Max. Array items" />
                                                 </div>
-                                                <div style={{ color: "gray", fontSize: "12px", paddingLeft: "11px", paddingRight: "11px" }}>{arrayMinMaxHelperText}</div>
+                                                <div style={{ color: "gray", fontSize: "12px", paddingLeft: "11px", paddingRight: "11px", paddingBottom: "10px" }}>{arrayMinMaxHelperText}</div>
+                                                <FormControlLabel control={<Checkbox onChange={() => handleUniqueItemsCheckBoxOnChange()} checked={arrayUniqueItems} />} label="Input items must be unique." />
                                                 <FormControlLabel control={<Checkbox onChange={() => handleCheckBoxOnChange()} checked={requiredChecked} />} label="Required. Checked means the field must be filled." />
                                             </>
                                             : null}

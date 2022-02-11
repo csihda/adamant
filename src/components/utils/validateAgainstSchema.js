@@ -14,7 +14,21 @@ const messageLookUpTable = (field_label, keyword, message) => {
         case 'required':
             return `'${field_label}' field must be filled (required)`
         default:
-            return (`Input for '${field_label}' field ` + message)
+            if (keyword === "uniqueItems") {
+                message = message.split("")
+                let newMessage = []
+                message.forEach(s => {
+                    if (!Number.isNaN(parseInt(s))) {
+                        newMessage.push(parseInt(s) + 1)
+                    } else {
+                        newMessage.push(s)
+                    }
+                })
+                newMessage = newMessage.join("")
+                return (`Input for '${field_label}' field ` + newMessage.replace("##", "no."))
+            } else {
+                return (`Input for '${field_label}' field ` + message)
+            }
     }
 }
 

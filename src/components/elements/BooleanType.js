@@ -203,7 +203,7 @@ const BooleanType = ({ field_uri, withinArray, withinObject, value, dataInputIte
 
     return (
         <>
-            <div onMouseEnter={() => {
+            <div onClick={() => {
                 if (inputError === true) {
                     setInputError(false)
                     setDescriptionText(field_description !== undefined ? field_description : "")

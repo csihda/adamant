@@ -35,6 +35,10 @@ const useStyles = makeStyles((theme) => ({
 
 const Accordion = withStyles({
     root: {
+        border: `1px solid rgba(232, 244, 253, 1)`,
+        '&:not(:last-child)': {
+            borderBottom: 0,
+        },
         boxShadow: "none",
         '&:before': {
             display: 'none',
@@ -48,6 +52,7 @@ const Accordion = withStyles({
 
 const AccordionSummary = withStyles({
     root: {
+        backgroundColor: "rgba(232, 244, 253, 1)",
         borderBottom: '1px solid rgba(0, 0, 0, .0)',
         marginBottom: -1,
         minHeight: 56,
@@ -63,7 +68,7 @@ const AccordionSummary = withStyles({
     expanded: {},
 })(MuiAccordionSummary);
 
-const ArrayType = ({ adamant_field_error, adamant_error_description, maxItems, minItems, oSetDataInputItems, oDataInputItems, withinObject, withinArray, field_uri, value, pathFormData, path, pathSchema, field_required, field_key, field_index, edit, field_label, field_description, field_items, field_prefixItems }) => {
+const ArrayType = ({ adamant_field_error, adamant_error_description, maxItems, minItems, uniqueItems, oSetDataInputItems, oDataInputItems, withinObject, withinArray, field_uri, value, pathFormData, path, pathSchema, field_required, field_key, field_index, edit, field_label, field_description, field_items, field_prefixItems }) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [expand, setExpand] = useState(true);
     const { updateParent, convertedSchema, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
@@ -345,6 +350,7 @@ const ArrayType = ({ adamant_field_error, adamant_error_description, maxItems, m
         "items": field_items,
         "minItems": minItems,
         "maxItems": maxItems,
+        "uniqueItems": uniqueItems,
         "type": "array",
         "value": value
     }
@@ -444,28 +450,29 @@ const ArrayType = ({ adamant_field_error, adamant_error_description, maxItems, m
     }
 
     return (<>
-        <div onMouseEnter={() => {
+        <div onClick={() => {
             if (adamant_error_description !== undefined && adamant_field_error !== undefined) {
                 set(convertedSchema, path + ".adamant_error_description", (field_description !== undefined ? field_description : ""))
                 set(convertedSchema, path + ".adamant_field_error", false)
                 setInputError(false)
                 setDescriptionText(field_description !== undefined ? field_description : "")
+                updateParent(convertedSchema)
             }
         }} style={{ width: "100%", padding: "10px 0px 10px 0px" }}>
             <Accordion expanded={expand} style={inputError ? {
                 border: `1px solid #ff7961`,
-                '&:not(:last-child)': {
+                '&:not(:lastChild)': {
                     borderBottom: 0,
                 }
             } :
                 {
                     border: `1px solid rgba(232, 244, 253, 1)`,
-                    '&:not(:last-child)': {
+                    '&:not(:lastChild)': {
                         borderBottom: 0,
                     }
                 }} >
                 <AccordionSummary
-                    style={inputError ? { backgroundColor: "#ff7961" } : { backgroundColor: "rgba(232, 244, 253, 1)" }}
+                    style={inputError ? { backgroundColor: "white", borderRadius: "4px", borderBottom: '1px solid  #ff7961' } : { backgroundColor: "rgba(232, 244, 253, 1)", borderBottom: '1px solid  rgba(0, 0, 0, .0)' }}
                     expandIcon={withinObject ? null :
                         <Tooltip placement="top" title={`Collapse/Expand this container`}>
                             <ExpandMoreIcon />
@@ -478,8 +485,8 @@ const ArrayType = ({ adamant_field_error, adamant_error_description, maxItems, m
                 >
                     <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
                         <div style={{ width: "100%" }}>
-                            <Typography className={classes.heading}>{field_label + (required ? "*" : "")}</Typography>
-                            {expand ? <div style={{ color: "gray" }}>
+                            <Typography style={inputError ? { color: "#ff7961" } : {}} className={classes.heading}>{field_label + (required ? "*" : "")}</Typography>
+                            {expand ? <div style={inputError ? { color: "#ff7961" } : { color: "gray" }}>
                                 {descriptionText}
                             </div> : null}
                         </div>
@@ -496,7 +503,7 @@ const ArrayType = ({ adamant_field_error, adamant_error_description, maxItems, m
                         </> : null}
                     </div>
                 </AccordionSummary>
-                <Divider />
+                <div style={{ paddingTop: "2px" }}></div>
                 <AccordionDetails>
                     <DragDropContext onDragEnd={handleOnDragEnd}>
                         <Droppable droppableId="subforms">

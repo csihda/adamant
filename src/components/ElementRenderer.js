@@ -9,7 +9,7 @@ import AnyOfKeywordPlaceHolder from './elements/AnyOfKeywordPlaceHolder';
 import FileUpload from './elements/FileUpload';
 
 
-const ElementRenderer = ({ withinObject, dataInputItems, setDataInputItems, withinArray, path, pathSchema, pathFormData, elementRequired, fieldkey, fieldIndex, edit, field: { minItems, maxItems, minimum, maximum, minLength, maxLength, type, $id, id, title, contentEncoding, description, properties, required, enumerate, items, defaultValue, value, anyOf, adamant_field_error, adamant_error_description } }) => {
+const ElementRenderer = ({ withinObject, dataInputItems, setDataInputItems, withinArray, path, pathSchema, pathFormData, elementRequired, fieldkey, fieldIndex, edit, field: { minItems, maxItems, uniqueItems, minimum, maximum, minLength, maxLength, type, $id, id, title, contentEncoding, description, properties, required, enumerate, items, defaultValue, value, anyOf, adamant_field_error, adamant_error_description } }) => {
 
     switch (type) {
         case 'string':
@@ -136,6 +136,7 @@ const ElementRenderer = ({ withinObject, dataInputItems, setDataInputItems, with
                 value={value}
                 maxItems={maxItems}
                 minItems={minItems}
+                uniqueItems={uniqueItems}
                 oDataInputItems={dataInputItems}
                 oSetDataInputItems={setDataInputItems}
                 withinArray={withinArray}

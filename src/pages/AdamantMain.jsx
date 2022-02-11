@@ -34,6 +34,7 @@ import QPTDATLogo from "../assets/adamant-header-5.svg";
 import createDescriptionListFromJSON from "../components/utils/createDescriptionListFromJSON";
 import HelpIcon from "@material-ui/icons/HelpOutlineRounded";
 import { Tooltip } from "@material-ui/core";
+import validateSchemaAgainstSpecification from "../components/utils/validateSchemaAgainstSpecification";
 
 // function that receive the schema and convert it to Form/json data blueprint
 // also to already put the default value to this blueprint
@@ -473,10 +474,36 @@ const AdamantMain = () => {
   // compile on-click handle
   const compileOnClick = () => {
     let value = schema;
-    setInputMode(true);
-    setSchema(value);
-    setEditMode(false);
-    setDisable(true);
+
+    const [valid, message] = validateSchemaAgainstSpecification(
+      JSON.parse(JSON.stringify(schema)),
+      schemaSpecification
+    );
+    if (valid) {
+      setInputMode(true);
+      setSchema(value);
+      setEditMode(false);
+      setDisable(true);
+    } else {
+      toast.error(
+        <>
+          <div>
+            <strong>Your schema is not valid.</strong>
+          </div>
+          {message}
+        </>,
+        {
+          position: "top-right",
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: false,
+          progress: undefined,
+        }
+      );
+      return;
+    }
   };
 
   // return to edit mode handle
@@ -529,6 +556,15 @@ const AdamantMain = () => {
       let newPath = [];
       let tempValue = JSON.parse(JSON.stringify(value));
       for (let i = 0; i < path.length; ) {
+        if (path[i] === "items" && tempValue[path[i]]["type"] === "object") {
+          set(value, newPath.join(".") + ".adamant_field_error", true);
+          set(
+            value,
+            newPath.join(".") + ".adamant_error_description",
+            "One or more fields in this array have invalid inputs. Please fix them."
+          );
+          return;
+        }
         if (
           path[i] === "properties" &&
           Array.isArray(tempValue["properties"])

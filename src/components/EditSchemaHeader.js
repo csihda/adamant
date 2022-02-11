@@ -55,7 +55,7 @@ const EditSchemaHeader = ({ schemaVersion, title, description, schemaID, openDia
     const { updateParent, convertedSchema, setSchemaSpecification } = useContext(FormContext);
 
 
-    const allowedSchemaDrafts = ["http://json-schema.org/draft-04/schema#", "http://json-schema.org/draft-05/schema#", "http://json-schema.org/draft-06/schema#", "http://json-schema.org/draft-07/schema#"]
+    const allowedSchemaDrafts = ["http://json-schema.org/draft-04/schema#", "http://json-schema.org/draft-07/schema#"]
 
 
 
