@@ -153,8 +153,8 @@ const FormRenderer = ({ setSchemaSpecification, revertAllChanges, schema, edit, 
                     </Tooltip>
                 </> : null}
             </div>
+            <Typography style={{ paddingBottom: "10px" }}>{description}</Typography>
             <Divider />
-            <Typography>{description}</Typography>
             <DragDropContext onDragEnd={handleOnDragEnd}>
                 <Droppable droppableId="forms">
                     {(provided) => (
