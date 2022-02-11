@@ -20,7 +20,7 @@ import getValue from "../utils/getValue";
 import set from "set-value";
 import MuiAccordion from '@material-ui/core/Accordion';
 import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -363,13 +363,7 @@ const ArrayType = ({ adamant_field_error, adamant_error_description, maxItems, m
                 toast.warning(
                     `Can not add more item. Maximum number (${maxItems}) of items has been reached.`,
                     {
-                        position: "top-right",
-                        autoClose: 5000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: false,
-                        progress: undefined,
+                        toastId: "maxNumberWarning"
                     }
                 );
 
@@ -539,7 +533,6 @@ const ArrayType = ({ adamant_field_error, adamant_error_description, maxItems, m
             </Accordion>
         </div>
         {openDialog ? <EditElement field_uri={field_uri} pathFormData={pathFormData} field_key={field_key} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
-        <ToastContainer />
     </>
     );
 };

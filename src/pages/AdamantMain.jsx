@@ -18,7 +18,7 @@ import deleteKeySchema from "../components/utils/deleteKeySchema";
 import validateAgainstSchema from "../components/utils/validateAgainstSchema";
 import CreateELabFTWExperimentDialog from "../components/CreateELabFTWExperimentDialog";
 import { useEffect } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import prepareDataForDescList from "../components/utils/prepareDataForDescList";
 import array2objectAnyOf from "../components/utils/array2objectAnyOf";
@@ -151,13 +151,7 @@ const AdamantMain = () => {
             </div>
           </>,
           {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: false,
-            progress: undefined,
+            toastId: "connectionSuccess",
           }
         );
       },
@@ -185,13 +179,7 @@ const AdamantMain = () => {
             <div>Submit feature is disabled.</div>
           </>,
           {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: false,
-            progress: undefined,
+            toastId: "connectionWarning",
           }
         );
       },
@@ -223,13 +211,7 @@ const AdamantMain = () => {
           toast.warning(
             "Error while fetching the schemas. Using basic list of schemas.",
             {
-              position: "top-right",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: false,
-              progress: undefined,
+              toastId: "fetchingSchemasError",
             }
           );
           // if unable to fetch the schemas then use the basic list of schemas
@@ -428,8 +410,9 @@ const AdamantMain = () => {
     setJsonData({});
     setSelectedSchemaName("");
 
+    // always use newer schema specification
     let schemaBlueprint = {
-      $schema: "http://json-schema.org/draft-04/schema#",
+      $schema: "http://json-schema.org/draft-07/schema#",
       type: "object",
       properties: {},
     };
@@ -493,13 +476,7 @@ const AdamantMain = () => {
           {message}
         </>,
         {
-          position: "top-right",
-          autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: false,
-          progress: undefined,
+          toastId: "schemaError",
         }
       );
       return;
@@ -750,13 +727,8 @@ const AdamantMain = () => {
           })}
         </>,
         {
-          position: "top-right",
           autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: false,
-          progress: undefined,
+          toastId: "formDataError",
         }
       );
       return;
@@ -809,13 +781,8 @@ const AdamantMain = () => {
           })}
         </>,
         {
-          position: "top-right",
           autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: false,
-          progress: undefined,
+          toastId: "formDataError",
         }
       );
       return;
@@ -838,13 +805,8 @@ const AdamantMain = () => {
           <div style={{ paddingBottom: "10px" }}>Check your inputs!</div>
         </>,
         {
-          position: "top-right",
           autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: false,
-          progress: undefined,
+          toastId: "formDataError",
         }
       );
       return;
@@ -893,26 +855,14 @@ const AdamantMain = () => {
         //}
         setRetrievedTags(status);
         toast.success(`Successfully retrieved the tags!`, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: false,
-          progress: undefined,
+          toastId: "fetchingTagsSuccess",
         });
       },
       error: function (status) {
         console.log("Failed to retrieve tags");
         console.log(status);
         toast.error(`Failed to get the tags!\nMaybe wrong url or token?`, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: false,
-          progress: undefined,
+          toastId: "fetchingTagsError",
         });
       },
     });
@@ -956,13 +906,8 @@ const AdamantMain = () => {
           })}
         </>,
         {
-          position: "top-right",
           autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: false,
-          progress: undefined,
+          toastId: "formDataError",
         }
       );
       // clear states
@@ -998,13 +943,7 @@ const AdamantMain = () => {
         toast.success(
           `Successfully created an experiment with id: ${status["experimentId"]}!`,
           {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: false,
-            progress: undefined,
+            toastId: "createExperimentSuccess",
           }
         );
 
@@ -1023,13 +962,7 @@ const AdamantMain = () => {
         toast.error(
           `Failed to create an experiment!\nMaybe wrong url or token?`,
           {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: false,
-            progress: undefined,
+            toastId: "createExperimentError",
           }
         );
         // clear states
@@ -1060,13 +993,7 @@ const AdamantMain = () => {
           <div style={{ paddingBottom: "10px" }}>Check your inputs!</div>
         </>,
         {
-          position: "top-right",
-          autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: false,
-          progress: undefined,
+          toastId: "formDataError",
         }
       );
       return;
@@ -1118,13 +1045,8 @@ const AdamantMain = () => {
           })}
         </>,
         {
-          position: "top-right",
           autoClose: 10000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: false,
-          progress: undefined,
+          toastId: "formDataError",
         }
       );
       // clear states
@@ -1437,7 +1359,6 @@ const AdamantMain = () => {
         openCreateElabFTWExperimentDialog={openCreateElabFTWExperimentDialog}
         getTagsELabFTW={getTagsELabFTW}
       />
-      <ToastContainer />
       {openFormReviewDialog ? (
         <FormReviewBeforeSubmit
           onlineMode={onlineMode}

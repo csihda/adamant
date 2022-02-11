@@ -17,7 +17,7 @@ import EditSchemaHeader from "./EditSchemaHeader";
 import JSONSchemaViewerDialog from "./JSONSchemaViewerDialog";
 import { Tooltip } from "@material-ui/core";
 import { useDropzone } from "react-dropzone";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import fillForm from "./utils/fillForm";
 import EditElement from "./EditElement";
 
@@ -60,13 +60,7 @@ const FormRenderer = ({ setSchemaSpecification, revertAllChanges, schema, edit, 
                 toast.error(
                     validity[1],
                     {
-                        position: "top-right",
-                        autoClose: 5000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: false,
-                        progress: undefined,
+                        toastId: "somethingInvalidError"
                     }
                 );
             } else {
@@ -201,7 +195,6 @@ const FormRenderer = ({ setSchemaSpecification, revertAllChanges, schema, edit, 
             setOpenSchemaViewer={setOpenSchemaViewer}
             jsonschema={originalSchema}
         /> : null}
-        <ToastContainer />
     </>);
 };
 

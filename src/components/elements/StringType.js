@@ -34,7 +34,6 @@ const StringType = ({ adamant_field_error, adamant_error_description, minLength,
     const [fieldEnumerate, setFieldEnumerate] = useState()
     //const [required, setRequired] = useState(false)
     const classes = useStyles();
-    console.log(descriptionText)
 
     const handleOnChange = (event) => {
         setFieldValue(event.target.value)

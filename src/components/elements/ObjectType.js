@@ -67,11 +67,19 @@ const AccordionSummary = withStyles({
     expanded: {},
 })(MuiAccordionSummary);
 
-const ObjectType = ({ dataInputItems, setDataInputItems, withinArray, withinObject, field_uri, path, pathSchema, pathFormData, field_required, field_key, field_index, edit, field_label, field_description, field_properties }) => {
+const ObjectType = ({ adamant_error_description, adamant_field_error, dataInputItems, setDataInputItems, withinArray, withinObject, field_uri, path, pathSchema, pathFormData, field_required, object_is_required, field_key, field_index, edit, field_label, field_description, field_properties }) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [openDialogAddElement, setOpenDialogAddElement] = useState(false);
     const [expand, setExpand] = useState(true)// set to "true" for normally open accordion
     const { updateParent, convertedSchema, handleDataDelete } = useContext(FormContext);
+    const [descriptionText, setDescriptionText] = useState(field_description !== undefined ? field_description : "")
+    const [inputError, setInputError] = useState(false)
+
+    // for visual feedback on the field after validation
+    useEffect(() => {
+        setInputError(adamant_field_error !== undefined ? adamant_field_error : false)
+        setDescriptionText(adamant_error_description !== undefined ? adamant_error_description : field_description !== undefined ? field_description : "")
+    }, [adamant_error_description, adamant_field_error])
 
     // clean up empty strings in the paths
     path = path.split(".")
@@ -80,6 +88,13 @@ const ObjectType = ({ dataInputItems, setDataInputItems, withinArray, withinObje
     pathFormData = pathFormData.split(".")
     pathFormData = pathFormData.filter(e => e)
     pathFormData = pathFormData.join(".")
+
+    var required
+    if (object_is_required === undefined) {
+        required = false;
+    } else if (object_is_required.includes(field_key)) {
+        required = true;
+    };
 
     // This is to expand or contract the accordion, because normally open is used 
     const expandOnChange = () => {
@@ -142,6 +157,7 @@ const ObjectType = ({ dataInputItems, setDataInputItems, withinArray, withinObje
         "fieldKey": field_key,
         "title": field_label,
         "description": field_description,
+        "required": field_required,
         "properties": field_properties,
         "$id": field_uri,
         "type": "object"
@@ -153,14 +169,34 @@ const ObjectType = ({ dataInputItems, setDataInputItems, withinArray, withinObje
     const classes = useStyles();
 
     return (<>
-        <div style={{ width: "100%", padding: "10px 0px 10px 0px" }}>
-            <Accordion expanded={expand} >
+        <div onClick={() => {
+            if (adamant_error_description !== undefined && adamant_field_error !== undefined) {
+                set(convertedSchema, path + ".adamant_error_description", (field_description !== undefined ? field_description : ""))
+                set(convertedSchema, path + ".adamant_field_error", false)
+                setInputError(false)
+                setDescriptionText(field_description !== undefined ? field_description : "")
+                updateParent(convertedSchema)
+            }
+        }}
+            style={{ width: "100%", padding: "10px 0px 10px 0px" }}>
+            <Accordion expanded={expand} style={inputError ? {
+                border: `1px solid #ff7961`,
+                '&:not(:lastChild)': {
+                    borderBottom: 0,
+                }
+            } :
+                {
+                    border: `1px solid rgba(232, 244, 253, 1)`,
+                    '&:not(:lastChild)': {
+                        borderBottom: 0,
+                    }
+                }}>
                 <AccordionSummary
+                    style={inputError ? { backgroundColor: "white", borderRadius: "4px", borderBottom: '1px solid  #ff7961', height: "auto" } : { backgroundColor: "rgba(232, 244, 253, 1)", borderBottom: '1px solid  rgba(0, 0, 0, .0)', height: "auto" }}
                     expandIcon={
                         <Tooltip placement="top" title={`Collapse/Expand this container"`}>
                             <ExpandMoreIcon />
                         </Tooltip>}
-                    style={{ height: "auto" }}
                     IconButtonProps={{
                         onClick: expandOnChange
                     }}
@@ -169,8 +205,8 @@ const ObjectType = ({ dataInputItems, setDataInputItems, withinArray, withinObje
                 >
                     <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
                         <div style={{ width: "100%" }}>
-                            <Typography className={classes.heading}>{field_label}</Typography>
-                            {expand ? <div style={{ color: "gray" }}>
+                            <Typography style={inputError ? { color: "#ff7961" } : {}} className={classes.heading}>{field_label + (required ? "*" : "")}</Typography>
+                            {expand ? <div style={inputError ? { color: "#ff7961" } : { color: "gray" }}>
                                 {field_description}
                             </div> : null}
                         </div>
@@ -224,7 +260,7 @@ const ObjectType = ({ dataInputItems, setDataInputItems, withinArray, withinObje
                 </AccordionDetails>
             </Accordion>
         </div>
-        {openDialog ? <EditElement field_uri={field_uri} pathFormData={pathFormData} field_key={field_key} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} /> : null}
+        {openDialog ? <EditElement field_uri={field_uri} pathFormData={pathFormData} field_key={field_key} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} /> : null}
         {openDialogAddElement ? <EditElement editOrAdd={"add"} openDialog={openDialogAddElement} setOpenDialog={setOpenDialogAddElement} path={path} defaultSchema={defaultSchema} /> : null}
     </>);
 };

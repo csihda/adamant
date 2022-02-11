@@ -28,6 +28,8 @@ const array2object = (propert) => {
                     someObject[tempKey]["properties"]
                 );
             }
+
+            // delete keywords that are not supposed to be in the schema
             if (item === "value") {
                 delete someObject[tempKey]["value"]
             }

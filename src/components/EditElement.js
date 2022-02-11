@@ -236,6 +236,7 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                 delete tempUISchema["items"]
                 delete tempUISchema["minItems"]
                 delete tempUISchema["maxItems"]
+                delete tempUISchema["uniqueItems"]
                 delete tempUISchema["properties"]
                 delete tempUISchema["maximum"]
                 delete tempUISchema["minimum"]
@@ -256,6 +257,7 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                 delete tempUISchema["items"]
                 delete tempUISchema["minItems"]
                 delete tempUISchema["maxItems"]
+                delete tempUISchema["uniqueItems"]
                 delete tempUISchema["properties"]
                 delete tempUISchema["maximum"]
                 delete tempUISchema["minimum"]
@@ -289,6 +291,7 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                 delete tempUISchema["items"]
                 delete tempUISchema["minItems"]
                 delete tempUISchema["maxItems"]
+                delete tempUISchema["uniqueItems"]
                 delete tempUISchema["maxLength"]
                 delete tempUISchema["minLength"]
                 delete tempUISchema["enumerate"]
@@ -433,6 +436,7 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                 delete tempUISchema["items"]
                 delete tempUISchema["minItems"]
                 delete tempUISchema["maxItems"]
+                delete tempUISchema["uniqueItems"]
                 delete tempUISchema["properties"]
                 delete tempUISchema["maximum"]
                 delete tempUISchema["minimum"]
@@ -453,6 +457,7 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                 delete tempUISchema["items"]
                 delete tempUISchema["minItems"]
                 delete tempUISchema["maxItems"]
+                delete tempUISchema["uniqueItems"]
                 delete tempUISchema["properties"]
                 delete tempUISchema["maximum"]
                 delete tempUISchema["minimum"]
@@ -473,16 +478,12 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                 setEnumChecked(false);
             }
 
-            if (selectedType === "fileupload (string)" && schemaSpecification === "http://json-schema.org/draft-04/schema#") {
-                console.log("hahaha")
-                delete tempUISchema["contentEncoding"]
-            }
-
             // get rid of array-specific keywords if selectedType is not array
             if (selectedType !== "array" & tempUISchema["items"] !== undefined) {
                 delete tempUISchema["items"]
                 delete tempUISchema["minItems"]
                 delete tempUISchema["maxItems"]
+                delete tempUISchema["uniqueItems"]
             }
 
             // for fileupload
@@ -495,6 +496,7 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                 delete tempUISchema["items"]
                 delete tempUISchema["minItems"]
                 delete tempUISchema["maxItems"]
+                delete tempUISchema["uniqueItems"]
                 delete tempUISchema["maxLength"]
                 delete tempUISchema["minLength"]
                 delete tempUISchema["enumerate"]
@@ -609,7 +611,7 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
             case 'min':
                 if (value[0] >= value[1]) {
                     console.log("min value cannot be greater than max value")
-                    setArrayMinMaxHelperText(<div style={{ color: "#f44336" }}>minItems value cannot be greater or equal than maxItems value.</div>)
+                    setArrayMinMaxHelperText(<div style={{ color: "#f44336" }}>minItems value cannot be greater or equal than maxItems value. minItems value was changed to 'None'.</div>)
                     value[0] = "None"
                     return setArrayMinMaxItem(value);
                 } else {
@@ -619,7 +621,7 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
             case 'max':
                 if (value[0] >= value[1]) {
                     console.log("min value cannot be greater than max value")
-                    setArrayMinMaxHelperText(<div style={{ color: "#f44336" }}>minItems value cannot be greater or equal than maxItems value.</div>)
+                    setArrayMinMaxHelperText(<div style={{ color: "#f44336" }}>minItems value cannot be greater or equal than maxItems value. maxItems value was changed to 'None'.</div>)
                     value[1] = "None"
                     return setArrayMinMaxItem(value);
                 } else {
@@ -683,7 +685,7 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
             case 'min-integer':
                 if (value[0] >= value[1]) {
                     console.log("min value cannot be greater than max value")
-                    setNumberMinMaxValueHelpertext(<div style={{ color: "#f44336" }}>Min. value cannot be greater or equal than max. value.</div>)
+                    setNumberMinMaxValueHelpertext(<div style={{ color: "#f44336" }}>Min. value cannot be greater or equal than max. value. Min. value was changed to 'None'.</div>)
                     value[0] = "None"
                     return setNumberMinMaxValue(value);
                 } else {
@@ -693,7 +695,7 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
             case 'min-number':
                 if (value[0] >= value[1]) {
                     console.log("min value cannot be greater than max value")
-                    setNumberMinMaxValueHelpertext(<div style={{ color: "#f44336" }}>Min. value cannot be greater or equal than max. value.</div>)
+                    setNumberMinMaxValueHelpertext(<div style={{ color: "#f44336" }}>Min. value cannot be greater or equal than max. value. Min. value was changed to 'None'.</div>)
                     value[0] = "None"
                     return setNumberMinMaxValue(value);
                 } else if (value.includes("None")) {
@@ -706,7 +708,7 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
             case 'max-integer':
                 if (value[0] >= value[1]) {
                     console.log("min value cannot be greater than max value")
-                    setNumberMinMaxValueHelpertext(<div style={{ color: "#f44336" }}>Min. value cannot be greater or equal than max. value.</div>)
+                    setNumberMinMaxValueHelpertext(<div style={{ color: "#f44336" }}>Min. value cannot be greater or equal than max. value.  Max. value was changed to 'None'.</div>)
                     value[1] = "None"
                     return setNumberMinMaxValue(value);
                 } else {
@@ -716,7 +718,7 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
             case 'max-number':
                 if (value[0] >= value[1]) {
                     console.log("min value cannot be greater than max value")
-                    setNumberMinMaxValueHelpertext(<div style={{ color: "#f44336" }}>Min. value cannot be greater or equal than max. value.</div>)
+                    setNumberMinMaxValueHelpertext(<div style={{ color: "#f44336" }}>Min. value cannot be greater or equal than max. value. Max. value was changed to 'None'.</div>)
                     value[1] = "None"
                     return setNumberMinMaxValue(value);
                 } else if (value.includes("None")) {
@@ -949,6 +951,7 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                                                 <FormControlLabel control={<Checkbox onChange={() => handleCheckBoxOnChange()} checked={requiredChecked} />} label="Required. Checked means the field must be filled." />
                                             </>
                                             : null}
+                                        {selectedType === "object" ? <FormControlLabel control={<Checkbox onChange={() => handleCheckBoxOnChange()} checked={requiredChecked} />} label="Required. Checked means the field must be filled." /> : null}
                                         {selectedType !== "object" & selectedType !== "array" & selectedType !== "boolean" ?
                                             <>
                                                 <FormControlLabel control={<Checkbox onChange={() => handleCheckBoxOnChange()} checked={requiredChecked} />} label="Required. Checked means the field must be filled." />

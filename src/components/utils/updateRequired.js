@@ -16,9 +16,9 @@ const getValue = (json, path) => {
 
 const updateRequired = ({ selectedType, path, requiredChecked, field_key, convertedSchema }) => {
 
-    if (selectedType === "object") {
+    /*if (selectedType === "object") {
         requiredChecked = false
-    }
+    }*/
 
     const set = require("set-value");
 

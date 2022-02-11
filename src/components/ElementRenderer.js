@@ -189,6 +189,7 @@ const ElementRenderer = ({ withinObject, dataInputItems, setDataInputItems, with
                     field_label={title}
                     field_description={description}
                     field_required={required}
+                    object_is_required={elementRequired}
                     field_properties={properties}
                     edit={edit}
                 />)
