@@ -7,9 +7,9 @@
   max-width: 1000px;
   margin: 0 auto;
   background-color: #ffff;
-  min-height: 500px;
+  /*min-height: 500px;*/
   border: 1px solid #251d92;
-  border-radius: 5px;
+  border-radius: 8px;
 }
 
 .form_container {

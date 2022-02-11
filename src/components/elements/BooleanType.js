@@ -1,6 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { Checkbox, FormLabel, FormHelperText, FormControl } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from "@material-ui/icons/Delete";
 import { IconButton } from '@material-ui/core';
@@ -11,29 +10,12 @@ import { Tooltip } from '@material-ui/core';
 import getValue from '../utils/getValue';
 import set from 'set-value';
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        width: 'auto',
-    },
-    heading: {
-        fontSize: theme.typography.pxToRem(15),
-        fontWeight: theme.typography.fontWeightRegular,
-    },
-}));
-
-const style = {
-    paddingTop: "10px",
-    paddingBottom: "10px",
-}
-
-
 const BooleanType = ({ field_uri, withinArray, withinObject, value, dataInputItems, setDataInputItems, path, pathFormData, field_required, field_index, edit, field_key, field_label, field_description, defaultValue }) => {
     const [descriptionText, setDescriptionText] = useState(field_description !== undefined ? field_description : "");
     const [openDialog, setOpenDialog] = useState(false);
     const { updateParent, convertedSchema, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
     const [inputValue, setInputValue] = useState(value !== undefined ? value : typeof (defaultValue) === "boolean" ? defaultValue : false);
     const [inputError, setInputError] = useState(false)
-    const classes = useStyles();
 
     // clean up empty strings in the paths
     path = path.split(".")

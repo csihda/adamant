@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState, useCallback } from 'react'
-import { FormLabel, FormHelperText, FormControl, TextField } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { FormLabel, FormHelperText, FormControl } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from "@material-ui/icons/Delete";
 import { IconButton, Button } from '@material-ui/core';
@@ -14,22 +13,6 @@ import { useDropzone } from "react-dropzone";
 import LinearProgress from '@mui/material/LinearProgress';
 import Box from "@material-ui/core/Box";
 import NotRenderable from "../../assets/not-renderable.png"
-
-
-const useStyles = makeStyles((theme) => ({
-    root: {
-        width: 'auto',
-    },
-    heading: {
-        fontSize: theme.typography.pxToRem(15),
-        fontWeight: theme.typography.fontWeightRegular,
-    },
-}));
-
-const style = {
-    paddingTop: "10px",
-    paddingBottom: "10px",
-}
 
 const getAcceptedTypes = (field_description) => {
     let matches = field_description.match(/\[(.*?)\]/);
@@ -59,7 +42,7 @@ const validateAcceptedFile = (fileType, acceptedTypes) => {
 }
 
 
-const FileUpload = ({ contentEncoding, withinObject, field_uri, dataInputItems, setDataInputItems, withinArray, path, pathFormData, field_required, field_index, edit, field_key, field_label, field_description, field_enumerate, defaultValue, value }) => {
+const FileUpload = ({ adamant_field_error, adamant_error_description, contentEncoding, withinObject, field_uri, dataInputItems, setDataInputItems, withinArray, path, pathFormData, field_required, field_index, edit, field_key, field_label, field_description, field_enumerate, defaultValue, value }) => {
 
     const [openDialog, setOpenDialog] = useState(false);
     const { updateParent, convertedSchema, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
@@ -69,16 +52,15 @@ const FileUpload = ({ contentEncoding, withinObject, field_uri, dataInputItems, 
     const [renderingInProgress, setRenderingInProgress] = useState(false)
     const [mediaFileType, setMediaFileType] = useState(value !== undefined ? value.split(";")[0].replace("data:", "") : "")
     //const [required, setRequired] = useState(false)
-    const classes = useStyles();
+
+    // for visual feedback on the field after validation
+    useEffect(() => {
+        setInputError(adamant_field_error)
+        setDescriptionText(adamant_error_description)
+    }, [adamant_error_description, adamant_field_error])
 
     // define a list of renderable media file types
     let renderableMediaFileTypes = ["image/jpeg", "image/png", "image/bmp", "image/tiff", "image/svg+xml"]
-
-    // visualize that the field is required
-    let fieldLabel = field_label;
-    if (field_required !== undefined) {
-        fieldLabel += "*"
-    }
 
     // clean up empty strings in the paths
     path = path.split(".")
@@ -95,6 +77,12 @@ const FileUpload = ({ contentEncoding, withinObject, field_uri, dataInputItems, 
     } else if (field_required.includes(field_key)) {
         required = true;
     };
+
+    // visualize that the field is required
+    let fieldLabel = field_label;
+    if (required === true) {
+        fieldLabel += "*"
+    }
 
     // handle delete field UI
     const handleDeleteElement = () => {
@@ -294,6 +282,12 @@ const FileUpload = ({ contentEncoding, withinObject, field_uri, dataInputItems, 
     return (
         <>
             <div onMouseLeave={() => {
+                if (adamant_error_description !== undefined && adamant_field_error !== undefined) {
+                    set(convertedSchema, path + ".adamant_error_description", (field_description !== undefined ? field_description : ""))
+                    set(convertedSchema, path + ".adamant_field_error", false)
+                    setInputError(false)
+                    setDescriptionText(field_description !== undefined ? field_description : "")
+                }
                 if (inputError === true) {
                     setInputError(false)
                     setDescriptionText(field_description !== undefined ? field_description : "")
@@ -308,7 +302,7 @@ const FileUpload = ({ contentEncoding, withinObject, field_uri, dataInputItems, 
                             <LinearProgress />
                         </Box> : null}
                         <div style={{ width: "225px", display: "flex", justifyContent: "center" }}>
-                            {dataUrl !== "" ? <img src={renderableMediaFileTypes.includes(mediaFileType) ? dataUrl : NotRenderable} width="225" /> : ""}
+                            {dataUrl !== "" ? <img alt='fileUpload' src={renderableMediaFileTypes.includes(mediaFileType) ? dataUrl : NotRenderable} width="225" /> : ""}
                         </div>
                         <div style={{ width: "225px", fontSize: "10px", color: "grey", paddingTop: "5px", whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden" }}>
                             {dataUrl}

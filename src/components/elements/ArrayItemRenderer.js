@@ -70,7 +70,6 @@ const ArrayItemRenderer = ({ oSetDataInputItems, oDataInputItems, arrayFieldKey,
                 value={value}
                 setDataInputItems={setDataInputItems}
                 dataInputItems={dataInputItems}
-                field_label={field_label}
                 pathFormData={pathFormData}
                 pathSchema={pathSchema + ".value"}
                 path={path}

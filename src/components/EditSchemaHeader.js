@@ -52,7 +52,7 @@ const EditSchemaHeader = ({ schemaVersion, title, description, schemaID, openDia
     const [_title, _setTitle] = useState(title);
     const [_description, _setDescription] = useState(description);
     const [_schemaID, _setSchemaID] = useState(schemaID);
-    const { updateParent, convertedSchema } = useContext(FormContext);
+    const { updateParent, convertedSchema, setSchemaSpecification } = useContext(FormContext);
 
 
     const allowedSchemaDrafts = ["http://json-schema.org/draft-04/schema#", "http://json-schema.org/draft-05/schema#", "http://json-schema.org/draft-06/schema#", "http://json-schema.org/draft-07/schema#"]
@@ -61,6 +61,7 @@ const EditSchemaHeader = ({ schemaVersion, title, description, schemaID, openDia
 
     // save the change and update the UI
     const handleUpdateSchemaOnClick = () => {
+        setSchemaSpecification(_schemaVersion)
 
         if (_schemaVersion === undefined) {
             delete convertedSchema["$schema"]

@@ -41,7 +41,7 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
     const [fieldUri, setFieldUri] = useState(UISchema !== undefined ? UISchema["$id"] : "")
     const [description, setDescription] = useState(UISchema !== undefined ? UISchema["description"] : "")
     const [defValue, setDefValue] = useState(defaultValue !== undefined ? defaultValue : "")
-    const { updateParent, convertedSchema, updateFormDataId } = useContext(FormContext);
+    const { updateParent, convertedSchema, updateFormDataId, schemaSpecification } = useContext(FormContext);
     const [requiredChecked, setRequiredChecked] = useState(field_required === undefined ? false : field_required)
     const [enumChecked, setEnumChecked] = useState(enumerated === undefined ? false : enumerated)
     const [enumList, setEnumList] = useState(field_enumerate === undefined ? [] : field_enumerate);
@@ -136,8 +136,13 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
         }
     }
 
+    let datatypes
+    if (schemaSpecification !== "http://json-schema.org/draft-07/schema#") {
+        datatypes = ["string", "number", "integer", "object", "array", "boolean"]
 
-    const datatypes = ["string", "number", "integer", "object", "array", "boolean", "fileupload (string)"]
+    } else {
+        datatypes = ["string", "number", "integer", "object", "array", "boolean", "fileupload (string)"]
+    }
 
 
     const handleOnChangeListField = (event) => {
@@ -217,6 +222,13 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
             }
             // more validation keywords for numeric types
             if (["number", "integer"].includes(tempUISchema["type"])) {
+                // delete all unrelated keywords
+                delete tempUISchema["items"]
+                delete tempUISchema["minItems"]
+                delete tempUISchema["maxItems"]
+                delete tempUISchema["properties"]
+                delete tempUISchema["maximum"]
+                delete tempUISchema["minimum"]
                 if (numberMinMaxValue[0] !== "None") {
                     tempUISchema["minimum"] = numberMinMaxValue[0]
                 } else {
@@ -225,11 +237,18 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                 if (numberMinMaxValue[1] !== "None") {
                     tempUISchema["maximum"] = numberMinMaxValue[1]
                 } else {
-                    delete delete tempUISchema["maximum"]
+                    delete tempUISchema["maximum"]
                 }
             }
             // more validation keywords for string
             if (tempUISchema["type"] === "string") {
+                // delete all unrelated keywords
+                delete tempUISchema["items"]
+                delete tempUISchema["minItems"]
+                delete tempUISchema["maxItems"]
+                delete tempUISchema["properties"]
+                delete tempUISchema["maximum"]
+                delete tempUISchema["minimum"]
                 if (charMinMaxLengthValue[0] !== "None") {
                     tempUISchema["minLength"] = charMinMaxLengthValue[0]
                 } else {
@@ -238,7 +257,7 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                 if (charMinMaxLengthValue[1] !== "None") {
                     tempUISchema["maxLength"] = charMinMaxLengthValue[1]
                 } else {
-                    delete delete tempUISchema["maxLength"]
+                    delete tempUISchema["maxLength"]
                 }
             }
 
@@ -261,6 +280,8 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                 delete tempUISchema["enumerate"]
                 delete tempUISchema["enum"]
                 delete tempUISchema["properties"]
+                delete tempUISchema["maximum"]
+                delete tempUISchema["minimum"]
             }
 
             if (path !== undefined) {
@@ -876,14 +897,14 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                                                     <TextField value={arrayMinMaxItem[1]} onChange={event => handleMinMaxArrayItem(event, "max")} onBlur={event => { handleMinMaxArrayItemOnBlur(event, "max") }} margin="normal" fullWidth variant='outlined' label="Max. Array items" />
                                                 </div>
                                                 <div style={{ color: "gray", fontSize: "12px", paddingLeft: "11px", paddingRight: "11px" }}>{arrayMinMaxHelperText}</div>
-                                                {/*<FormControlLabel control={<Checkbox onChange={() => handleCheckBoxOnChange()} checked={requiredChecked} />} label="Required. Checked means the field must be filled." />*/}
+                                                <FormControlLabel control={<Checkbox onChange={() => handleCheckBoxOnChange()} checked={requiredChecked} />} label="Required. Checked means the field must be filled." />
                                             </>
                                             : null}
                                         {selectedType !== "object" & selectedType !== "array" & selectedType !== "boolean" ?
                                             <>
                                                 <FormControlLabel control={<Checkbox onChange={() => handleCheckBoxOnChange()} checked={requiredChecked} />} label="Required. Checked means the field must be filled." />
                                                 <div style={{ paddingTop: "15px", paddingBottom: "0px" }}>
-                                                    <FormControl component="misc">
+                                                    <FormControl component="misc-keywords">
                                                         <FormLabel style={{ color: "#01579b" }} component="legend">Misc.:</FormLabel>
                                                     </FormControl>
                                                 </div>
@@ -893,7 +914,7 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                                         {selectedType === "boolean" ?
                                             <>
                                                 <div style={{ paddingTop: "15px", paddingBottom: "0px" }}>
-                                                    <FormControl component="misc">
+                                                    <FormControl component="misc-keywords">
                                                         <FormLabel style={{ color: "#01579b" }} component="legend">Misc.:</FormLabel>
                                                     </FormControl>
                                                 </div>

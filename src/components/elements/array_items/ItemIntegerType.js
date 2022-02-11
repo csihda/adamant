@@ -20,12 +20,6 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const style = {
-    paddingTop: "10px",
-    paddingBottom: "10px",
-}
-
-
 const ItemIntegerType = ({ field_label, oDataInputItems, oSetDataInputItems, arrayFieldKey, withinObject, value, path, pathFormData, dataInputItems, setDataInputItems, edit, index, field_key, handleDeleteArrayItem }) => {
     const classes = useStyles();
     const [inputValue, setInputValue] = useState(value === undefined ? "" : value[index] === undefined ? "" : value[index]);

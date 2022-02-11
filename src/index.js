@@ -17,8 +17,8 @@ ReactDOM.render(
 );
 
 
-/* use this for strict mode, however it always throws the findDOMNode warning
-ReactDOM.render(
+//use this for strict mode, however it always throws the findDOMNode warning
+/*ReactDOM.render(
   <React.StrictMode>
     <Router>
       <CssBaseline />

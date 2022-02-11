@@ -24,19 +24,19 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const style = {
-    paddingTop: "10px",
-    paddingBottom: "10px",
-}
-
-
-const IntegerType = ({ minimum, maximum, field_uri, value, dataInputItems, setDataInputItems, withinArray, withinObject, defaultValue, path, pathFormData, field_required, field_index, edit, field_key, field_label, field_description, field_enumerate }) => {
+const IntegerType = ({ adamant_error_description, adamant_field_error, minimum, maximum, field_uri, value, dataInputItems, setDataInputItems, withinArray, withinObject, defaultValue, path, pathFormData, field_required, field_index, edit, field_key, field_label, field_description, field_enumerate }) => {
     const [descriptionText, setDescriptionText] = useState(field_description !== undefined ? field_description : "");
     const [openDialog, setOpenDialog] = useState(false);
     const { updateParent, convertedSchema, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
     const [inputValue, setInputValue] = useState(defaultValue !== undefined & value === undefined ? defaultValue : value === undefined ? "" : value)// useState(defaultValue !== undefined ? defaultValue : value);
     const [inputError, setInputError] = useState(false)
     const classes = useStyles();
+
+    // for visual feedback on the field after validation
+    useEffect(() => {
+        setInputError(adamant_field_error)
+        setDescriptionText(adamant_error_description)
+    }, [adamant_error_description, adamant_field_error])
 
     // clean up empty strings in the paths
     path = path.split(".")
@@ -232,12 +232,12 @@ const IntegerType = ({ minimum, maximum, field_uri, value, dataInputItems, setDa
                     setDataInputItems(items);
 
                     // store to the main form data
-                    let event = {
+                    /*let event = {
                         "target": {
                             "value":
                                 items
                         }
-                    }
+                    }*/
                     // conv. schema data
                     handleConvertedDataInput(val, newPath + ".value", "integer")
                     // update field value
@@ -275,6 +275,12 @@ const IntegerType = ({ minimum, maximum, field_uri, value, dataInputItems, setDa
             <>
                 <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
                     <TextField onFocus={() => {
+                        if (adamant_error_description !== undefined && adamant_field_error !== undefined) {
+                            set(convertedSchema, path + ".adamant_error_description", (field_description !== undefined ? field_description : ""))
+                            set(convertedSchema, path + ".adamant_field_error", false)
+                            setInputError(false)
+                            setDescriptionText(field_description !== undefined ? field_description : "")
+                        }
                         if (inputError === true) {
                             setInputValue("")
                             // then delete the value the convertedSchema
@@ -290,7 +296,7 @@ const IntegerType = ({ minimum, maximum, field_uri, value, dataInputItems, setDa
                                 updateParent(value)
                             }
                         }
-                    }} error={inputError} onBlur={() => handleInputOnBlur()} onChange={e => handleInputOnChange(e)} value={inputValue === undefined ? defaultValue : inputValue} required={required} helperText={field_description} fullWidth={true} className={classes.heading} id={field_key} label={field_label} variant="outlined" InputProps={{
+                    }} error={inputError} onBlur={() => handleInputOnBlur()} onChange={e => handleInputOnChange(e)} value={inputValue === undefined ? defaultValue : inputValue} required={required} fullWidth={true} className={classes.heading} id={field_key} label={field_label} variant="outlined" InputProps={{
                         endAdornment: <InputAdornment position="start">{<MathComponent tex={String.raw`\\${unit}`} />}</InputAdornment>,
                     }} helperText={descriptionText} />
                     {edit ? <>
@@ -315,6 +321,12 @@ const IntegerType = ({ minimum, maximum, field_uri, value, dataInputItems, setDa
                 <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
                     <TextField
                         onFocus={() => {
+                            if (adamant_error_description !== undefined && adamant_field_error !== undefined) {
+                                set(convertedSchema, path + ".adamant_error_description", (field_description !== undefined ? field_description : ""))
+                                set(convertedSchema, path + ".adamant_field_error", false)
+                                setInputError(false)
+                                setDescriptionText(field_description !== undefined ? field_description : "")
+                            }
                             if (inputError === true) {
                                 setInputValue("")
                                 // then delete the value the convertedSchema
@@ -338,7 +350,6 @@ const IntegerType = ({ minimum, maximum, field_uri, value, dataInputItems, setDa
                         onChange={e => handleInputOnChange(e)}
                         value={inputValue === undefined ? defaultValue : inputValue}
                         required={required}
-                        helperText={field_description}
                         fullWidth={true}
                         className={classes.heading}
                         id={field_key}

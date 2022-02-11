@@ -34,6 +34,12 @@ const array2object = (propert) => {
             if (item === "prevValue") {
                 delete someObject[tempKey][item]
             }
+            if (item === "adamant_field_error") {
+                delete someObject[tempKey][item]
+            }
+            if (item === "adamant_error_description") {
+                delete someObject[tempKey][item]
+            }
         });
     });
     return someObject;

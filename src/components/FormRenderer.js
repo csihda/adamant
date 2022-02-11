@@ -13,7 +13,6 @@ import DragHandleIcon from "@material-ui/icons/DragIndicator";
 import UploadDataIcon from '@mui/icons-material/UploadFile';
 import { ReactComponent as JsonIcon } from '../assets/json-file-svgrepo-com.svg'
 import RevertIvon from "@material-ui/icons/History";
-import AddElement from "./AddElement";
 import EditSchemaHeader from "./EditSchemaHeader";
 import JSONSchemaViewerDialog from "./JSONSchemaViewerDialog";
 import { Tooltip } from "@material-ui/core";
@@ -43,8 +42,8 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const FormRenderer = ({ revertAllChanges, schema, edit, originalSchema }) => {
-    const { updateParent, convertedSchema, implementedFieldTypes } = useContext(FormContext);
+const FormRenderer = ({ setSchemaSpecification, revertAllChanges, schema, edit, originalSchema }) => {
+    const { updateParent, convertedSchema } = useContext(FormContext);
     const [openDialogAddElement, setOpenDialogAddElement] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
     const [openSchemaViewer, setOpenSchemaViewer] = useState(false);
@@ -108,6 +107,9 @@ const FormRenderer = ({ revertAllChanges, schema, edit, originalSchema }) => {
 
     // deconstruct
     const { properties, title, description, required, $schema, id, $id } = schema ?? {}
+    useEffect(() => {
+        setSchemaSpecification($schema)
+    }, [])
 
     // update the order in properties on drag end
     const handleOnDragEnd = (result) => {

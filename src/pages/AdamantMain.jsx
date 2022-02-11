@@ -101,6 +101,7 @@ const AdamantMain = () => {
   const [jsonData, setJsonData] = useState({});
   const [descriptionList, setDescriptionList] = useState("");
   const [schemaWithValues, setSchemaWithValues] = useState({});
+  const [schemaSpecification, setSchemaSpecification] = useState("");
   const [token, setToken] = useState("");
   const [eLabURL, setELabURL] = useState("");
   const [experimentTitle, setExperimentTitle] = useState("");
@@ -519,6 +520,45 @@ const AdamantMain = () => {
     setSchemaIntermediate(updatedSchema2);
   };
 
+  // update error stuff visually after validation (if some field(s) is are invalid)
+  const setErrorStuffUponValidation = (errorMessages) => {
+    let value = { ...convertedSchema };
+    errorMessages.forEach((message) => {
+      let path = message.path;
+      path = path.split(".");
+      let newPath = [];
+      let tempValue = JSON.parse(JSON.stringify(value));
+      for (let i = 0; i < path.length; ) {
+        if (
+          path[i] === "properties" &&
+          Array.isArray(tempValue["properties"])
+        ) {
+          newPath.push(path[i]);
+          i += 1;
+          let index = tempValue["properties"].findIndex(
+            (val) => val.fieldKey === path[i]
+          );
+          newPath.push(index);
+          i += 1;
+          tempValue = tempValue["properties"][index];
+        } else {
+          newPath.push(path[i]);
+          tempValue = tempValue[path[i]];
+          i += 1;
+        }
+      }
+      //console.log(newPath.join("."));
+      set(value, newPath.join(".") + ".adamant_field_error", true);
+      set(
+        value,
+        newPath.join(".") + ".adamant_error_description",
+        message.message
+      );
+    });
+
+    updateParent(value);
+  };
+
   // revert all changes to the schema
   const revertAllChanges = () => {
     let value = { ...originalSchema };
@@ -660,24 +700,17 @@ const AdamantMain = () => {
     //
     // validate jsonData against its schema before download
     //
-    const [valid, validation] = validateAgainstSchema(content, contentSchema);
+    const [valid, messages] = validateAgainstSchema(content, contentSchema);
+    setErrorStuffUponValidation(messages);
     if (!valid | (Object.keys(content).length === 0)) {
-      let errorMessages = "";
-      if (validation.errors !== null) {
-        for (let i = 0; i < validation.errors.length; i++) {
-          let currentMessage = validation.errors[i].message + ".";
-          errorMessages += currentMessage + "\n";
-        }
-      }
-      errorMessages = errorMessages.split("\n");
       toast.error(
         <>
           <div>
             <strong>Form data is not valid.</strong>
           </div>
           <div style={{ paddingBottom: "10px" }}>Check your inputs!</div>
-          {errorMessages.map((item, index) => {
-            return <div key={index}>{item}</div>;
+          {messages.map((item, index) => {
+            return <div key={index}>{index + 1 + ". " + item.message}</div>;
           })}
         </>,
         {
@@ -726,24 +759,17 @@ const AdamantMain = () => {
     //
     // validate jsonData against its schema before download
     //
-    const [valid, validation] = validateAgainstSchema(content, contentSchema);
+    const [valid, messages] = validateAgainstSchema(content, contentSchema);
+    setErrorStuffUponValidation(messages);
     if (!valid | (Object.keys(content).length === 0)) {
-      let errorMessages = "";
-      if (validation.errors !== null) {
-        for (let i = 0; i < validation.errors.length; i++) {
-          let currentMessage = validation.errors[i].message + ".";
-          errorMessages += currentMessage + "\n";
-        }
-      }
-      errorMessages = errorMessages.split("\n");
       toast.error(
         <>
           <div>
             <strong>Form data is not valid.</strong>
           </div>
           <div style={{ paddingBottom: "10px" }}>Check your inputs!</div>
-          {errorMessages.map((item, index) => {
-            return <div key={index}>{item}</div>;
+          {messages.map((item, index) => {
+            return <div key={index}>{index + 1 + ". " + item.message}</div>;
           })}
         </>,
         {
@@ -877,27 +903,20 @@ const AdamantMain = () => {
     //
     // validate jsonData against its schema before submission
     //
-    const [valid, validation] = validateAgainstSchema(
+    const [valid, messages] = validateAgainstSchema(
       content,
       JSON.parse(JSON.stringify(contentSchema))
     );
+    setErrorStuffUponValidation(messages);
     if (!valid | (Object.keys(content).length === 0)) {
-      let errorMessages = "";
-      if (validation.errors !== null) {
-        for (let i = 0; i < validation.errors.length; i++) {
-          let currentMessage = validation.errors[i].message + ".";
-          errorMessages += currentMessage + "\n";
-        }
-      }
-      errorMessages = errorMessages.split("\n");
       toast.error(
         <>
           <div>
             <strong>Form data is not valid.</strong>
           </div>
           <div style={{ paddingBottom: "10px" }}>Check your inputs!</div>
-          {errorMessages.map((item, index) => {
-            return <div key={index}>{item}</div>;
+          {messages.map((item, index) => {
+            return <div key={index}>{index + 1 + ". " + item.message}</div>;
           })}
         </>,
         {
@@ -1040,7 +1059,7 @@ const AdamantMain = () => {
     if (content === undefined) {
       content = {};
     }
-    console.log("content", content);
+    //console.log("content", content);
     let contentSchema = { ...schema };
 
     //console.log("content", content);
@@ -1048,25 +1067,18 @@ const AdamantMain = () => {
     //
     // validate jsonData against its schema before submission
     //
-    const [valid, validation] = validateAgainstSchema(content, contentSchema);
-    console.log(content);
+    const [valid, messages] = validateAgainstSchema(content, contentSchema);
+    setErrorStuffUponValidation(messages);
+    //console.log(content);
     if (!valid | (Object.keys(content).length === 0)) {
-      let errorMessages = "";
-      if (validation.errors !== null) {
-        for (let i = 0; i < validation.errors.length; i++) {
-          let currentMessage = validation.errors[i].message + ".";
-          errorMessages += currentMessage + "\n";
-        }
-      }
-      errorMessages = errorMessages.split("\n");
       toast.error(
         <>
           <div>
             <strong>Form data is not valid.</strong>
           </div>
           <div style={{ paddingBottom: "10px" }}>Check your inputs!</div>
-          {errorMessages.map((item, index) => {
-            return <div key={index}>{item}</div>;
+          {messages.map((item, index) => {
+            return <div key={index}>{index + 1 + ". " + item.message}</div>;
           })}
         </>,
         {
@@ -1100,6 +1112,8 @@ const AdamantMain = () => {
           handleDataDelete,
           handleConvertedDataInput,
           SEMSelectedDevice,
+          schemaSpecification,
+          setSchemaSpecification,
           setSEMSelectedDevice,
           implementedFieldTypes,
         }}
@@ -1289,6 +1303,7 @@ const AdamantMain = () => {
           <FormRenderer
             revertAllChanges={revertAllChanges}
             schema={convertedSchema}
+            setSchemaSpecification={setSchemaSpecification}
             originalSchema={schema}
             edit={editMode}
           />

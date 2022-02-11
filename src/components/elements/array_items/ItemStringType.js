@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import TextField from "@material-ui/core/TextField"
 import { makeStyles } from '@material-ui/core/styles';
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -16,12 +16,6 @@ const useStyles = makeStyles((theme) => ({
         fontWeight: theme.typography.fontWeightRegular,
     },
 }));
-
-const style = {
-    paddingTop: "10px",
-    paddingBottom: "10px",
-}
-
 
 const ItemStringType = ({ oDataInputItems, oSetDataInputItems, arrayFieldKey, withinObject, value, pathFormData, dataInputItems, setDataInputItems, path, edit, index, field_key, handleDeleteArrayItem }) => {
     const classes = useStyles();

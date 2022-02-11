@@ -9,12 +9,14 @@ import AnyOfKeywordPlaceHolder from './elements/AnyOfKeywordPlaceHolder';
 import FileUpload from './elements/FileUpload';
 
 
-const ElementRenderer = ({ withinObject, dataInputItems, setDataInputItems, withinArray, path, pathSchema, pathFormData, elementRequired, fieldkey, fieldIndex, edit, field: { minItems, maxItems, minimum, maximum, minLength, maxLength, type, $id, id, title, contentEncoding, description, properties, required, enumerate, items, defaultValue, value, anyOf } }) => {
+const ElementRenderer = ({ withinObject, dataInputItems, setDataInputItems, withinArray, path, pathSchema, pathFormData, elementRequired, fieldkey, fieldIndex, edit, field: { minItems, maxItems, minimum, maximum, minLength, maxLength, type, $id, id, title, contentEncoding, description, properties, required, enumerate, items, defaultValue, value, anyOf, adamant_field_error, adamant_error_description } }) => {
 
     switch (type) {
         case 'string':
             if (contentEncoding !== undefined) {
                 return (<FileUpload
+                    adamant_field_error={adamant_field_error}
+                    adamant_error_description={adamant_error_description}
                     contentEncoding={contentEncoding}
                     value={value}
                     withinArray={withinArray}
@@ -35,6 +37,8 @@ const ElementRenderer = ({ withinObject, dataInputItems, setDataInputItems, with
                 />)
             } else {
                 return (<StringType
+                    adamant_field_error={adamant_field_error}
+                    adamant_error_description={adamant_error_description}
                     value={value}
                     withinArray={withinArray}
                     withinObject={withinObject}
@@ -58,6 +62,8 @@ const ElementRenderer = ({ withinObject, dataInputItems, setDataInputItems, with
             }
         case 'number':
             return (<NumberType
+                adamant_field_error={adamant_field_error}
+                adamant_error_description={adamant_error_description}
                 minimum={minimum}
                 maximum={maximum}
                 value={value}
@@ -80,6 +86,8 @@ const ElementRenderer = ({ withinObject, dataInputItems, setDataInputItems, with
             />)
         case 'integer':
             return (<IntegerType
+                adamant_field_error={adamant_field_error}
+                adamant_error_description={adamant_error_description}
                 minimum={minimum}
                 maximum={maximum}
                 value={value}
@@ -102,6 +110,8 @@ const ElementRenderer = ({ withinObject, dataInputItems, setDataInputItems, with
             />)
         case 'boolean':
             return (<BooleanType
+                adamant_field_error={adamant_field_error}
+                adamant_error_description={adamant_error_description}
                 value={value}
                 withinArray={withinArray}
                 withinObject={withinObject}
@@ -121,6 +131,8 @@ const ElementRenderer = ({ withinObject, dataInputItems, setDataInputItems, with
             />)
         case 'array':
             return (<ArrayType
+                adamant_field_error={adamant_field_error}
+                adamant_error_description={adamant_error_description}
                 value={value}
                 maxItems={maxItems}
                 minItems={minItems}
@@ -144,6 +156,8 @@ const ElementRenderer = ({ withinObject, dataInputItems, setDataInputItems, with
             if (anyOf !== undefined) {
                 return (
                     <AnyOfKeywordPlaceHolder
+                        adamant_field_error={adamant_field_error}
+                        adamant_error_description={adamant_error_description}
                         pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldkey : fieldkey}
                         withinArray={withinArray}
                         withinObject={withinObject}
@@ -162,6 +176,8 @@ const ElementRenderer = ({ withinObject, dataInputItems, setDataInputItems, with
                 )
             } else {
                 return (<ObjectType
+                    adamant_field_error={adamant_field_error}
+                    adamant_error_description={adamant_error_description}
                     withinArray={withinArray}
                     withinObject={withinObject}
                     path={path + "." + fieldIndex}
@@ -180,6 +196,8 @@ const ElementRenderer = ({ withinObject, dataInputItems, setDataInputItems, with
             if (anyOf) {
                 return (
                     <AnyOfKeywordPlaceHolder
+                        adamant_field_error={adamant_field_error}
+                        adamant_error_description={adamant_error_description}
                         pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldkey : fieldkey}
                         withinArray={withinArray}
                         withinObject={withinObject}

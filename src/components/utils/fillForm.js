@@ -37,7 +37,7 @@ const fillForm = (schemaProp, data) => {
                             return null
                         };
                     case 'array':
-                        if (typeof (data[element["fieldKey"]]) === "array") {
+                        if (Array.isArray(data[element["fieldKey"]])) {
                             return element["prevValue"] = data[element["fieldKey"]]
                         } else {
                             return null

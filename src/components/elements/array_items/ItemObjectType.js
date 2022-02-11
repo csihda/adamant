@@ -1,5 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { makeStyles } from '@material-ui/core/styles';
+import React, { useState } from 'react'
 import ElementRenderer from "../../ElementRenderer";
 import Divider from '@material-ui/core/Divider';
 import Accordion from "@material-ui/core/Accordion";
@@ -7,27 +6,8 @@ import { AccordionDetails, AccordionSummary } from '@material-ui/core';
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { Button } from '@material-ui/core';
 import DeleteIcon from "@material-ui/icons/Delete";
-import { FormContext } from "../../../FormContext"
 
-
-const useStyles = makeStyles((theme) => ({
-    root: {
-        width: '100%',
-    },
-    heading: {
-        color: 'rgba(82, 94, 103, 1)',
-        fontSize: theme.typography.pxToRem(25),
-        fontWeight: theme.typography.fontWeightRegular,
-    },
-}));
-
-const style = {
-    paddingTop: "10px",
-    paddingBottom: "10px",
-}
-
-
-const ItemObjectType = ({ value, path, dataInputItems, setDataInputItems, field_label, pathFormData, field_required, field_items, field_type, edit, index, field_key, handleDeleteArrayItem }) => {
+const ItemObjectType = ({ path, dataInputItems, setDataInputItems, field_label, pathFormData, field_required, field_items, field_type, edit, index, field_key, handleDeleteArrayItem }) => {
     const [expand, setExpand] = useState(dataInputItems[index]["adamant-ui-specific-expand"] === undefined ? true : dataInputItems[index]["adamant-ui-specific-expand"]); // set to "true" for normally open accordion
     let objectIndex = index;
     let field_properties = field_items["properties"]

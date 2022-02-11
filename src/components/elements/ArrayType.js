@@ -35,10 +35,6 @@ const useStyles = makeStyles((theme) => ({
 
 const Accordion = withStyles({
     root: {
-        border: '1px solid rgba(232, 244, 253, 1)',
-        '&:not(:last-child)': {
-            borderBottom: 0,
-        },
         boxShadow: "none",
         '&:before': {
             display: 'none',
@@ -52,7 +48,6 @@ const Accordion = withStyles({
 
 const AccordionSummary = withStyles({
     root: {
-        backgroundColor: 'rgba(232, 244, 253, 1)',
         borderBottom: '1px solid rgba(0, 0, 0, .0)',
         marginBottom: -1,
         minHeight: 56,
@@ -68,12 +63,21 @@ const AccordionSummary = withStyles({
     expanded: {},
 })(MuiAccordionSummary);
 
-const ArrayType = ({ maxItems, minItems, oSetDataInputItems, oDataInputItems, withinObject, withinArray, field_uri, value, pathFormData, path, pathSchema, field_required, field_key, field_index, edit, field_label, field_description, field_items, field_prefixItems }) => {
+const ArrayType = ({ adamant_field_error, adamant_error_description, maxItems, minItems, oSetDataInputItems, oDataInputItems, withinObject, withinArray, field_uri, value, pathFormData, path, pathSchema, field_required, field_key, field_index, edit, field_label, field_description, field_items, field_prefixItems }) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [expand, setExpand] = useState(true);
     const { updateParent, convertedSchema, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
     const [inputItems, setInputItems] = useState([]);
     const [dataInputItems, setDataInputItems] = useState([]);
+    const [descriptionText, setDescriptionText] = useState(field_description !== undefined ? field_description : "")
+    const [inputError, setInputError] = useState(false)
+
+    // for visual feedback on the field after validation
+    useEffect(() => {
+        setInputError(adamant_field_error)
+        setDescriptionText(adamant_error_description)
+    }, [adamant_error_description, adamant_field_error])
+
     // clean up empty strings in the paths
     path = path.split(".")
     path = path.filter(e => e)
@@ -440,9 +444,28 @@ const ArrayType = ({ maxItems, minItems, oSetDataInputItems, oDataInputItems, wi
     }
 
     return (<>
-        <div style={{ width: "100%", padding: "10px 0px 10px 0px" }}>
-            <Accordion expanded={expand} >
+        <div onMouseEnter={() => {
+            if (adamant_error_description !== undefined && adamant_field_error !== undefined) {
+                set(convertedSchema, path + ".adamant_error_description", (field_description !== undefined ? field_description : ""))
+                set(convertedSchema, path + ".adamant_field_error", false)
+                setInputError(false)
+                setDescriptionText(field_description !== undefined ? field_description : "")
+            }
+        }} style={{ width: "100%", padding: "10px 0px 10px 0px" }}>
+            <Accordion expanded={expand} style={inputError ? {
+                border: `1px solid #ff7961`,
+                '&:not(:last-child)': {
+                    borderBottom: 0,
+                }
+            } :
+                {
+                    border: `1px solid rgba(232, 244, 253, 1)`,
+                    '&:not(:last-child)': {
+                        borderBottom: 0,
+                    }
+                }} >
                 <AccordionSummary
+                    style={inputError ? { backgroundColor: "#ff7961" } : { backgroundColor: "rgba(232, 244, 253, 1)" }}
                     expandIcon={withinObject ? null :
                         <Tooltip placement="top" title={`Collapse/Expand this container`}>
                             <ExpandMoreIcon />
@@ -457,7 +480,7 @@ const ArrayType = ({ maxItems, minItems, oSetDataInputItems, oDataInputItems, wi
                         <div style={{ width: "100%" }}>
                             <Typography className={classes.heading}>{field_label + (required ? "*" : "")}</Typography>
                             {expand ? <div style={{ color: "gray" }}>
-                                {field_description}
+                                {descriptionText}
                             </div> : null}
                         </div>
                         <div>

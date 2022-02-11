@@ -22,16 +22,12 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const style = {
-    paddingTop: "10px",
-    paddingBottom: "10px",
-}
+
+const StringType = ({ adamant_field_error, adamant_error_description, minLength, maxLength, withinObject, field_uri, dataInputItems, setDataInputItems, withinArray, path, pathFormData, field_required, field_index, edit, field_key, field_label, field_description, field_enumerate, defaultValue, value }) => {
 
 
-const StringType = ({ minLength, maxLength, withinObject, field_uri, dataInputItems, setDataInputItems, withinArray, path, pathFormData, field_required, field_index, edit, field_key, field_label, field_description, field_enumerate, defaultValue, value }) => {
-
-
-    //const [descriptionText, setDescriptionText] = useState(field_description);
+    const [descriptionText, setDescriptionText] = useState(adamant_error_description !== undefined ? adamant_error_description : field_description !== undefined ? field_description : "");
+    const [inputError, setInputError] = useState(adamant_field_error !== undefined ? adamant_field_error : false);
     const [openDialog, setOpenDialog] = useState(false);
     const { updateParent, convertedSchema, handleDataDelete, handleConvertedDataInput, SEMSelectedDevice, setSEMSelectedDevice } = useContext(FormContext);
     const [fieldValue, setFieldValue] = useState(defaultValue !== undefined ? defaultValue : value !== undefined ? value : "")
@@ -45,6 +41,22 @@ const StringType = ({ minLength, maxLength, withinObject, field_uri, dataInputIt
         // this is for SEM form only!
         if (field_key === "semDevice") {
             setSEMSelectedDevice(event.target.value)
+        }
+    }
+
+    // for visual feedback on the field after validation
+    useEffect(() => {
+        setInputError(adamant_field_error)
+        setDescriptionText(adamant_error_description)
+    }, [adamant_error_description, adamant_field_error])
+
+    // set stuff back to normal onFocus
+    const handleOnFocus = () => {
+        if (adamant_error_description !== undefined && adamant_field_error !== undefined) {
+            set(convertedSchema, path + ".adamant_error_description", (field_description !== undefined ? field_description : ""))
+            set(convertedSchema, path + ".adamant_field_error", false)
+            setInputError(false)
+            setDescriptionText(field_description !== undefined ? field_description : "")
         }
     }
 
@@ -249,6 +261,8 @@ const StringType = ({ minLength, maxLength, withinObject, field_uri, dataInputIt
             <>
                 <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
                     < TextField
+                        onFocus={() => { handleOnFocus() }}
+                        error={inputError}
                         onBlur={(event) => handleOnBlur(event, pathFormData, "string")}
                         onChange={event => handleOnChange(event)}
                         required={required}
@@ -262,7 +276,7 @@ const StringType = ({ minLength, maxLength, withinObject, field_uri, dataInputIt
                             native: true,
                         }
                         }
-                        helperText={field_description}
+                        helperText={descriptionText}
                         value={fieldValue === undefined ? defaultValue : fieldValue}
                     >
                         {
@@ -295,6 +309,8 @@ const StringType = ({ minLength, maxLength, withinObject, field_uri, dataInputIt
                 <>
                     <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
                         <TextField
+                            onFocus={() => { handleOnFocus() }}
+                            error={inputError}
                             multiline
                             onKeyDown={(e) => {
                                 if (e.key === "Enter" && !(e.shiftKey)) {
@@ -302,7 +318,7 @@ const StringType = ({ minLength, maxLength, withinObject, field_uri, dataInputIt
                                     //setFieldValue(e.target.value);
                                 }
                             }}
-                            onBlur={(event) => handleOnBlur(event, pathFormData, "string")} required={required} helperText={field_description} onChange={(event) => { handleOnChange(event) }} value={fieldValue} fullWidth={true} className={classes.heading} id={field_key} label={field_label} variant="outlined" />
+                            onBlur={(event) => handleOnBlur(event, pathFormData, "string")} required={required} helperText={descriptionText} onChange={(event) => { handleOnChange(event) }} value={fieldValue} fullWidth={true} className={classes.heading} id={field_key} label={field_label} variant="outlined" />
                         {edit ? <>
                             <Tooltip placement="top" title={`Edit field "${field_label}"`}>
                                 <IconButton onClick={() => setOpenDialog(true)} style={{ marginLeft: "5px", marginTop: "5px", height: "45px" }}>
@@ -324,6 +340,8 @@ const StringType = ({ minLength, maxLength, withinObject, field_uri, dataInputIt
                 <>
                     <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
                         < TextField
+                            onFocus={() => { handleOnFocus() }}
+                            error={inputError}
                             onBlur={(event) => handleOnBlur(event, pathFormData, "string")}
                             onChange={event => handleOnChange(event)}
                             required={required}
@@ -337,7 +355,7 @@ const StringType = ({ minLength, maxLength, withinObject, field_uri, dataInputIt
                                 native: true,
                             }
                             }
-                            helperText={field_description}
+                            helperText={descriptionText}
                             value={fieldValue === undefined ? defaultValue : fieldValue}
                         >
                             {
