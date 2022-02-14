@@ -1,17 +1,21 @@
-from distutils import filelist
 from flask import Flask, request
 from flask_restful import Api
 import elabapy
 import json
-import io
 import base64
-from PIL import Image
 from pathlib import Path
 import os
+import smtplib
+from email.message import EmailMessage
+import mimetypes
+import io
+import base64
+from datetime import date
+
 
 app = Flask(__name__, static_folder='../build',
             static_url_path='/')  # for Gunicorn deployment
-#app = Flask(__name__)
+# app = Flask(__name__)
 api = Api(app)
 
 
@@ -32,6 +36,24 @@ def findBase64(data, prevKey, emptyArray):
                     emptyArray.append({"key": key, "data": data[key]})
 
     return emptyArray
+
+
+def findRequesterEmail(jsdata, requesterKeyword, result):
+    for key in jsdata:
+        if key == requesterKeyword:
+            result = jsdata[key]
+        if isinstance(jsdata[key], dict):
+            result = findRequesterEmail(jsdata[key], requesterKeyword, result)
+    return result
+
+
+def findOperatorName(jsdata, operatorKeyword, result):
+    for key in jsdata:
+        if key == operatorKeyword:
+            result = jsdata[key]
+        if isinstance(jsdata[key], dict):
+            result = findOperatorName(jsdata[key], operatorKeyword, result)
+    return result
 
 
 # @app.route('/')
@@ -153,16 +175,90 @@ def create_experiment():
     return {"responseText": f"Created experiment with id {response['id']}.", "message": "success", "experimentId": response['id']}
 
 
-"""
-@app.route('/api/atat_capture_image', methods=['GET'])
-def atat_capture_image():
-    img = Image.open("atat_meme.jpg", mode='r')
-    img_byte_arr = io.BytesIO()
-    img.save(img_byte_arr, format='png')
-    my_encoded_img = base64.encodebytes(
-        img_byte_arr.getvalue()).decode('ascii')
-    return my_encoded_img
-"""
+@app.route('/api/submit_job_request', methods=['POST'])
+def submit_job_request():
+    today = date.today()
+    dateToday = today.strftime("%d_%b_%Y")
+
+    jsdata = request.form['javascript_data']
+    jsschema = request.form['schema']
+    body = request.form['body']
+    jsdata = json.loads(jsdata)
+    jsschema = json.loads(jsschema)
+
+    try:
+        with open("./sem_operators.json", "r") as resp:
+            f = resp.read()
+            f = json.loads(f)
+            applicantEmail = findRequesterEmail(jsdata, "applicantEmail", "")
+            operatorName = findOperatorName(jsdata, "semOperator", "")
+            operatorName = operatorName.replace(" ", "_")
+            operatorName = operatorName.lower()
+            # print(operatorName)
+            operatorEmail = ""
+
+            for key in f["operators"]:
+                if key == operatorName:
+                    operatorEmail = f["operators"][operatorName]
+                    print(operatorEmail)
+
+            # early exit when operator email is not found
+            if operatorEmail == "":
+                return {"response": 500, "responseText": "Operator name is not found."}
+
+            f = open("./emailing_configuration.json", "r")
+            f = f.read()
+            email_conf = json.loads(f)
+
+            # now send this to the applicant email and target email
+            s = smtplib.SMTP_SSL(email_conf["smtp"])
+
+            # SEND TO APPLICANT
+            msg = EmailMessage()
+            msg['From'] = email_conf["from"]
+            msg['To'] = applicantEmail
+            msg['Subject'] = email_conf["confirmationEmailSubject"]
+
+            header = email_conf["headerText"]
+            html = header+body
+
+            msg.set_content(html, subtype="html")
+
+            # create json attachments
+            for i in range(0, 2):
+                data = ""
+                if i == 0:
+                    data = jsdata
+                    fileName = "form_data"
+                else:
+                    data = jsschema
+                    fileName = "schema"
+
+                f = json.dumps(data, indent=2).encode('utf-8')
+                f_byte_arr = io.BytesIO()
+                f_byte_arr.write(f)
+                f_byte_arr.seek(0)
+                binary_data = f_byte_arr.read()
+                # Guess MIME type or use 'application/octet-stream'
+                maintype, _, subtype = (mimetypes.guess_type("{0}_{1}.json".format(
+                    fileName, dateToday))[0] or 'application/octet-stream').partition("/")
+                # Add as attachment
+                msg.add_attachment(binary_data, maintype=maintype, subtype=subtype,
+                                   filename="{0}_{1}.json".format(fileName, dateToday))
+
+            try:
+                s.send_message(msg)
+                print("applicant email is valid")
+                del msg
+                return {"response": 200, "responseText": "Your request has been submitted."}
+            except Exception as e:
+                del msg
+                print(e)
+                return {"response": 500, "responseText": "Something went wrong"}
+
+    except Exception as e:
+        print(e)
+        return {"response": 500, "responseText": "List of operators are not available in the server."}
 
 # if __name__ == "__main__":
 #    app.run(debug=True, host="0.0.0.0", port=5000)

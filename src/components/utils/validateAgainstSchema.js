@@ -50,8 +50,10 @@ const createBetterValidationMessages = (validate, schema) => {
             path.push(error.params.missingProperty)
         }
         path = path.join(".")
+        console.log(path)
 
         let field = getValueInSchemaFullPath(schema, path)
+        console.log(field)
         let field_label = field["title"]
         let field_type = field["type"]
 

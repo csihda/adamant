@@ -101,6 +101,7 @@ const AdamantMain = () => {
   const [createScratchMode, setCreateScratchMode] = useState(false);
   const [jsonData, setJsonData] = useState({});
   const [descriptionList, setDescriptionList] = useState("");
+  const [styledDescriptionList, setStyledDescriptionList] = useState("");
   const [schemaWithValues, setSchemaWithValues] = useState({});
   const [schemaSpecification, setSchemaSpecification] = useState("");
   const [token, setToken] = useState("");
@@ -112,6 +113,7 @@ const AdamantMain = () => {
   const [SEMSelectedDevice, setSEMSelectedDevice] = useState("");
   const [HeaderImage, setHeaderImage] = useState(QPTDATLogo);
   const [openFormReviewDialog, setOpenFormReviewDialog] = useState(false);
+  const [openJobRequestDialog, setOpenJobRequestDialog] = useState(false);
   // for dropdown buttons
   const [anchorEl, setAnchorEl] = useState(null);
   const [
@@ -684,7 +686,7 @@ const AdamantMain = () => {
     let sha256_hash = CryptoJS.SHA256(JSON.stringify(content));
 
     let a = document.createElement("a");
-    let file = new Blob([JSON.stringify(content,null,2)], {
+    let file = new Blob([JSON.stringify(content, null, 2)], {
       type: "application/json",
     });
     a.href = URL.createObjectURL(file);
@@ -974,6 +976,66 @@ const AdamantMain = () => {
     });
   };
 
+  // submit sem job request
+  const submitJobRequest = () => {
+    let convSchemaData = { ...convertedSchema };
+    let content = convData2FormData(
+      JSON.parse(JSON.stringify(convSchemaData["properties"]))
+    );
+
+    let contentSchema = { ...schema };
+
+    // get rid of empty values in content
+    content = removeEmpty(content);
+    if (content === undefined) {
+      content = {};
+    }
+
+    var $ = require("jquery");
+    $.ajax({
+      type: "POST",
+      url: "/api/submit_job_request",
+      async: false,
+      dataType: "json",
+      data: {
+        javascript_data: JSON.stringify(content),
+        schema: JSON.stringify(contentSchema),
+        body: styledDescriptionList,
+      },
+      success: function (status) {
+        if (status["response"] === 200) {
+          console.log("SUCCESS");
+          console.log(status);
+
+          // close submit dialog
+          setOpenJobRequestDialog(false);
+          toast.success(`${status.responseText}`, {
+            toastId: "jobRequestSubmitSuccess",
+          });
+        } else {
+          console.log("ERROR");
+          console.log(status);
+
+          // close submit dialog
+          setOpenJobRequestDialog(false);
+          toast.error(`${status.responseText}`, {
+            toastId: "jobRequestSubmitError",
+          });
+        }
+      },
+      error: function (status) {
+        console.log("ERROR");
+        console.log(status);
+
+        // close submit dialog
+        setOpenJobRequestDialog(false);
+        toast.error(`${status.responseText}`, {
+          toastId: "jobRequestSubmitError",
+        });
+      },
+    });
+  };
+
   const handleOnClickProceedButton = () => {
     // Create elab ftw description list and store it to the description list state
     let convSch = { ...convertedSchema };
@@ -1009,7 +1071,7 @@ const AdamantMain = () => {
       true
     );
 
-    setDescriptionList(descList);
+    setStyledDescriptionList(descList);
 
     // validate the data first using ajv
     //let content = { ...jsonData };
@@ -1364,8 +1426,12 @@ const AdamantMain = () => {
           onlineMode={onlineMode}
           openFormReviewDialog={openFormReviewDialog}
           setOpenFormReviewDialog={setOpenFormReviewDialog}
-          descriptionList={descriptionList}
-          setOpenFunctions={{ setOpenCreateElabFTWExperimentDialog }}
+          descriptionList={styledDescriptionList}
+          setOpenFunctions={{
+            setOpenCreateElabFTWExperimentDialog,
+            setOpenJobRequestDialog,
+          }}
+          submitFunctions={{ submitJobRequest }}
         />
       ) : null}
     </>

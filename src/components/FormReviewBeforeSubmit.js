@@ -10,7 +10,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import { Menu, MenuItem } from "@material-ui/core";
 
 
-const FormReviewBeforeSubmit = ({ onlineMode, openFormReviewDialog, setOpenFormReviewDialog, descriptionList, setOpenFunctions }) => {
+const FormReviewBeforeSubmit = ({ onlineMode, openFormReviewDialog, setOpenFormReviewDialog, descriptionList, setOpenFunctions, submitFunctions }) => {
 
     // for dropdown buttons
     const [anchorEl, setAnchorEl] = useState(null);
@@ -83,7 +83,9 @@ const FormReviewBeforeSubmit = ({ onlineMode, openFormReviewDialog, setOpenFormR
                     }} >
                         Create eLabFTW Experiment
                     </MenuItem>
-                    <MenuItem disabled={!onlineMode} >
+                    <MenuItem disabled={!onlineMode} onClick={() => {
+                        submitFunctions.submitJobRequest()
+                    }} >
                         Submit SEM job request
                     </MenuItem>
                 </Menu>

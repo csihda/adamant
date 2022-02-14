@@ -18,6 +18,8 @@
 # python floders
 /backend/venv
 /backend/temp-files
+/backend/sem_operators.json
+/backend/emailing_configuration.json
 
 /deployment/adamant-main.nginx
 /deployment/adamant-main.service
