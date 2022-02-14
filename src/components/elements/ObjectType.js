@@ -207,7 +207,7 @@ const ObjectType = ({ adamant_error_description, adamant_field_error, dataInputI
                         <div style={{ width: "100%" }}>
                             <Typography style={inputError ? { color: "#ff7961" } : {}} className={classes.heading}>{field_label + (required ? "*" : "")}</Typography>
                             {expand ? <div style={inputError ? { color: "#ff7961" } : { color: "gray" }}>
-                                {field_description}
+                                {descriptionText}
                             </div> : null}
                         </div>
                         <div>
