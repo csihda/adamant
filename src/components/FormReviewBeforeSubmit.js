@@ -84,7 +84,8 @@ const FormReviewBeforeSubmit = ({ onlineMode, openFormReviewDialog, setOpenFormR
                         Create eLabFTW Experiment
                     </MenuItem>
                     <MenuItem disabled={!onlineMode} onClick={() => {
-                        submitFunctions.submitJobRequest()
+                        submitFunctions.submitJobRequest();
+                        setOpenFormReviewDialog(false);
                     }} >
                         Submit SEM job request
                     </MenuItem>

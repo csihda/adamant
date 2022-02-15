@@ -607,6 +607,12 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
 
     const handleMinMaxArrayItemOnBlur = (event, keyword) => {
         let value = [...arrayMinMaxItem]
+
+        // early exit
+        if (value[0] === "None" && value[1] === "None") {
+            console.log("Doing nothing because the inputs have not changed.")
+            return
+        }
         switch (keyword) {
             case 'min':
                 if (value[0] >= value[1]) {
@@ -681,6 +687,13 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
 
     const handleMinMaxValueOnBlur = (event, minMax) => {
         let value = [...numberMinMaxValue]
+
+        // early exit
+        if (value[0] === "None" && value[1] === "None") {
+            console.log("Doing nothing because the inputs have not changed.")
+            return
+        }
+
         switch (minMax) {
             case 'min-integer':
                 if (value[0] >= value[1]) {
@@ -751,6 +764,13 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
     }
     const handleMinMaxCharLengthOnBlur = (event, keyword) => {
         let value = [...charMinMaxLengthValue]
+
+        // early exit
+        if (value[0] === "None" && value[1] === "None") {
+            console.log("Doing nothing because the inputs have not changed.")
+            return
+        }
+
         switch (keyword) {
             case 'minLength':
                 if (value[0] >= value[1]) {

@@ -56,6 +56,16 @@ def findOperatorName(jsdata, operatorKeyword, result):
     return result
 
 
+def findRequesterName(jsdata, requesterNameKeyword, result):
+    for key in jsdata:
+        if key == requesterNameKeyword:
+            result = jsdata[key]
+        if isinstance(jsdata[key], dict):
+            result = findRequesterName(
+                jsdata[key], requesterNameKeyword, result)
+    return result
+
+
 # @app.route('/')
 # def index():
 #    return app.send_static_file('index.html')
@@ -191,15 +201,16 @@ def submit_job_request():
             f = resp.read()
             f = json.loads(f)
             applicantEmail = findRequesterEmail(jsdata, "applicantEmail", "")
+            # applicantName = findRequesterName(jsdata, "applicantName", "")
             operatorName = findOperatorName(jsdata, "semOperator", "")
-            operatorName = operatorName.replace(" ", "_")
-            operatorName = operatorName.lower()
+            operatorName_ = operatorName.replace(" ", "_")
             # print(operatorName)
             operatorEmail = ""
+            responsiblePersonEmail = f["responsible"]
 
             for key in f["operators"]:
-                if key == operatorName:
-                    operatorEmail = f["operators"][operatorName]
+                if key == operatorName_:
+                    operatorEmail = f["operators"][operatorName_]
                     print(operatorEmail)
 
             # early exit when operator email is not found
@@ -210,19 +221,31 @@ def submit_job_request():
             f = f.read()
             email_conf = json.loads(f)
 
-            # now send this to the applicant email and target email
+            # sending the emails
             s = smtplib.SMTP_SSL(email_conf["smtp"])
 
-            # SEND TO APPLICANT
-            msg = EmailMessage()
-            msg['From'] = email_conf["from"]
-            msg['To'] = applicantEmail
-            msg['Subject'] = email_conf["confirmationEmailSubject"]
+            # PREPARE msg1 for APPLICANT
+            msg1 = EmailMessage()
+            msg1['From'] = email_conf["from"]
+            msg1['To'] = applicantEmail
+            msg1['Subject'] = email_conf["confirmationEmailSubject"]
 
-            header = email_conf["headerText"]
-            html = header+body
+            header1 = email_conf["confirmationHeaderText"]
+            html1 = header1+body
 
-            msg.set_content(html, subtype="html")
+            msg1.set_content(html1, subtype="html")
+
+            # PREPARE msg2 for OPERATOR
+            msg2 = EmailMessage()
+            msg2['From'] = email_conf["from"]
+            msg2['To'] = "{0}, {1}".format(
+                operatorEmail, responsiblePersonEmail)
+            msg2['Subject'] = email_conf["requestReceivedEmailSubject"]
+
+            header2 = email_conf["requestReceivedHeaderText"]
+            html2 = header2+body
+
+            msg2.set_content(html2, subtype="html")
 
             # create json attachments
             for i in range(0, 2):
@@ -243,16 +266,22 @@ def submit_job_request():
                 maintype, _, subtype = (mimetypes.guess_type("{0}_{1}.json".format(
                     fileName, dateToday))[0] or 'application/octet-stream').partition("/")
                 # Add as attachment
-                msg.add_attachment(binary_data, maintype=maintype, subtype=subtype,
-                                   filename="{0}_{1}.json".format(fileName, dateToday))
+                msg1.add_attachment(binary_data, maintype=maintype, subtype=subtype,
+                                    filename="{0}_{1}.json".format(fileName, dateToday))
+                msg2.add_attachment(binary_data, maintype=maintype, subtype=subtype,
+                                    filename="{0}_{1}.json".format(fileName, dateToday))
 
+            # now send the emails to both requester and operator (and responsible person)
             try:
-                s.send_message(msg)
+                s.send_message(msg1)
+                s.send_message(msg2)
                 print("applicant email is valid")
-                del msg
+                del msg1
+                del msg2
                 return {"response": 200, "responseText": "Your request has been submitted."}
             except Exception as e:
-                del msg
+                del msg1
+                del msg2
                 print(e)
                 return {"response": 500, "responseText": "Something went wrong"}
 

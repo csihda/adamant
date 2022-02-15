@@ -101,7 +101,6 @@ const AdamantMain = () => {
   const [createScratchMode, setCreateScratchMode] = useState(false);
   const [jsonData, setJsonData] = useState({});
   const [descriptionList, setDescriptionList] = useState("");
-  const [styledDescriptionList, setStyledDescriptionList] = useState("");
   const [schemaWithValues, setSchemaWithValues] = useState({});
   const [schemaSpecification, setSchemaSpecification] = useState("");
   const [token, setToken] = useState("");
@@ -1000,7 +999,7 @@ const AdamantMain = () => {
       data: {
         javascript_data: JSON.stringify(content),
         schema: JSON.stringify(contentSchema),
-        body: styledDescriptionList,
+        body: descriptionList,
       },
       success: function (status) {
         if (status["response"] === 200) {
@@ -1071,7 +1070,7 @@ const AdamantMain = () => {
       true
     );
 
-    setStyledDescriptionList(descList);
+    setDescriptionList(descList);
 
     // validate the data first using ajv
     //let content = { ...jsonData };
@@ -1426,7 +1425,7 @@ const AdamantMain = () => {
           onlineMode={onlineMode}
           openFormReviewDialog={openFormReviewDialog}
           setOpenFormReviewDialog={setOpenFormReviewDialog}
-          descriptionList={styledDescriptionList}
+          descriptionList={descriptionList}
           setOpenFunctions={{
             setOpenCreateElabFTWExperimentDialog,
             setOpenJobRequestDialog,

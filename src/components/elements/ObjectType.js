@@ -194,7 +194,7 @@ const ObjectType = ({ adamant_error_description, adamant_field_error, dataInputI
                 <AccordionSummary
                     style={inputError ? { backgroundColor: "white", borderRadius: "4px", borderBottom: '1px solid  #ff7961', height: "auto" } : { backgroundColor: "rgba(232, 244, 253, 1)", borderBottom: '1px solid  rgba(0, 0, 0, .0)', height: "auto" }}
                     expandIcon={
-                        <Tooltip placement="top" title={`Collapse/Expand this container"`}>
+                        <Tooltip placement="top" title={`Collapse/Expand this container`}>
                             <ExpandMoreIcon />
                         </Tooltip>}
                     IconButtonProps={{
