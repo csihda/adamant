@@ -271,12 +271,15 @@ const AdamantMain = () => {
       setSchemaWithValues(JSON.parse(JSON.stringify(oriSchema)));
       setConvertedSchema(convertedSchema);
 
-      if (convertedSchema["title"] === "SEM Request Form") {
+      if (
+        convertedSchema["title"] ===
+        "Scanning Electron Microscope (SEM) Request Form"
+      ) {
         try {
           //let SEMlogo = require("../assets/sem-header-picture.png");
           //setHeaderImage(SEMlogo["default"]);
           setHeaderImage(QPTDATLogo);
-          setEditMode(true);
+          setEditMode(false);
         } catch (error) {
           console.log(error);
           setHeaderImage(QPTDATLogo);
@@ -325,12 +328,14 @@ const AdamantMain = () => {
           setSchemaWithValues(JSON.parse(JSON.stringify(oriSchema)));
           setConvertedSchema(convertedSchema);
 
-          if (obj["title"] === "SEM Request Form") {
+          if (
+            obj["title"] === "Scanning Electron Microscope (SEM) Request Form"
+          ) {
             try {
               //let SEMlogo = require("../assets/sem-header-picture.png");
               //setHeaderImage(SEMlogo["default"]);
               setHeaderImage(QPTDATLogo);
-              setEditMode(true);
+              setEditMode(false);
             } catch (error) {
               console.log(error);
               setHeaderImage(QPTDATLogo);
@@ -435,12 +440,12 @@ const AdamantMain = () => {
     setSchemaWithValues(JSON.parse(JSON.stringify(oriSchema)));
     setConvertedSchema(convertedSchema);
 
-    if (obj["title"] === "SEM Request Form") {
+    if (obj["title"] === "Scanning Electron Microscope (SEM) Request Form") {
       try {
         //let SEMlogo = require("../assets/sem-header-picture.png");
         //setHeaderImage(SEMlogo["default"]);
         setHeaderImage(QPTDATLogo);
-        setEditMode(true);
+        setEditMode(false);
       } catch (error) {
         console.log(error);
         setHeaderImage(QPTDATLogo);
@@ -487,7 +492,7 @@ const AdamantMain = () => {
   // return to edit mode handle
   const toEditMode = () => {
     let value = schema;
-    if (schema["title"] === "SEM Request Form") {
+    if (schema["title"] === "Scanning Electron Microscope (SEM) Request Form") {
       setInputMode(false);
       setSchema(value);
       setEditMode(false);
