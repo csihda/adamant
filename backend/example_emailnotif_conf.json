@@ -1,0 +1,23 @@
+{ "emailConfList": [
+    {
+        "completeSchemaTitle": "title of the complete schema",
+        "requestSchemaTitle": "title of the request schema",
+        "smtp": "your institution's SMTP (Simple Mail Transfer Protocol)",
+        "from": "sender's custom email address",
+        "requesterEmailKeyword": "the keyword in the schema that contains the requester's email address",
+        "operatorNameKeyword": "the keyword in the schema that contains the operator's name",
+        "operators": {
+            "operator_name_1": "operator_1@email.com",
+            "operator_name_2": "operator_2@email.com",
+            "operator_name_3": "operator_3@email.com"
+        },
+        "responsibleOperatorName":"responsible person of this workflow",
+        "responsibleOperatorEmail":"email address of the responsible person",
+        "confirmationEmailSubject": "email subject for confirmation email (for requester)",
+        "confirmationHeaderText": "<div>confirmation header text must be within this div tags</div>\n",
+        "requestReceivedEmailSubject": "email subject for receiving request (for operator)",
+        "requestReceivedHeaderText": "<div>received header text must be within this div tags </div>\n",
+        "requestAcceptedHeaderText": "<div>request accepted header text must be within this div tags </div>\n"
+    }
+    ]
+}

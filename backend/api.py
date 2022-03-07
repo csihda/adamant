@@ -1,3 +1,4 @@
+import email
 from flask import Flask, request
 from flask_restful import Api
 import elabapy
@@ -197,29 +198,32 @@ def submit_job_request():
     jsschema = json.loads(jsschema)
 
     try:
-        with open("./sem_operators.json", "r") as resp:
+        with open("./emailnotif_conf.json", "r") as resp:
             f = resp.read()
+
+            # find the right conf based on the schema title
             f = json.loads(f)
-            applicantEmail = findRequesterEmail(jsdata, "applicantEmail", "")
-            # applicantName = findRequesterName(jsdata, "applicantName", "")
-            operatorName = findOperatorName(jsdata, "semOperator", "")
+            email_conf = {}
+            for element in f["emailConfList"]:
+                if element["completeSchemaTitle"] == jsschema["title"] or element["requestSchemaTitle"] == jsschema["title"]:
+                    email_conf = element
+
+            requesterEmail = findRequesterEmail(
+                jsdata, email_conf["requesterEmailKeyword"], "")
+            operatorName = findOperatorName(
+                jsdata, email_conf["operatorNameKeyword"], "")
             operatorName_ = operatorName.replace(" ", "_")
-            # print(operatorName)
             operatorEmail = ""
-            responsiblePersonEmail = f["responsible"]
+            responsiblePersonEmail = email_conf["responsibleOperatorEmail"]
 
-            for key in f["operators"]:
+            for key in email_conf["operators"]:
                 if key == operatorName_:
-                    operatorEmail = f["operators"][operatorName_]
-                    print(operatorEmail)
+                    operatorEmail = email_conf["operators"][operatorName_]
 
-            # early exit when operator email is not found
-            if operatorEmail == "":
-                return {"response": 500, "responseText": "Operator name is not found."}
-
-            f = open("./emailing_configuration.json", "r")
-            f = f.read()
-            email_conf = json.loads(f)
+            print("smtp:", email_conf["smtp"])
+            print("operator:", operatorEmail)
+            print("requester:", requesterEmail)
+            print("responsible:", responsiblePersonEmail)
 
             # sending the emails
             s = smtplib.SMTP_SSL(email_conf["smtp"])
@@ -227,7 +231,7 @@ def submit_job_request():
             # PREPARE msg1 for APPLICANT
             msg1 = EmailMessage()
             msg1['From'] = email_conf["from"]
-            msg1['To'] = applicantEmail
+            msg1['To'] = requesterEmail
             msg1['Subject'] = email_conf["confirmationEmailSubject"]
 
             header1 = email_conf["confirmationHeaderText"]
