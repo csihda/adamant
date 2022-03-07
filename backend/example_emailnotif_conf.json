@@ -1,4 +1,6 @@
-{ "emailConfList": [
+{ 
+    "comment": "to use the e-mail notification feature, please change this file's name to 'emailnotif_conf.json'",
+    "emailConfList": [
     {
         "completeSchemaTitle": "title of the complete schema",
         "requestSchemaTitle": "title of the request schema",
@@ -13,11 +15,11 @@
         },
         "responsibleOperatorName":"responsible person of this workflow",
         "responsibleOperatorEmail":"email address of the responsible person",
-        "confirmationEmailSubject": "email subject for confirmation email (for requester)",
-        "confirmationHeaderText": "<div>confirmation header text must be within this div tags</div>\n",
-        "requestReceivedEmailSubject": "email subject for receiving request (for operator)",
-        "requestReceivedHeaderText": "<div>received header text must be within this div tags </div>\n",
-        "requestAcceptedHeaderText": "<div>request accepted header text must be within this div tags </div>\n"
+        "confirmationEmailSubject": "email subject for confirmation email (for requester). Example: SEM Job Request confirmation",
+        "confirmationHeaderText": "confirmation header text must be within div tags. Example: <div>This is a confirmation email for your SEM Request with the following details:</div>\n",
+        "requestReceivedEmailSubject": "email subject for receiving request (for operator). Example: New SEM Job Request",
+        "requestReceivedHeaderText": "received header text must be within div tags. Example: <div>You've just got a new SEM job request with the following details: </div>\n",
+        "requestAcceptedHeaderText": "request accepted header text must be within div tags. Example: <div>Your request has been accepted and currently being investigated.</div>\n"
     }
     ]
 }
