@@ -39,6 +39,7 @@ def findBase64(data, prevKey, emptyArray):
     return emptyArray
 
 
+# find the value of requesterKeyword
 def findRequesterEmail(jsdata, requesterKeyword, result):
     for key in jsdata:
         if key == requesterKeyword:
@@ -48,6 +49,7 @@ def findRequesterEmail(jsdata, requesterKeyword, result):
     return result
 
 
+# find the value of operator Keyword
 def findOperatorName(jsdata, operatorKeyword, result):
     for key in jsdata:
         if key == operatorKeyword:
@@ -57,6 +59,7 @@ def findOperatorName(jsdata, operatorKeyword, result):
     return result
 
 
+# find the falue of requesterNameKeyword
 def findRequesterName(jsdata, requesterNameKeyword, result):
     for key in jsdata:
         if key == requesterNameKeyword:
@@ -77,6 +80,7 @@ def check_mode():
     return {"message": "connection is a success"}
 
 
+# get schemas from backend
 @app.route('/api/get_schemas', methods=["GET"])
 def get_schemas():
     list_of_schemas = {"schemaName": [""], "schema": [None]}
@@ -85,12 +89,14 @@ def get_schemas():
         file = filelist[i]
         file = open(str(file), 'r', encoding='utf-8')
         filename = str(file.name).replace("schemas\\", "")
+        filename = filename.replace("schema/", "")  # for linux, maybe
         content = file.read()
         list_of_schemas["schema"].append(content)
         list_of_schemas["schemaName"].append(filename)
     return list_of_schemas
 
 
+# get available tags from eLabFTW
 @app.route('/api/get_tags', methods=['POST'])
 def get_tags():
     elabURL = request.form['eLabURL']
@@ -105,6 +111,7 @@ def get_tags():
     return json.dumps(all_tags)
 
 
+# create experiment in eLabFTW
 @app.route('/api/create_experiment', methods=['POST'])
 def create_experiment():
     jsdata = request.form['javascript_data']
@@ -117,6 +124,7 @@ def create_experiment():
     tags = json.loads(tags)
     jsdata = json.loads(jsdata)
     jsschema = json.loads(jsschema)
+    jsschema_title = jsschema["title"]
 
     # create experiment in eLabFtw
     elabURL = '{}/api/v1/'.format(elabURL)
@@ -183,6 +191,39 @@ def create_experiment():
     for f in os.listdir(dir):
         os.remove(os.path.join(dir, f))
 
+    # check if this process is related to job request workflow, if yes then send an e-mail notif to the requester
+    with open("./emailnotif_conf.json", "r") as fi:
+        f = fi.read()
+        f = json.loads(f)
+        email_conf = ""
+        for element in f["emailConfList"]:
+            if element["completeSchemaTitle"] == jsschema_title or element["requestSchemaTitle"] == jsschema_title:
+                email_conf = element
+        # finish the process if not related to job request workflow
+        if email_conf == "":
+            return {"responseText": f"Created experiment with id {response['id']}.", "message": "success", "experimentId": response['id']}
+
+        requesterEmail = findRequesterEmail(
+            jsdata, email_conf["requesterEmailKeyword"], "")
+
+        # sending the emails
+        s = smtplib.SMTP_SSL(email_conf["smtp"])
+
+        # PREPARE msg for APPLICANT
+        msg = EmailMessage()
+        msg['From'] = email_conf["from"]
+        msg['To'] = requesterEmail
+        msg['Subject'] = email_conf["requestAcceptedSubject"]
+
+        header = email_conf["requestAcceptedHeaderText"]
+        html = header+body
+
+        msg.set_content(html, subtype="html")
+
+        s.send_message(msg)
+        print("applicant email is valid")
+        del msg
+
     return {"responseText": f"Created experiment with id {response['id']}.", "message": "success", "experimentId": response['id']}
 
 
@@ -198,8 +239,8 @@ def submit_job_request():
     jsschema = json.loads(jsschema)
 
     try:
-        with open("./emailnotif_conf.json", "r") as resp:
-            f = resp.read()
+        with open("./emailnotif_conf.json", "r") as fi:
+            f = fi.read()
 
             # find the right conf based on the schema title
             f = json.loads(f)
@@ -220,10 +261,10 @@ def submit_job_request():
                 if key == operatorName_:
                     operatorEmail = email_conf["operators"][operatorName_]
 
-            print("smtp:", email_conf["smtp"])
-            print("operator:", operatorEmail)
-            print("requester:", requesterEmail)
-            print("responsible:", responsiblePersonEmail)
+            #print("smtp:", email_conf["smtp"])
+            #print("operator:", operatorEmail)
+            #print("requester:", requesterEmail)
+            #print("responsible:", responsiblePersonEmail)
 
             # sending the emails
             s = smtplib.SMTP_SSL(email_conf["smtp"])

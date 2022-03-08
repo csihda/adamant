@@ -19,6 +19,7 @@
         "confirmationHeaderText": "confirmation header text must be within div tags. Example: <div>This is a confirmation email for your SEM Request with the following details:</div>\n",
         "requestReceivedEmailSubject": "email subject for receiving request (for operator). Example: New SEM Job Request",
         "requestReceivedHeaderText": "received header text must be within div tags. Example: <div>You've just got a new SEM job request with the following details: </div>\n",
+        "requestAcceptedSubject": "email subject for when the request is accepted (for requesster). Example: SEM job request accepted",
         "requestAcceptedHeaderText": "request accepted header text must be within div tags. Example: <div>Your request has been accepted and currently being investigated.</div>\n"
     }
     ]
