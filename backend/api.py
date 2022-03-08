@@ -73,24 +73,21 @@ def findRequesterName(jsdata, requesterNameKeyword, result):
 # def index():
 #    return app.send_static_file('index.html')
 
-
-@app.route('/api/list_jobrequest_schemas', methods=['GET'])
-def list_jobrequest_schemas():
-    list_schemas = []
-    with open("./emailnotif-conf.json", "r") as fi:
-        f = fi.read()
-        f = json.loads(f)
-        emailconf_list = f["emailConfList"]
-        for element in emailconf_list:
-            list_schemas.append(element["completeSchemaTitle"])
-            list_schemas.append(element["requestSchemaTitle"])
-
-    return {"jobRequestSchemaList": list_schemas}
-
-
 @app.route('/api/check_mode', methods=["GET"])
 def check_mode():
-    return {"message": "connection is a success"}
+    # check if online, and get list of schemas used in job request workflows
+    list_schemas = []
+    try:
+        with open("./emailnotif-conf.json", "r") as fi:
+            f = fi.read()
+            f = json.loads(f)
+            emailconf_list = f["emailConfList"]
+            for element in emailconf_list:
+                list_schemas.append(element["completeSchemaTitle"])
+                list_schemas.append(element["requestSchemaTitle"])
+        return {"message": "connection is a success", "jobRequestSchemaList": list_schemas}
+    except Exception as e:
+        return {"message": "connection is a success", "jobRequestSchemaList": list_schemas}
 
 
 # get schemas from backend
@@ -102,7 +99,7 @@ def get_schemas():
         file = filelist[i]
         file = open(str(file), 'r', encoding='utf-8')
         filename = str(file.name).replace("schemas\\", "")
-        filename = filename.replace("schema/", "")  # for linux, maybe
+        filename = filename.replace("schemas/", "")  # for linux, maybe
         content = file.read()
         list_of_schemas["schema"].append(content)
         list_of_schemas["schemaName"].append(filename)

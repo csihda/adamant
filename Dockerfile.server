@@ -3,7 +3,7 @@ WORKDIR /app
 RUN mkdir ./schemas
 RUN mkdir ./temp-files
 
-COPY backend/requirements.txt backend/api.py backend/mime-types-extensions.json backend/.flaskenv ./
+COPY backend/requirements.txt backend/api.py backend/*.json backend/.flaskenv ./
 COPY backend/schemas/ ./schemas/
 RUN ls -la ./schemas/*
 RUN pip install -r ./requirements.txt

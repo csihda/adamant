@@ -143,8 +143,9 @@ const AdamantMain = () => {
     $.ajax({
       type: "GET",
       url: "/api/check_mode",
-      success: function () {
+      success: function (status) {
         console.log("Connection to server is established. Online mode");
+        setJobRequestSchemas(status["jobRequestSchemaList"]);
         setOnlineMode(true);
         toast.success(
           <>
@@ -156,17 +157,6 @@ const AdamantMain = () => {
             toastId: "connectionSuccess",
           }
         );
-
-        // get the name of job request schemas
-        $.ajax({
-          type: "GET",
-          url: "/api/list_jobrequest_schemas",
-          success: function (status) {
-            console.log(status["jobRequestSchemaList"]);
-            setJobRequestSchemas(status["jobRequestSchemaList"]);
-          },
-          error: function () {},
-        });
       },
       error: function () {
         console.log(

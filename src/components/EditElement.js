@@ -33,7 +33,7 @@ import getValue from './utils/getValue';
 })); */
 
 
-const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_required, field_key, UISchema, path, pathFormData, openDialog, setOpenDialog, defaultValue }) => {
+const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_required, field_key, UISchema, path, pathFormData, openDialog, setOpenDialog, defaultValue, field_label }) => {
 
     const [selectedType, setSelectedType] = useState(UISchema !== undefined ? UISchema["type"] : "string")
     const [title, setTitle] = useState(UISchema !== undefined ? UISchema["title"] : "")
@@ -839,7 +839,7 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                         <div style={{ display: "inline-flex", width: "100%", verticalAlign: "middle" }}>
                             {editOrAdd === "add" ? <AddIcon fontSize="large" color="primary" style={{ alignSelf: "center" }} /> : <EditIcon fontSize="large" color="primary" style={{ alignSelf: "center" }} />}
                             <div style={{ width: "100%", alignSelf: "center" }}>
-                                {editOrAdd === "add" ? "Add element in" : "Edit"} "{tempUISchema["title"]}"
+                                {editOrAdd === "add" ? `Add element in "${field_label}"` : `Edit "${tempUISchema["title"]}"`}
                             </div>
                             <IconButton onClick={() => handleCancelEdit()}><CloseIcon fontSize="large" color="secondary" /></IconButton>
                         </div>
@@ -867,7 +867,7 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                         <div style={{ display: "inline-flex", width: "100%", verticalAlign: "middle" }}>
                             {editOrAdd === "add" ? <AddIcon fontSize="large" color="primary" style={{ alignSelf: "center" }} /> : <EditIcon fontSize="large" color="primary" style={{ alignSelf: "center" }} />}
                             <div style={{ width: "100%", alignSelf: "center" }}>
-                                {editOrAdd === "add" ? "Add element in" : "Edit"} "{tempUISchema["title"]}"
+                                {editOrAdd === "add" ? `Add element in "${field_label}"` : `Edit "${tempUISchema["title"]}"`}
                             </div>
                             <IconButton onClick={() => handleCancelEdit()}><CloseIcon fontSize="large" color="secondary" /></IconButton>
                         </div>
