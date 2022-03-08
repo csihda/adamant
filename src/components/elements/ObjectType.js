@@ -261,7 +261,7 @@ const ObjectType = ({ adamant_error_description, adamant_field_error, dataInputI
             </Accordion>
         </div>
         {openDialog ? <EditElement field_uri={field_uri} pathFormData={pathFormData} field_key={field_key} field_index={field_index} openDialog={openDialog} setOpenDialog={setOpenDialog} path={path} UISchema={UISchema} field_required={required} field_label={field_label} /> : null}
-        {openDialogAddElement ? <EditElement editOrAdd={"add"} openDialog={openDialogAddElement} setOpenDialog={setOpenDialogAddElement} path={path} defaultSchema={defaultSchema} UISchema={UISchema} field_label={field_label} /> : null}
+        {openDialogAddElement ? <EditElement editOrAdd={"add"} openDialog={openDialogAddElement} setOpenDialog={setOpenDialogAddElement} path={path} defaultSchema={defaultSchema} field_label={field_label} /> : null}
     </>);
 };
 
