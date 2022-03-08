@@ -818,7 +818,7 @@ const AdamantMain = () => {
       return;
     }
     // create description list
-    let footnote = `<div> This template was generated with <span><a title=https://github.com/csihda/adamant href=https://github.com/csihda/adamant>ADAMANT v0.0.1</a></span> </div>`;
+    let footnote = `<div> This template was generated with <span><a title=https://github.com/csihda/adamant href=https://github.com/csihda/adamant>ADAMANT v0.1.0</a></span> </div>`;
     let descList = createDescriptionListFromJSON(
       cleaned,
       convSch,
@@ -1065,7 +1065,7 @@ const AdamantMain = () => {
       return;
     }
     // create description list
-    let footnote = `<div> This template was generated with <span><a title=https://github.com/csihda/adamant href=https://github.com/csihda/adamant>ADAMANT v0.0.1</a></span> </div>`;
+    let footnote = `<div> This template was generated with <span><a title=https://github.com/csihda/adamant href=https://github.com/csihda/adamant>ADAMANT v0.1.0</a></span> </div>`;
     let descList = createDescriptionListFromJSON(
       cleaned,
       convSch,
@@ -1406,7 +1406,7 @@ const AdamantMain = () => {
             </Button>
           )}
         </div>
-        <div style={{ padding: "10px", color: "grey" }}>ADAMANT v0.0.1</div>
+        <div style={{ padding: "10px", color: "grey" }}>ADAMANT v0.1.0</div>
       </FormContext.Provider>
       <CreateELabFTWExperimentDialog
         setTags={setTags}
