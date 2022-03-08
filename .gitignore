@@ -19,7 +19,7 @@
 /backend/venv
 /backend/temp-files
 /backend/sem_operators.json
-/backend/emailnotif_conf.json
+/backend/emailnotif-conf.json
 
 /deployment/adamant-main.nginx
 /deployment/adamant-main.service

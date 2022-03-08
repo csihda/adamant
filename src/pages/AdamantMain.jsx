@@ -113,6 +113,7 @@ const AdamantMain = () => {
   const [HeaderImage, setHeaderImage] = useState(QPTDATLogo);
   const [openFormReviewDialog, setOpenFormReviewDialog] = useState(false);
   const [openJobRequestDialog, setOpenJobRequestDialog] = useState(false);
+  const [jobRequestSchemas, setJobRequestSchemas] = useState([]);
   // for dropdown buttons
   const [anchorEl, setAnchorEl] = useState(null);
   const [
@@ -155,6 +156,17 @@ const AdamantMain = () => {
             toastId: "connectionSuccess",
           }
         );
+
+        // get the name of job request schemas
+        $.ajax({
+          type: "GET",
+          url: "/api/list_jobrequest_schemas",
+          success: function (status) {
+            console.log(status["jobRequestSchemaList"]);
+            setJobRequestSchemas(status["jobRequestSchemaList"]);
+          },
+          error: function () {},
+        });
       },
       error: function () {
         console.log(
@@ -271,10 +283,7 @@ const AdamantMain = () => {
       setSchemaWithValues(JSON.parse(JSON.stringify(oriSchema)));
       setConvertedSchema(convertedSchema);
 
-      if (
-        convertedSchema["title"] ===
-        "Scanning Electron Microscope (SEM) Request Form"
-      ) {
+      if (jobRequestSchemas.includes(convertedSchema["title"])) {
         try {
           //let SEMlogo = require("../assets/sem-header-picture.png");
           //setHeaderImage(SEMlogo["default"]);
@@ -328,9 +337,7 @@ const AdamantMain = () => {
           setSchemaWithValues(JSON.parse(JSON.stringify(oriSchema)));
           setConvertedSchema(convertedSchema);
 
-          if (
-            obj["title"] === "Scanning Electron Microscope (SEM) Request Form"
-          ) {
+          if (jobRequestSchemas.includes(obj["title"])) {
             try {
               //let SEMlogo = require("../assets/sem-header-picture.png");
               //setHeaderImage(SEMlogo["default"]);
@@ -380,7 +387,7 @@ const AdamantMain = () => {
       setJsonData({});
       setSelectedSchemaName("");
     },
-    [setRenderReady]
+    [setRenderReady, jobRequestSchemas]
   );
   //
 
@@ -440,7 +447,7 @@ const AdamantMain = () => {
     setSchemaWithValues(JSON.parse(JSON.stringify(oriSchema)));
     setConvertedSchema(convertedSchema);
 
-    if (obj["title"] === "Scanning Electron Microscope (SEM) Request Form") {
+    if (jobRequestSchemas.includes(obj["title"])) {
       try {
         //let SEMlogo = require("../assets/sem-header-picture.png");
         //setHeaderImage(SEMlogo["default"]);
@@ -492,7 +499,7 @@ const AdamantMain = () => {
   // return to edit mode handle
   const toEditMode = () => {
     let value = schema;
-    if (schema["title"] === "Scanning Electron Microscope (SEM) Request Form") {
+    if (jobRequestSchemas.includes(schema["title"])) {
       setInputMode(false);
       setSchema(value);
       setEditMode(false);

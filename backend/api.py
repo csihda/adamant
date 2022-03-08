@@ -1,4 +1,3 @@
-import email
 from flask import Flask, request
 from flask_restful import Api
 import elabapy
@@ -73,6 +72,20 @@ def findRequesterName(jsdata, requesterNameKeyword, result):
 # @app.route('/')
 # def index():
 #    return app.send_static_file('index.html')
+
+
+@app.route('/api/list_jobrequest_schemas', methods=['GET'])
+def list_jobrequest_schemas():
+    list_schemas = []
+    with open("./emailnotif-conf.json", "r") as fi:
+        f = fi.read()
+        f = json.loads(f)
+        emailconf_list = f["emailConfList"]
+        for element in emailconf_list:
+            list_schemas.append(element["completeSchemaTitle"])
+            list_schemas.append(element["requestSchemaTitle"])
+
+    return {"jobRequestSchemaList": list_schemas}
 
 
 @app.route('/api/check_mode', methods=["GET"])
@@ -192,7 +205,7 @@ def create_experiment():
         os.remove(os.path.join(dir, f))
 
     # check if this process is related to job request workflow, if yes then send an e-mail notif to the requester
-    with open("./emailnotif_conf.json", "r") as fi:
+    with open("./emailnotif-conf.json", "r") as fi:
         f = fi.read()
         f = json.loads(f)
         email_conf = ""
@@ -239,7 +252,7 @@ def submit_job_request():
     jsschema = json.loads(jsschema)
 
     try:
-        with open("./emailnotif_conf.json", "r") as fi:
+        with open("./emailnotif-conf.json", "r") as fi:
             f = fi.read()
 
             # find the right conf based on the schema title
