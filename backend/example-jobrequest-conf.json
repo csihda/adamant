@@ -1,11 +1,12 @@
 { 
-    "comment": "to use the e-mail notification feature, please change this file's name to 'emailnotif_conf.json'",
-    "emailConfList": [
+    "comment": "to use the e-mail notification feature, please change this file's name to 'jobrequest-conf.json'",
+    "confList": [
     {
         "completeSchemaTitle": "title of the complete schema",
         "requestSchemaTitle": "title of the request schema",
         "smtp": "your institution's SMTP (Simple Mail Transfer Protocol)",
         "from": "sender's custom email address",
+        "submitButtonText":"text to be displayed on the submit button (front-end). E.g., Submit SEM Job Request",
         "requesterEmailKeyword": "the keyword in the schema that contains the requester's email address",
         "operatorNameKeyword": "the keyword in the schema that contains the operator's name",
         "operators": {

@@ -114,6 +114,8 @@ const AdamantMain = () => {
   const [openFormReviewDialog, setOpenFormReviewDialog] = useState(false);
   const [openJobRequestDialog, setOpenJobRequestDialog] = useState(false);
   const [jobRequestSchemas, setJobRequestSchemas] = useState([]);
+  const [submitTextList, setSubmitTextList] = useState([]);
+  const [submitText, setSubmitText] = useState("Submit Job Request");
   // for dropdown buttons
   const [anchorEl, setAnchorEl] = useState(null);
   const [
@@ -146,6 +148,8 @@ const AdamantMain = () => {
       success: function (status) {
         console.log("Connection to server is established. Online mode");
         setJobRequestSchemas(status["jobRequestSchemaList"]);
+        console.log(status["jobRequestSchemaList"]);
+        setSubmitTextList(status["submitButtonText"]);
         setOnlineMode(true);
         toast.success(
           <>
@@ -279,6 +283,9 @@ const AdamantMain = () => {
           //setHeaderImage(SEMlogo["default"]);
           setHeaderImage(QPTDATLogo);
           setEditMode(false);
+          setSubmitText(
+            submitTextList[jobRequestSchemas.indexOf(convertedSchema["title"])]
+          );
         } catch (error) {
           console.log(error);
           setHeaderImage(QPTDATLogo);
@@ -333,6 +340,11 @@ const AdamantMain = () => {
               //setHeaderImage(SEMlogo["default"]);
               setHeaderImage(QPTDATLogo);
               setEditMode(false);
+              setSubmitText(
+                submitTextList[
+                  jobRequestSchemas.findIndex(convertedSchema["title"])
+                ]
+              );
             } catch (error) {
               console.log(error);
               setHeaderImage(QPTDATLogo);
@@ -377,7 +389,7 @@ const AdamantMain = () => {
       setJsonData({});
       setSelectedSchemaName("");
     },
-    [setRenderReady, jobRequestSchemas]
+    [setRenderReady, jobRequestSchemas, submitTextList]
   );
   //
 
@@ -443,6 +455,9 @@ const AdamantMain = () => {
         //setHeaderImage(SEMlogo["default"]);
         setHeaderImage(QPTDATLogo);
         setEditMode(false);
+        setSubmitText(
+          submitTextList[jobRequestSchemas.findIndex(convertedSchema["title"])]
+        );
       } catch (error) {
         console.log(error);
         setHeaderImage(QPTDATLogo);
@@ -1433,6 +1448,7 @@ const AdamantMain = () => {
             setOpenJobRequestDialog,
           }}
           submitFunctions={{ submitJobRequest }}
+          submitText={submitText}
         />
       ) : null}
     </>

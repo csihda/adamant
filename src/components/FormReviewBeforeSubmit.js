@@ -10,7 +10,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import { Menu, MenuItem } from "@material-ui/core";
 
 
-const FormReviewBeforeSubmit = ({ onlineMode, openFormReviewDialog, setOpenFormReviewDialog, descriptionList, setOpenFunctions, submitFunctions }) => {
+const FormReviewBeforeSubmit = ({ onlineMode, openFormReviewDialog, setOpenFormReviewDialog, descriptionList, setOpenFunctions, submitFunctions, submitText }) => {
 
     // for dropdown buttons
     const [anchorEl, setAnchorEl] = useState(null);
@@ -87,7 +87,7 @@ const FormReviewBeforeSubmit = ({ onlineMode, openFormReviewDialog, setOpenFormR
                         submitFunctions.submitJobRequest();
                         setOpenFormReviewDialog(false);
                     }} >
-                        Submit SEM job request
+                        {submitText}
                     </MenuItem>
                 </Menu>
             </DialogActions>

@@ -76,18 +76,21 @@ def findRequesterName(jsdata, requesterNameKeyword, result):
 @app.route('/api/check_mode', methods=["GET"])
 def check_mode():
     # check if online, and get list of schemas used in job request workflows
-    list_schemas = []
+    listSchemas = []
+    listSubmitText = []
     try:
-        with open("./emailnotif-conf.json", "r") as fi:
+        with open("./jobrequest-conf.json", "r") as fi:
             f = fi.read()
             f = json.loads(f)
-            emailconf_list = f["emailConfList"]
+            emailconf_list = f["confList"]
             for element in emailconf_list:
-                list_schemas.append(element["completeSchemaTitle"])
-                list_schemas.append(element["requestSchemaTitle"])
-        return {"message": "connection is a success", "jobRequestSchemaList": list_schemas}
+                listSchemas.append(element["completeSchemaTitle"])
+                listSchemas.append(element["requestSchemaTitle"])
+                listSubmitText.append(element["submitButtonText"])
+                listSubmitText.append(element["submitButtonText"])
+        return {"message": "connection is a success", "jobRequestSchemaList": listSchemas, "submitButtonText": listSubmitText}
     except Exception as e:
-        return {"message": "connection is a success", "jobRequestSchemaList": list_schemas}
+        return {"message": "connection is a success", "jobRequestSchemaList": listSchemas, "submitButtonText": listSubmitText}
 
 
 # get schemas from backend
@@ -202,11 +205,11 @@ def create_experiment():
         os.remove(os.path.join(dir, f))
 
     # check if this process is related to job request workflow, if yes then send an e-mail notif to the requester
-    with open("./emailnotif-conf.json", "r") as fi:
+    with open("./jobrequest-conf.json", "r") as fi:
         f = fi.read()
         f = json.loads(f)
         email_conf = ""
-        for element in f["emailConfList"]:
+        for element in f["confList"]:
             if element["completeSchemaTitle"] == jsschema_title or element["requestSchemaTitle"] == jsschema_title:
                 email_conf = element
         # finish the process if not related to job request workflow
@@ -249,13 +252,13 @@ def submit_job_request():
     jsschema = json.loads(jsschema)
 
     try:
-        with open("./emailnotif-conf.json", "r") as fi:
+        with open("./jobrequest-conf.json", "r") as fi:
             f = fi.read()
 
             # find the right conf based on the schema title
             f = json.loads(f)
             email_conf = {}
-            for element in f["emailConfList"]:
+            for element in f["confList"]:
                 if element["completeSchemaTitle"] == jsschema["title"] or element["requestSchemaTitle"] == jsschema["title"]:
                     email_conf = element
 
