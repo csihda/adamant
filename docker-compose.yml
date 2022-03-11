@@ -4,6 +4,9 @@ services:
       context: .
       dockerfile: Dockerfile.server
     image: adamant-server
+    volumes:
+      - ./backend/conf:/app/conf
+      - ./backend/schemas:/app/schemas
   client:
     build:
       context: .
@@ -11,3 +14,7 @@ services:
     image: adamant-client
     ports:
       - "3000:80"
+
+volumes:
+  myapp:
+    external: true

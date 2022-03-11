@@ -1,7 +1,8 @@
 { 
-    "comment": "to use the e-mail notification feature, please change this file's name to 'jobrequest-conf.json'",
+    "comment": "to use the e-mail notification feature, please adjust the keywords' values accordingly and change this file's name to 'jobrequest-conf.json'",
     "confList": [
     {
+        "configurationNo": 1,
         "completeSchemaTitle": "title of the complete schema",
         "requestSchemaTitle": "title of the request schema",
         "smtp": "your institution's SMTP (Simple Mail Transfer Protocol)",

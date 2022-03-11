@@ -79,7 +79,7 @@ def check_mode():
     listSchemas = []
     listSubmitText = []
     try:
-        with open("./jobrequest-conf.json", "r") as fi:
+        with open("./conf/jobrequest-conf.json", "r") as fi:
             f = fi.read()
             f = json.loads(f)
             emailconf_list = f["confList"]
@@ -205,7 +205,7 @@ def create_experiment():
         os.remove(os.path.join(dir, f))
 
     # check if this process is related to job request workflow, if yes then send an e-mail notif to the requester
-    with open("./jobrequest-conf.json", "r") as fi:
+    with open("./conf/jobrequest-conf.json", "r") as fi:
         f = fi.read()
         f = json.loads(f)
         email_conf = ""
@@ -252,7 +252,7 @@ def submit_job_request():
     jsschema = json.loads(jsschema)
 
     try:
-        with open("./jobrequest-conf.json", "r") as fi:
+        with open("./conf/jobrequest-conf.json", "r") as fi:
             f = fi.read()
 
             # find the right conf based on the schema title
