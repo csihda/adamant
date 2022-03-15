@@ -1,7 +1,7 @@
 {
   "homepage": "http://csihda.github.io/",
   "name": "adamant",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.7.1",
