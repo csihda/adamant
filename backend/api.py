@@ -205,37 +205,40 @@ def create_experiment():
         os.remove(os.path.join(dir, f))
 
     # check if this process is related to job request workflow, if yes then send an e-mail notif to the requester
-    with open("./conf/jobrequest-conf.json", "r") as fi:
-        f = fi.read()
-        f = json.loads(f)
-        email_conf = ""
-        for element in f["confList"]:
-            if element["completeSchemaTitle"] == jsschema_title or element["requestSchemaTitle"] == jsschema_title:
-                email_conf = element
-        # finish the process if not related to job request workflow
-        if email_conf == "":
-            return {"responseText": f"Created experiment with id {response['id']}.", "message": "success", "experimentId": response['id']}
+    try:
+        with open("./conf/jobrequest-conf.json", "r") as fi:
+            f = fi.read()
+            f = json.loads(f)
+            email_conf = ""
+            for element in f["confList"]:
+                if element["completeSchemaTitle"] == jsschema_title or element["requestSchemaTitle"] == jsschema_title:
+                    email_conf = element
+            # finish the process if not related to job request workflow
+            if email_conf == "":
+                return {"responseText": f"Created experiment with id {response['id']}.", "message": "success", "experimentId": response['id']}
 
-        requesterEmail = findRequesterEmail(
-            jsdata, email_conf["requesterEmailKeyword"], "")
+            requesterEmail = findRequesterEmail(
+                jsdata, email_conf["requesterEmailKeyword"], "")
 
-        # sending the emails
-        s = smtplib.SMTP_SSL(email_conf["smtp"])
+            # sending the emails
+            s = smtplib.SMTP_SSL(email_conf["smtp"])
 
-        # PREPARE msg for APPLICANT
-        msg = EmailMessage()
-        msg['From'] = email_conf["from"]
-        msg['To'] = requesterEmail
-        msg['Subject'] = email_conf["requestAcceptedSubject"]
+            # PREPARE msg for APPLICANT
+            msg = EmailMessage()
+            msg['From'] = email_conf["from"]
+            msg['To'] = requesterEmail
+            msg['Subject'] = email_conf["requestAcceptedSubject"]
 
-        header = email_conf["requestAcceptedHeaderText"]
-        html = header+body
+            header = email_conf["requestAcceptedHeaderText"]
+            html = header+body
 
-        msg.set_content(html, subtype="html")
+            msg.set_content(html, subtype="html")
 
-        s.send_message(msg)
-        print("applicant email is valid")
-        del msg
+            s.send_message(msg)
+            print("applicant email is valid")
+            del msg
+    except Exception as e:
+        print("No job request configuration was found. Skipping.")
 
     return {"responseText": f"Created experiment with id {response['id']}.", "message": "success", "experimentId": response['id']}
 
