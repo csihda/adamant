@@ -1,6 +1,7 @@
 version: '3'
 
 services:
+# back-end
   api:
     build:
       context: .
@@ -9,6 +10,7 @@ services:
     volumes:
       - ./backend/conf:/app/conf
       - ./backend/schemas:/app/schemas
+ # front-end 
   client:
     build:
       context: .
