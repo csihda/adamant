@@ -26,6 +26,7 @@ import SchemaOne from "../schemas/plasma-mds.json";
 import SchemaTwo from "../schemas/pak-schema.json";
 import SchemaThree from "../schemas/appj-schema.json";
 import SchemaFour from "../schemas/all-types.json";
+import SchemaFive from "../schemas/demonstrator-schema.json";
 import fillValueWithEmptyString from "../components/utils/fillValueWithEmptyString";
 import convData2FormData from "../components/utils/convData2FormData";
 import FormReviewBeforeSubmit from "../components/FormReviewBeforeSubmit";
@@ -175,6 +176,7 @@ const AdamantMain = () => {
           "pak-schema.json",
           "appj-schema.json",
           "all-types.json",
+          "demonstrator-schema.json",
         ]);
         setSchemaList([null, SchemaOne, SchemaTwo, SchemaThree, SchemaFour]);
 
@@ -228,6 +230,7 @@ const AdamantMain = () => {
             "pak-schema.json",
             "appj-schema.json",
             "all-types.json",
+            "demonstrator-schema.json",
           ]);
           setSchemaList([null, SchemaOne, SchemaTwo, SchemaThree, SchemaFour]);
         },
