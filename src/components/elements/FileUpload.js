@@ -70,7 +70,7 @@ const FileUpload = ({ adamant_field_error, adamant_error_description, contentEnc
     }, [field_description])
 
     // max. allowed fileupload size
-    let allowedFileSize = 200000
+    let allowedFileSize = 500000
 
     // for visual feedback on the field after validation
     useEffect(() => {
@@ -157,7 +157,7 @@ const FileUpload = ({ adamant_field_error, adamant_error_description, contentEnc
             // only accept file lower than allowedFileSize
             if (acceptedFile[0]["size"] > allowedFileSize) {
                 valid = false;
-                setDescriptionText("File size is too big. The file size should not exceed 200 KB.")
+                setDescriptionText(`File size is too big. The file size should not exceed ${allowedFileSize / 1000} KB.`)
             }
             if (valid) {
                 setRenderingInProgress(true)
@@ -285,6 +285,7 @@ const FileUpload = ({ adamant_field_error, adamant_error_description, contentEnc
     const handleOnClickedClear = () => {
         setMediaFileType("")
         setDataUrl("")
+        setFileSize()
         // then delete in the form convdata
         if (withinArray !== undefined & withinArray) {
             let newPathFormData = pathFormData.split(".");
