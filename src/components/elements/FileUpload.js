@@ -47,11 +47,30 @@ const FileUpload = ({ adamant_field_error, adamant_error_description, contentEnc
     const [openDialog, setOpenDialog] = useState(false);
     const { updateParent, convertedSchema, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
     const [inputError, setInputError] = useState(false)
-    const [descriptionText, setDescriptionText] = useState(field_description !== undefined ? field_description : "");
+    //const [descriptionText, setDescriptionText] = useState(field_description !== undefined ? field_description : "");
+    const [descriptionText, setDescriptionText] = useState()
     const [dataUrl, setDataUrl] = useState(defaultValue !== undefined ? defaultValue : value !== undefined ? value : "")
     const [renderingInProgress, setRenderingInProgress] = useState(false)
     const [mediaFileType, setMediaFileType] = useState(value !== undefined ? value.split(";")[0].replace("data:", "") : "")
+    const [fileSize, setFileSize] = useState();
     //const [required, setRequired] = useState(false)
+
+    // update description text state as soon as new field description is obtained
+    useEffect(() => {
+        if (adamant_error_description !== undefined) {
+            setDescriptionText(adamant_error_description)
+        }
+        else if (field_description !== undefined) {
+            setDescriptionText(field_description)
+        }
+        else {
+            setDescriptionText("")
+        }
+
+    }, [field_description])
+
+    // max. allowed fileupload size
+    let allowedFileSize = 200000
 
     // for visual feedback on the field after validation
     useEffect(() => {
@@ -131,9 +150,18 @@ const FileUpload = ({ adamant_field_error, adamant_error_description, contentEnc
                 valid = true
             } else {
                 valid = validateAcceptedFile(acceptedFile[0]["name"], acceptedTypes)
+                if (!valid) {
+                    setDescriptionText("Seems like you've given a file with an unaccepted file type?")
+                }
+            }
+            // only accept file lower than allowedFileSize
+            if (acceptedFile[0]["size"] > allowedFileSize) {
+                valid = false;
+                setDescriptionText("File size is too big. The file size should not exceed 200 KB.")
             }
             if (valid) {
                 setRenderingInProgress(true)
+                setFileSize(acceptedFile[0]["size"])
                 // process the schema, validation etc
                 // read file and update receivedData
                 const reader = new FileReader();
@@ -169,9 +197,7 @@ const FileUpload = ({ adamant_field_error, adamant_error_description, contentEnc
             } else {
                 setRenderingInProgress(false)
                 setInputError(true)
-                setDescriptionText("Seems like you've given a file with an unaccepted file type?")
                 setDataUrl("")
-
                 setMediaFileType("")
             }
         },
@@ -299,7 +325,7 @@ const FileUpload = ({ adamant_field_error, adamant_error_description, contentEnc
             }} style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', alignItems: "center", width: '100%' }}>
                 <div style={{ paddingLeft: "15px", width: "100%" }}>
                     <FormControl >
-                        <FormLabel style={{ paddingBottom: "10px", color: `${inputError ? "red" : ""}` }}>{fieldLabel === undefined ? + "" : fieldLabel + ":"}</FormLabel>
+                        <FormLabel style={{ paddingBottom: "10px", color: `${inputError ? "red" : ""}` }}>{fieldLabel + ` (max. ${allowedFileSize / 1000} KB)` === undefined ? + "" : fieldLabel + ` (max. ${allowedFileSize / 1000} KB)` + ":"}</FormLabel>
                         {renderingInProgress ? <Box sx={{ width: '225px' }}>
                             <LinearProgress />
                         </Box> : null}
@@ -308,6 +334,9 @@ const FileUpload = ({ adamant_field_error, adamant_error_description, contentEnc
                         </div>
                         <div style={{ width: "225px", fontSize: "10px", color: "grey", paddingTop: "5px", whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden" }}>
                             {dataUrl}
+                        </div>
+                        <div style={{ width: "225px", fontSize: "10px", color: "grey", paddingTop: "5px", whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden" }}>
+                            {fileSize !== undefined ? `size: ${fileSize / 1000} KB` : null}
                         </div>
                         <div style={{ paddingTop: "5px", textAlign: "left", width: "100%" }} >
                             <Button color={inputError ? "secondary" : "default"} variant="outlined" {...getRootProps()} ><input {...getInputProps()} />Upload a file</Button>

@@ -26,7 +26,8 @@ const useStyles = makeStyles((theme) => ({
 const StringType = ({ adamant_field_error, adamant_error_description, minLength, maxLength, withinObject, field_uri, dataInputItems, setDataInputItems, withinArray, path, pathFormData, field_required, field_index, edit, field_key, field_label, field_description, field_enumerate, defaultValue, value }) => {
 
 
-    const [descriptionText, setDescriptionText] = useState(adamant_error_description !== undefined ? adamant_error_description : field_description !== undefined ? field_description : "");
+    //const [descriptionText, setDescriptionText] = useState(adamant_error_description !== undefined ? adamant_error_description : field_description !== undefined ? field_description : "");
+    const [descriptionText, setDescriptionText] = useState()
     const [inputError, setInputError] = useState(adamant_field_error !== undefined ? adamant_field_error : false);
     const [openDialog, setOpenDialog] = useState(false);
     const { updateParent, convertedSchema, handleDataDelete, handleConvertedDataInput, SEMSelectedDevice, setSEMSelectedDevice } = useContext(FormContext);
@@ -34,6 +35,20 @@ const StringType = ({ adamant_field_error, adamant_error_description, minLength,
     const [fieldEnumerate, setFieldEnumerate] = useState()
     //const [required, setRequired] = useState(false)
     const classes = useStyles();
+
+    // update description text state as soon as new field description is obtained
+    useEffect(() => {
+        if (adamant_error_description !== undefined) {
+            setDescriptionText(adamant_error_description)
+        }
+        else if (field_description !== undefined) {
+            setDescriptionText(field_description)
+        }
+        else {
+            setDescriptionText("")
+        }
+
+    }, [field_description])
 
     const handleOnChange = (event) => {
         setFieldValue(event.target.value)

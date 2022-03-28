@@ -178,7 +178,14 @@ const AdamantMain = () => {
           "all-types.json",
           "demonstrator-schema.json",
         ]);
-        setSchemaList([null, SchemaOne, SchemaTwo, SchemaThree, SchemaFour]);
+        setSchemaList([
+          null,
+          SchemaOne,
+          SchemaTwo,
+          SchemaThree,
+          SchemaFour,
+          SchemaFive,
+        ]);
 
         toast.warning(
           <>
@@ -232,7 +239,14 @@ const AdamantMain = () => {
             "all-types.json",
             "demonstrator-schema.json",
           ]);
-          setSchemaList([null, SchemaOne, SchemaTwo, SchemaThree, SchemaFour]);
+          setSchemaList([
+            null,
+            SchemaOne,
+            SchemaTwo,
+            SchemaThree,
+            SchemaFour,
+            SchemaFive,
+          ]);
         },
       });
     }

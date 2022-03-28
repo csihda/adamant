@@ -72,8 +72,23 @@ const ObjectType = ({ adamant_error_description, adamant_field_error, dataInputI
     const [openDialogAddElement, setOpenDialogAddElement] = useState(false);
     const [expand, setExpand] = useState(true)// set to "true" for normally open accordion
     const { updateParent, convertedSchema, handleDataDelete } = useContext(FormContext);
-    const [descriptionText, setDescriptionText] = useState(field_description !== undefined ? field_description : "")
+    //const [descriptionText, setDescriptionText] = useState(field_description !== undefined ? field_description : "")
+    const [descriptionText, setDescriptionText] = useState()
     const [inputError, setInputError] = useState(false)
+
+    // update description text state as soon as new field description is obtained
+    useEffect(() => {
+        if (adamant_error_description !== undefined) {
+            setDescriptionText(adamant_error_description)
+        }
+        else if (field_description !== undefined) {
+            setDescriptionText(field_description)
+        }
+        else {
+            setDescriptionText("")
+        }
+
+    }, [field_description])
 
     // for visual feedback on the field after validation
     useEffect(() => {

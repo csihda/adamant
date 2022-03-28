@@ -11,11 +11,23 @@ import getValue from '../utils/getValue';
 import set from 'set-value';
 
 const BooleanType = ({ field_uri, withinArray, withinObject, value, dataInputItems, setDataInputItems, path, pathFormData, field_required, field_index, edit, field_key, field_label, field_description, defaultValue }) => {
-    const [descriptionText, setDescriptionText] = useState(field_description !== undefined ? field_description : "");
+    //const [descriptionText, setDescriptionText] = useState(field_description !== undefined ? field_description : "");
+    const [descriptionText, setDescriptionText] = useState()
     const [openDialog, setOpenDialog] = useState(false);
     const { updateParent, convertedSchema, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
     const [inputValue, setInputValue] = useState(value !== undefined ? value : typeof (defaultValue) === "boolean" ? defaultValue : false);
     const [inputError, setInputError] = useState(false)
+
+    // update description text state as soon as new field description is obtained
+    useEffect(() => {
+        if (field_description !== undefined) {
+            setDescriptionText(field_description)
+        }
+        else {
+            setDescriptionText("")
+        }
+
+    }, [field_description])
 
     // clean up empty strings in the paths
     path = path.split(".")

@@ -74,8 +74,23 @@ const ArrayType = ({ adamant_field_error, adamant_error_description, maxItems, m
     const { updateParent, convertedSchema, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
     const [inputItems, setInputItems] = useState([]);
     const [dataInputItems, setDataInputItems] = useState([]);
-    const [descriptionText, setDescriptionText] = useState(field_description !== undefined ? field_description : "")
+    //const [descriptionText, setDescriptionText] = useState(field_description !== undefined ? field_description : "")
+    const [descriptionText, setDescriptionText] = useState()
     const [inputError, setInputError] = useState(false)
+
+    // update description text state as soon as new field description is obtained
+    useEffect(() => {
+        if (adamant_error_description !== undefined) {
+            setDescriptionText(adamant_error_description)
+        }
+        else if (field_description !== undefined) {
+            setDescriptionText(field_description)
+        }
+        else {
+            setDescriptionText("")
+        }
+
+    }, [field_description])
 
     // for visual feedback on the field after validation
     useEffect(() => {

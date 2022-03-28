@@ -25,12 +25,27 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const IntegerType = ({ adamant_error_description, adamant_field_error, minimum, maximum, field_uri, value, dataInputItems, setDataInputItems, withinArray, withinObject, defaultValue, path, pathFormData, field_required, field_index, edit, field_key, field_label, field_description, field_enumerate }) => {
-    const [descriptionText, setDescriptionText] = useState(field_description !== undefined ? field_description : "");
+    //const [descriptionText, setDescriptionText] = useState(field_description !== undefined ? field_description : "");
+    const [descriptionText, setDescriptionText] = useState()
     const [openDialog, setOpenDialog] = useState(false);
     const { updateParent, convertedSchema, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
     const [inputValue, setInputValue] = useState(defaultValue !== undefined & value === undefined ? defaultValue : value === undefined ? "" : value)// useState(defaultValue !== undefined ? defaultValue : value);
     const [inputError, setInputError] = useState(false)
     const classes = useStyles();
+
+    // update description text state as soon as new field description is obtained
+    useEffect(() => {
+        if (adamant_error_description !== undefined) {
+            setDescriptionText(adamant_error_description)
+        }
+        else if (field_description !== undefined) {
+            setDescriptionText(field_description)
+        }
+        else {
+            setDescriptionText("")
+        }
+
+    }, [field_description])
 
     // for visual feedback on the field after validation
     useEffect(() => {
