@@ -2,7 +2,7 @@
 
 #
 Adamant is a JSON schema-based metadata creation tool presented in a user-friendly interface. Adamant aims to ease the integration of various research data management (RDM) workflows into the everyday research routine of especially small independent laboratories, which hopefully leads to generation of research data that adhere to the FAIR (findable, accessible, interoperable, reusable) principles.
-Currently, Adamant supports the following features:
+As of now, Adamant supports the following features:
 
 - Rendering of interactive web-form based on a valid JSON schema
 - User-friendly editing process of the rendered web-form and the corresponding schema
@@ -52,7 +52,5 @@ We recommend to deploy Adamant with docker-compose, which can be done with ease:
 
 By default, the deployed system can be accessed at `http://localhost:3000`.
 
-# TO DO: Example use cases
-
-
-# TO DO: Grant information/acknowledgement
+# Grant information
+The work was funded by the Federal Ministry of Education and Research (BMBF) under the grant mark 16QK03A. The responsibility for the content of this repository lies with the authors.
