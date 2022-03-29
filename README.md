@@ -17,7 +17,7 @@ A live demo of Adamant (client only) is available at: https://csihda.github.io/a
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 # Supported JSON schema keywords
-Currently, Adamant supports the rendering and editing of JSON schemas with a specification version draft 4 or 7. The following table lists all the implemented JSON schema keywords. Note that the `id` keyword only works with the JSON schema specification version draft 4, whereas `$id` is used for the newer specification drafts. Lastly, the `contentEncoding` keyword is intended to be used with the specification version draft 7 or newer.
+Currently, Adamant supports the rendering and editing of JSON schemas with a specification version draft 4 or 7. The following table lists all the implemented JSON schema keywords in the current version of Adamant. Note that the `id` keyword only works with the JSON schema specification version draft 4, whereas `$id` is used for the newer specification drafts. Lastly, the `contentEncoding` keyword is intended to be used with the specification version draft 7 or newer.
 
 | Field Type | Implemented Keywords | Note |
 |-----------|----------------------|----|
