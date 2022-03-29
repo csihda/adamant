@@ -39,7 +39,7 @@ Setting up Adamant on a local machine for development:
 - `adamant/backend$ pip install -r requirements.txt`—install the dependencies for the back-end
 - `adamant/backend$ cd ..`—go back to adamant project directory
 - `adamant$ yarn start-api`—start the back-end
-- `adamant$ yarn start`—on a new terminal, in the adamant project directory, start the client-si
+- `adamant$ yarn start`—on a new terminal, in the adamant project directory, start the front-end
 
 By default, Adamant is accessible at `http://localhost:3000`.
 
