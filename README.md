@@ -34,7 +34,7 @@ Setting up Adamant on a local machine for development:
 - `adamant$ npm install`—install the dependencies for the client-side
 - `adamant$ cd backend`—go to backend directory
 - `adamant/backend$ python -m venv venv`—create a python virtual environment
-- `adamant/backend$ ./venv/Scripts/activate—activate the virtual environment
+- `adamant/backend$ ./venv/Scripts/activate`—activate the virtual environment
 - `adamant/backend$ pip install -r requirements.txt`—install the dependencies for the back-end
 - `adamant/backend$ cd ..`—go back to adamant project directory
 - `adamant$ yarn start-api`—start the back-end
