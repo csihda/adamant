@@ -27,7 +27,7 @@ Currently, Adamant supports the rendering and editing of JSON schemas with a spe
 |Array| `title` , `id`, `$id`, `description`, `type`, `default`, `items`, `minItems`, `maxItems`, `uniqueItems` | |
 |Object| `title`, `id`, `$id`, `description`, `type`, `properties`, `required` | |
 
-# For development
+# Development
 Setting up Adamant on a local machine for development:
 - `$ git clone https://github.com/csihda/adamant.git`—clone the repository
 - `$ cd adamant`—go to adamant project directory
@@ -42,7 +42,7 @@ Setting up Adamant on a local machine for development:
 
 By default, Adamant is accessible at `http://localhost:3000`.
 
-# For deployment
+# Deployment
 We recommend to deploy Adamant with docker-compose, which can be done with ease:
 - `$ git clone https://github.com/csihda/adamant.git`—clone the repository
 - `$ cd adamant`—go to adamant project directory
