@@ -22,11 +22,11 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import prepareDataForDescList from "../components/utils/prepareDataForDescList";
 import array2objectAnyOf from "../components/utils/array2objectAnyOf";
-import SchemaOne from "../schemas/plasma-mds.json";
-import SchemaTwo from "../schemas/pak-schema.json";
-import SchemaThree from "../schemas/appj-schema.json";
-import SchemaFour from "../schemas/all-types.json";
-import SchemaFive from "../schemas/demonstrator-schema.json";
+import SchemaOne from "../schemas/all-types.json";
+import SchemaTwo from "../schemas/demo-schema.json";
+import SchemaThree from "../schemas/example-experiment-schema.json";
+import SchemaFour from "../schemas/example-request-schema.json";
+import SchemaFive from "../schemas/plasma-mds.json";
 import fillValueWithEmptyString from "../components/utils/fillValueWithEmptyString";
 import convData2FormData from "../components/utils/convData2FormData";
 import FormReviewBeforeSubmit from "../components/FormReviewBeforeSubmit";
@@ -172,11 +172,11 @@ const AdamantMain = () => {
         // use available schema as a place holder
         setSchemaNameList([
           "",
-          "plasma-mds.json",
-          "pak-schema.json",
-          "appj-schema.json",
           "all-types.json",
-          "demonstrator-schema.json",
+          "demo-schema.json",
+          "example-experiment-schema.json",
+          "example-request-schema.json",
+          "plasma-mds.json",
         ]);
         setSchemaList([
           null,
@@ -233,11 +233,11 @@ const AdamantMain = () => {
           // if unable to fetch the schemas then use the basic list of schemas
           setSchemaNameList([
             "",
-            "plasma-mds.json",
-            "pak-schema.json",
-            "appj-schema.json",
             "all-types.json",
-            "demonstrator-schema.json",
+            "demo-schema.json",
+            "example-experiment-schema.json",
+            "example-request-schema.json",
+            "plasma-mds.json",
           ]);
           setSchemaList([
             null,

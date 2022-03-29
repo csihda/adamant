@@ -1,0 +1,172 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://example/schema/example-experiment-schema.json#",
+    "title": "Mass Spectrometry Experiment (Example Schema)",
+    "description": "Example schema for a mass spectrometry (MS) experiment",
+    "type": "object",
+    "properties": {
+        "general": {
+            "title": "General Information",
+            "description": "General information",
+            "type": "object",
+            "required": ["objectives", "purpose", "deadline", "MSInstrument", "MSOperator", "project", "projectLeaderName", "requesterName", "requesterEmail", "requesterPhone"],
+            "properties": {
+                "objectives": {
+                    "title": "Objective(s)",
+                    "description": "Describe the motivation, hypothesis, and reasons for the experiment.",
+                    "type": "string"
+                },
+                "purpose": {
+                    "title": "Purpose",
+                    "description": "Specify how the results will be used.",
+                    "type": "string"
+                },
+                "deadline": {
+                            "title": "Deadline",
+                            "description": "Specify the desired finish of the experiment",
+                            "type": "string"
+                        },
+                "MSInstrument": {
+                            "title": "MS Instrument",
+                            "description": "Specify the MS instrument to be used for this experiment",
+                            "type": "string"},
+                "MSOperator": {
+                            "title": "MS Operator",
+                            "description": "Choose operator for the requested experiment",
+                            "type": "string",
+                            "enum": ["Max Mustermann", "Joseph John Thomson", "Eugen Goldstein"]
+                        },
+                "project": {
+                            "title": "Project",
+                            "description": "Specify the project, e.g. name, number.",
+                            "type": "string"
+
+                },
+                "projectLeaderName": {
+                            "title": "Project Leader Name",
+                            "description": "",
+                            "type": "string"
+                        },
+                "requesterName": {
+                            "title": "Requester Name",
+                            "description": "",
+                            "type": "string"
+                        },
+                "requesterEmail": {
+                            "title": "Requester Email",
+                            "description": "",
+                            "type": "string"
+                    },
+                "requesterPhone": {
+                        "title": "Requester Phone Number",
+                        "description": "",
+                        "type": "string"
+                }
+            }
+        },
+        "MSParameters" : {
+            "title": "Mass Spectrometry Parameters",
+            "description": "Detailed description of the MS parameters used in the experiment",
+            "type": "object",
+            "required": ["scanTime", "targetTIC", "maxIonizTime", "emissionCurrent", "CIDWaveform", "isoStoLevel", "isolationWindow", "parentIon", "excitStorLevel", "excitAmplitude"],
+            "properties": {
+                "scanTime": {
+                    "title": "Scan Time [s]",
+                    "description": "Time required for each scan",
+                    "type": "number"
+                },
+                "targetTIC": {
+                    "title": "Target TIC [counts]",
+                    "description": "Total Ion Chromatogram (TIC) of the target",
+                    "type": "integer"
+                },
+                "maxIonizTime": {
+                    "title": "Maximum Ionization Time [\\mu s]",
+                    "description": "",
+                    "type": "number"
+                },
+                "emissionCurrent": {
+                    "title": "Emission Current [\\mu A]",
+                    "description": "",
+                    "type": "number"
+                },
+                "CIDWaveform": {
+                    "title": "CID Waveform",
+                    "description": "Waveform used for the collision induced dissociation (CID) process",
+                    "type": "string"
+                },
+                "isoStoLevel": {
+                    "title": "Isolation Storage Level [m/z]",
+                    "description": "",
+                    "type": "number"
+                },
+                "isolationWindow": {
+                    "title": "Isolation Window [m/z]",
+                    "description": "",
+                    "type": "number"
+                },
+                "parentIon": {
+                    "title": "Parent Ion [m/z]",
+                    "description": "",
+                    "type": "number"
+                },
+                "excitStorLevel": {
+                    "title": "Excitation Storage Level [m/z]",
+                    "description": "",
+                    "type": "number"
+                },
+                "excitAmplitude": {
+                    "title": "Excitation Amplitude [eV]",
+                    "description": "",
+                    "type": "number"
+                }
+            }
+        },
+        "sample": {
+            "title": "Sample",
+            "description": "Details of the samples to be analyzed with MS",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": ["sampleId", "sampleSafety", "chemicalComposition", "geometry", "physicalState"],
+                "properties": {
+                    "sampleId": {
+                        "title": "Sample ID",
+                        "description": "",
+                        "type": "string"
+                        },
+                    "sampleSafety" : {
+                        "title": "Safety Level",
+                        "description": "(Further description of this field will be specified soon)",
+                        "type": "string",
+                        "enum": ["","1 (no risk)", "2 (gloves and respiratory protection requested)","3 (hazardous material, detailed specification required)"]
+                        },
+                    "chemicalComposition":{
+                        "title": "Chemical Composition",
+                        "description": "List of chemical elements (symbols) that make up the sample (e.g., Ar, N, O, C).",
+                        "type": "string"
+                        },
+                    "geometry":{
+                        "title":"Geometry",
+                        "description": "Sample geometry (width x length x height/thickness) in mm.",
+                        "type": "string"
+                        },
+                    "physicalState":{
+                        "title" : "Sample Physical State",
+                        "description": "Physical state of the sample (e.g., liquid, solid, etc.",
+                        "type": "string",
+                        "enum": ["Liquid", "Solid", "Gas", "Plasma", "Bose-Einstein condensate"] 
+                        },
+                    "notes": {
+                        "title": "Notes",
+                        "description": "Other details",
+                        "type": "string"
+                        }
+                    }
+                },
+            "minItems": 1,
+            "maxItems": 16,
+            "uniqueItems": true
+        }
+    }
+}

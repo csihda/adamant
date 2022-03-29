@@ -1,15 +1,15 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "$id": "https://www.plasma-mds.org/schema/rubidium-efflux-assay-experiment-request.json#",
-    "title": "Request for a Rubidium Efflux Assay Experiment",
-    "description": "Schema for a request of a Rubidium Efflux Assay experiment using Atomic Absorption Spectroscopy (AAS) instrument",
+    "$id": "https://example/schema/example-request-schema.json#",
+    "title": "Request for a Mass Spectrometry Experiment (Example Schema)",
+    "description": "Example schema for a job request for a mass spectrometry (MS) experiment",
     "type": "object",
     "properties": {
         "general": {
             "title": "General Information",
             "description": "General information",
             "type": "object",
-            "required": ["objectives", "purpose", "deadline", "semDevice", "semOperator", "project", "projectLeaderName", "requesterName", "requesterEmail", "requesterPhone"],
+            "required": ["objectives", "purpose", "deadline", "MSInstrument", "MSOperator", "project", "projectLeaderName", "requesterName", "requesterEmail", "requesterPhone"],
             "properties": {
                 "objectives": {
                     "title": "Objective(s)",
@@ -26,14 +26,15 @@
                             "description": "Specify the desired finish of the experiment",
                             "type": "string"
                         },
-                "AASDevice": {
-                            "title": "AAS Instrument",
-                            "description": "Specify the AAS instrument to be used for this experiment",
+                "MSInstrument": {
+                            "title": "MS Instrument",
+                            "description": "Specify the MS instrument to be used for this experiment",
                             "type": "string"},
-                "AASOperator": {
-                            "title": "AAS Operator",
+                "MSOperator": {
+                            "title": "MS Operator",
                             "description": "Choose operator for the requested experiment",
-                            "type": "string"
+                            "type": "string",
+                            "enum": ["Max Mustermann", "Joseph John Thomson", "Eugen Goldstein"]
                         },
                 "project": {
                             "title": "Project",
@@ -65,21 +66,15 @@
         },
         "sample": {
             "title": "Sample",
-            "description": "Please add samples according to its priority (e.g., first sample is the first priority).",
+            "description": "Details of the samples to be analyzed with MS",
             "type": "array",
             "items": {
                 "type": "object",
-                "required": ["sampleId", "sampleSafety", "chemicalComposition", "geometry", "sampleProperties", "imaging"],
+                "required": ["sampleId", "sampleSafety", "chemicalComposition", "geometry", "physicalState"],
                 "properties": {
-                    "exampleImage":{
-                        "title": "Example Image",
-                        "description": "Example of how the \"desired\" result image should look like for this sample. Accepted file types: [\".jpg\",\".png\"]",
-                        "contentEncoding": "base64",
-                        "type":"string"
-                        },
                     "sampleId": {
                         "title": "Sample ID",
-                        "description": "Sample ID [YYMMDD-XXXX]. Maximum of 20 characters.",
+                        "description": "",
                         "type": "string"
                         },
                     "sampleSafety" : {
@@ -98,25 +93,21 @@
                         "description": "Sample geometry (width x length x height/thickness) in mm.",
                         "type": "string"
                         },
-                    "sampleProperties":{
-                        "title" : "Properties",
-                        "description": "Properties of the sample.",
-                        "type": "string" 
+                    "physicalState":{
+                        "title" : "Sample Physical State",
+                        "description": "Physical state of the sample (e.g., liquid, solid, etc.",
+                        "type": "string",
+                        "enum": ["Liquid", "Solid", "Gas", "Plasma", "Bose-Einstein condensate"] 
                         },
-                    "imaging": {
-                        "title": "Imaging",
-                        "description": "Specification of desired imaging parameters, e.g., zoom, image size, magnification.",
-                        "type": "string"
-                    },
                     "notes": {
                         "title": "Notes",
-                        "description": "Manufacturing details, pervious analysis, other remarks.",
+                        "description": "Other details",
                         "type": "string"
                         }
                     }
                 },
             "minItems": 1,
-            "maxItems": 8,
+            "maxItems": 16,
             "uniqueItems": true
         }
     }
