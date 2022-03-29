@@ -116,21 +116,6 @@
             "description": "Object Type Element",
             "type": "object",
             "properties": {}
-        },
-        "anyOf": {
-          "title": "AnyOf Keyword",
-          "description": "AnyOf Keyword",
-          "anyOf": [
-            {
-              "type":"array",
-              "items": {
-                "type":"string"
-              }
-            },
-            {
-              "type":"boolean"
-            }
-          ]
-      }
+        }
     }
 }
