@@ -30,25 +30,25 @@ Currently, Adamant supports the rendering and editing of JSON schemas with a spe
 
 # For development
 Setting up Adamant on a local machine for development:
-- `∼/$ gitclone https://github.com/csihda/adamant.git`—download or clone the repository
-- `∼/$ cd adamant`—go to adamant project directory
-- `∼/adamant$ npm install`—install the dependencies for the client-side
-- `∼/adamant$ cd backend`—go to backend directory
-- `∼/adamant/backend$ python -m venv venv`—create a python virtual environment
-- `∼/adamant/backend$ ./venv/Scripts/activate—activate the virtual environment
-- `∼/adamant/backend$ pip install -r requirements.txt`—install the dependencies for the back-end
-- `∼/adamant/backend$ cd ..`—go back to adamant project directory
-- `∼/adamant$ yarn start-api`—start the back-end
-- `∼/adamant$ yarn start`—on a new terminal, in the adamant project directory, start the client-si
+- `$ gitclone https://github.com/csihda/adamant.git`—download or clone the repository
+- `$ cd adamant`—go to adamant project directory
+- `adamant$ npm install`—install the dependencies for the client-side
+- `adamant$ cd backend`—go to backend directory
+- `adamant/backend$ python -m venv venv`—create a python virtual environment
+- `adamant/backend$ ./venv/Scripts/activate—activate the virtual environment
+- `adamant/backend$ pip install -r requirements.txt`—install the dependencies for the back-end
+- `adamant/backend$ cd ..`—go back to adamant project directory
+- `adamant$ yarn start-api`—start the back-end
+- `adamant$ yarn start`—on a new terminal, in the adamant project directory, start the client-si
 
 By default, Adamant is accessible at `http://localhost:3000`.
 
 # For deployment
 We recommend to deploy Adamant with docker-compose, which can be done with ease:
-- `∼$ gitclone https://github.com/csihda/adamant.git`—clone the repository
-- `∼$ cd adamant`—go to adamant project directory
-- `∼/adamant$ docker−compose build`—build the docker images for both back-end and front-end
-- `∼/adamant$ docker−compose up -d`—start both client and server containers, i.e., the whole system
+- `$ gitclone https://github.com/csihda/adamant.git`—clone the repository
+- `$ cd adamant`—go to adamant project directory
+- `adamant$ docker−compose build`—build the docker images for both back-end and front-end
+- `adamant$ docker−compose up -d`—start both client and server containers, i.e., the whole system
 
 By default, the deployed system can be accessed at `http://localhost:3000`.
 
