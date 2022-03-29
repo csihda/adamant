@@ -20,7 +20,7 @@ Currently, Adamant supports the rendering and editing of JSON schemas with a spe
 
 | Field Type | Implemented Keywords | Note |
 |-----------|----------------------|----|
-|String|`title`, `id`, `$id`, `description`, `type`, `enum`, `contentEncoding`, `default`, `minLength`, `maxLength`|contentEncoding can only receive a string value of `"base64"`|
+|String|`title`, `id`, `$id`, `description`, `type`, `enum`, `contentEncoding`, `default`, `minLength`, `maxLength`|`contentEncoding` can only receive a string value of `"base64"`|
 |Number| `title`, `id`, `$id`, `description`, `type`, `enum`, `default`, `minimum`, `maximum` | |
 |Integer| `title`, `id`, `$id`, `description`, `type`, `enum`, `default`, `minimum`, `maximum` | |
 |Boolean| `title`, `id`, `$id`, `description`, `type`, `default` | |
