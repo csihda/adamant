@@ -1,5 +1,5 @@
 {
-  "homepage": "http://csihda.github.io/adamant",
+  "homepage": "http://csihda.github.io/",
   "name": "adamant",
   "version": "1.0.0",
   "private": true,
@@ -15,18 +15,12 @@
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
-    "ajax": "0.0.4",
     "ajv": "^8.8.2",
     "ajv-draft-04": "^1.0.0",
     "cors": "^2.8.5",
     "crypto-js": "^4.1.1",
-    "http-proxy-middleware": "^2.0.1",
     "install": "^0.13.0",
     "jquery": "^3.6.0",
-    "jsonpath": "^1.1.1",
-    "jsonschema": "^1.4.0",
-    "list-files": "^1.1.4",
-    "mathjax": "^3.2.0",
     "mathjax-react": "^1.0.6",
     "npm": "^8.5.4",
     "react": "^17.0.2",
@@ -36,8 +30,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
     "react-toastify": "^8.1.0",
-    "set-value": "^4.1.0",
-    "web-vitals": "^1.0.1"
+    "set-value": "^4.1.0"
   },
   "scripts": {
     "predeploy": "npm run build",

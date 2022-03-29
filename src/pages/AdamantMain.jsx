@@ -1252,7 +1252,7 @@ const AdamantMain = () => {
                   alignItems: "center",
                 }}
               >
-                <Tooltip
+                {/* <Tooltip
                   placement="top"
                   title="Wondering how to use this tool?"
                 >
@@ -1266,7 +1266,7 @@ const AdamantMain = () => {
                   >
                     <HelpIcon />
                   </Button>
-                </Tooltip>
+                  </Tooltip>*/}
               </div>
             </div>
           ) : null}
