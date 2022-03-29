@@ -30,7 +30,7 @@ Currently, Adamant supports the rendering and editing of JSON schemas with a spe
 
 # For development
 Setting up Adamant on a local machine for development:
-- `$ git clone https://github.com/csihda/adamant.git`—download or clone the repository
+- `$ git clone https://github.com/csihda/adamant.git`—clone the repository
 - `$ cd adamant`—go to adamant project directory
 - `adamant$ npm install`—install the dependencies for the client-side
 - `adamant$ cd backend`—go to backend directory
