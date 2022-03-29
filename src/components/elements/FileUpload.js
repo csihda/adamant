@@ -155,10 +155,10 @@ const FileUpload = ({ adamant_field_error, adamant_error_description, contentEnc
                 }
             }
             // only accept file lower than allowedFileSize
-            if (acceptedFile[0]["size"] > allowedFileSize) {
-                valid = false;
-                setDescriptionText(`File size is too big. The file size should not exceed ${allowedFileSize / 1000} KB.`)
-            }
+            //if (acceptedFile[0]["size"] > allowedFileSize) {
+            //    valid = false;
+            //    setDescriptionText(`File size is too big. The file size should not exceed ${allowedFileSize / 1000} KB.`)
+            //}
             if (valid) {
                 setRenderingInProgress(true)
                 setFileSize(acceptedFile[0]["size"])
@@ -326,7 +326,7 @@ const FileUpload = ({ adamant_field_error, adamant_error_description, contentEnc
             }} style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', alignItems: "center", width: '100%' }}>
                 <div style={{ paddingLeft: "15px", width: "100%" }}>
                     <FormControl >
-                        <FormLabel style={{ paddingBottom: "10px", color: `${inputError ? "red" : ""}` }}>{fieldLabel + ` (max. ${allowedFileSize / 1000} KB)` === undefined ? + "" : fieldLabel + ` (max. ${allowedFileSize / 1000} KB)` + ":"}</FormLabel>
+                        <FormLabel style={{ paddingBottom: "10px", color: `${inputError ? "red" : ""}` }}>{fieldLabel === undefined ? + "" : fieldLabel + ":"}</FormLabel>
                         {renderingInProgress ? <Box sx={{ width: '225px' }}>
                             <LinearProgress />
                         </Box> : null}
