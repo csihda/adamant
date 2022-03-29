@@ -1,6 +1,5 @@
-<img src="https://raw.githubusercontent.com/csihda/adamant/59c295d846e9cc140c01b308c07a2499c1eb8e39/src/assets/adamant-header-5.svg" alt="drawing" style="width:50%;"/>
+# <img src="https://raw.githubusercontent.com/csihda/adamant/59c295d846e9cc140c01b308c07a2499c1eb8e39/src/assets/adamant-header-5.svg" alt="drawing" style="width:50%;"/>
 
-#
 Adamant is a JSON schema-based metadata creation tool presented in a user-friendly interface. Adamant aims to ease the integration of various research data management (RDM) workflows into the everyday research routine of especially small independent laboratories, which hopefully leads to the generation of research data that adhere to the FAIR (findable, accessible, interoperable, reusable) principles.
 As of now, Adamant supports the following features:
 
@@ -14,7 +13,7 @@ As of now, Adamant supports the following features:
 
 A live demo of Adamant (client only) is available at: https://csihda.github.io/adamant/.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/csihda/adamant/blob/main/LICENSE)
 
 # Supported JSON schema keywords
 Currently, Adamant supports the rendering and editing of JSON schemas with a specification version draft 4 or 7. The following table lists all the implemented JSON schema keywords in the current version of Adamant. Note that the `id` keyword only works with the JSON schema specification version draft 4, whereas `$id` is used for the newer specification drafts. Lastly, the `contentEncoding` keyword is intended to be used with the specification version draft 7 or newer.
