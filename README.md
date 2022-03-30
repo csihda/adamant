@@ -16,7 +16,7 @@ A live demo of Adamant (client only) is available at: https://csihda.github.io/a
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/csihda/adamant/blob/main/LICENSE)
 
 # Supported JSON schema keywords
-Currently, Adamant supports the rendering and editing of JSON schemas with a specification version draft 4 or 7. The following table lists all the implemented JSON schema keywords in the current version of Adamant. Note that the `id` keyword only works with the JSON schema specification version draft 4, whereas `$id` is used for the newer specification drafts. Lastly, the `contentEncoding` keyword is intended to be used with the specification version draft 7 or newer.
+Currently, Adamant supports the rendering and editing of JSON schemas with a specification version draft 4 and 7. The following table lists all the implemented JSON schema keywords in the current version of Adamant. Note that the `id` keyword only works with the JSON schema specification version draft 4, whereas `$id` is used for the newer specification drafts. Lastly, the `contentEncoding` keyword is intended to be used with the specification version draft 7 or newer.
 
 | Field Type | Implemented Keywords | Note |
 |-----------|----------------------|----|
@@ -43,7 +43,7 @@ Setting up Adamant on a local machine for development:
 By default, Adamant is accessible at `http://localhost:3000`.
 
 # Deployment
-We recommend to deploy Adamant with docker-compose, which can be done with ease:
+We recommend deploying Adamant with docker-compose, which can be done with ease:
 - `$ git clone https://github.com/csihda/adamant.git`—clone the repository
 - `$ cd adamant`—go to adamant project directory
 - `adamant$ docker−compose build`—build the docker images for both back-end and front-end
