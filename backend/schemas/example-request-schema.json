@@ -29,12 +29,14 @@
                 "MSInstrument": {
                             "title": "MS Instrument",
                             "description": "Specify the MS instrument to be used for this experiment",
-                            "type": "string"},
+                            "type": "string",
+                            "enum": ["", "Thermo Scientific Orbitrap Fusion ETD", " Waters XEVO TQ-S", "Agilent 7200 Q-TOF"]
+                        },
                 "MSOperator": {
                             "title": "MS Operator",
                             "description": "Choose operator for the requested experiment",
                             "type": "string",
-                            "enum": ["Max Mustermann", "Joseph John Thomson", "Eugen Goldstein"]
+                            "enum": ["","Max Mustermann", "Joseph John Thomson", "Eugen Goldstein"]
                         },
                 "project": {
                             "title": "Project",
