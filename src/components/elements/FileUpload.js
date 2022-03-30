@@ -13,6 +13,7 @@ import { useDropzone } from "react-dropzone";
 import LinearProgress from '@mui/material/LinearProgress';
 import Box from "@material-ui/core/Box";
 import NotRenderable from "../../assets/not-renderable.png"
+import FileIcon from "../../assets/file-icon.svg"
 
 const getAcceptedTypes = (field_description) => {
     let matches = field_description.match(/\[(.*?)\]/);
@@ -331,7 +332,7 @@ const FileUpload = ({ adamant_field_error, adamant_error_description, contentEnc
                             <LinearProgress />
                         </Box> : null}
                         <div style={{ width: "225px", display: "flex", justifyContent: "center" }}>
-                            {dataUrl !== "" ? <img alt='fileUpload' src={renderableMediaFileTypes.includes(mediaFileType) ? dataUrl : NotRenderable} width="225" /> : ""}
+                            {dataUrl !== "" ? <img alt='fileUpload' src={renderableMediaFileTypes.includes(mediaFileType) ? dataUrl : FileIcon} width={renderableMediaFileTypes.includes(mediaFileType) ? "225" : "64"} /> : ""}
                         </div>
                         <div style={{ width: "225px", fontSize: "10px", color: "grey", paddingTop: "5px", whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden" }}>
                             {dataUrl}
