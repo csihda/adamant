@@ -84,7 +84,33 @@ const removeEmpty = (obj) => {
   return Object.keys(obj).length > 0 || obj instanceof Array ? obj : undefined;
 };
 
-const AdamantMain = () => {
+// initialize color states for request selection buttons
+const createButtonColorStatesFromConfigs = (config) => {
+  let buttonStates = [];
+  for (let i = 0; i < config.length; i++) {
+    let states = {
+      variant: "contained",
+      color: "primary",
+    };
+    buttonStates.push(states);
+  }
+  return buttonStates;
+};
+
+// initialize color states for schema selection buttons
+const createSchemaButtonColorStates = (availableSchemas) => {
+  let buttonStates = [];
+  for (let i = 0; i < availableSchemas.length; i++) {
+    let states = {
+      variant: "outlined",
+      color: "default",
+    };
+    buttonStates.push(states);
+  }
+  return buttonStates;
+};
+
+const AdamantRequest = () => {
   // state management
   const [disable, setDisable] = useState(true);
   const [schemaMessage, setSchemaMessage] = useState(null);
@@ -116,7 +142,13 @@ const AdamantMain = () => {
   const [openJobRequestDialog, setOpenJobRequestDialog] = useState(false);
   const [jobRequestSchemas, setJobRequestSchemas] = useState([]);
   const [submitTextList, setSubmitTextList] = useState([]);
+  const [jobRequestConfList, setJobRequestConfList] = useState([]);
   const [submitText, setSubmitText] = useState("Submit Job Request");
+  const [availableRequestSchemas, setAvailableRequestSchemas] = useState([]);
+  const [renderAvailableSchemas, setRenderAvailableSchemas] = useState(false);
+  const [buttonColorStates, setButtonColorStates] = useState([]);
+  const [schemaSelectionButtonColors, setSchemaSelectionButtonColors] =
+    useState([]);
   // for dropdown buttons
   const [anchorEl, setAnchorEl] = useState(null);
   const [
@@ -151,6 +183,14 @@ const AdamantMain = () => {
         setJobRequestSchemas(status["jobRequestSchemaList"]);
         console.log(status["jobRequestSchemaList"]);
         setSubmitTextList(status["submitButtonText"]);
+        setJobRequestConfList(status["configs"]);
+        setButtonColorStates(
+          createButtonColorStatesFromConfigs(status["configs"])
+        );
+        console.log(
+          "states:",
+          createButtonColorStatesFromConfigs(status["configs"])
+        );
         setOnlineMode(true);
         toast.success(
           <>
@@ -1155,6 +1195,79 @@ const AdamantMain = () => {
     }
   };
 
+  const handleJobRequestButton = (content, index) => {
+    // reset the button color
+    if (jobRequestConfList.length !== 0) {
+      let btnStates = buttonColorStates;
+      for (let i = 0; i < jobRequestConfList.length; i++) {
+        btnStates[i]["color"] = "primary";
+      }
+      setButtonColorStates(btnStates);
+    }
+
+    // clear rendered schema first
+    clearSchemaOnClick();
+    // and continue
+    let availableSchemas = [];
+    for (let i = 0; i < content["requestSchemas"].length; i++) {
+      availableSchemas.push({
+        schema: content.requestSchemas[i],
+        schemaTitle: content.requestSchemasTitle[i],
+      });
+    }
+    if (availableSchemas.length !== 0) {
+      setRenderAvailableSchemas(true);
+      setAvailableRequestSchemas(availableSchemas);
+
+      // create default button color states for schema selection buttons
+      setSchemaSelectionButtonColors(
+        createSchemaButtonColorStates(availableSchemas)
+      );
+    } else {
+      setRenderAvailableSchemas(false);
+      setAvailableRequestSchemas([]);
+    }
+
+    // change the button color
+    if (buttonColorStates.length !== 0) {
+      let btnStates = buttonColorStates;
+      btnStates[index]["color"] = "secondary";
+      setButtonColorStates(btnStates);
+    }
+  };
+
+  const handleSelectSchema = (content, index) => {
+    // reset the button color
+    if (availableRequestSchemas.length !== 0) {
+      let btnStates = schemaSelectionButtonColors;
+      for (let i = 0; i < availableRequestSchemas.length; i++) {
+        btnStates[i]["color"] = "default";
+      }
+      setSchemaSelectionButtonColors(btnStates);
+    }
+
+    // get the index
+    let indx = schemaNameList.indexOf(content["schema"]);
+    let obj = schemaList[indx];
+    let convertedSchema = JSON.parse(JSON.stringify(obj));
+    convertedSchema["properties"] = object2array(obj["properties"]);
+    setSchema(obj);
+    let oriSchema = JSON.parse(JSON.stringify(obj));
+    setOriginalSchema(oriSchema);
+    setSchemaWithValues(JSON.parse(JSON.stringify(oriSchema)));
+    setConvertedSchema(convertedSchema);
+
+    // render the schema
+    renderOnClick();
+
+    // change the button color
+    if (schemaSelectionButtonColors.length !== 0) {
+      let btnStates = schemaSelectionButtonColors;
+      btnStates[index]["color"] = "secondary";
+      setSchemaSelectionButtonColors(btnStates);
+    }
+  };
+
   return (
     <>
       <FormContext.Provider
@@ -1177,7 +1290,43 @@ const AdamantMain = () => {
             alt="header"
             src={HeaderImage !== undefined ? HeaderImage : QPTDATLogo}
           />
-          {!inputMode ? (
+        </div>
+        <div style={{ fontSize: "20px", padding: "10px 10px 0px 10px" }}>
+          Please select a request workflow:
+        </div>
+        <div
+          style={{
+            display: "flex",
+            textAlign: "left",
+            padding: "10px 10px 0px 10px",
+          }}
+        >
+          {jobRequestConfList.length !== 0 && buttonColorStates.length !== 0
+            ? jobRequestConfList.map((content, index) => {
+                return (
+                  <Button
+                    onClick={() => handleJobRequestButton(content, index)}
+                    key={index}
+                    style={{
+                      fontSize: "auto",
+                      height: "50px",
+                      width: "auto",
+                      marginRight: "5px",
+                    }}
+                    color={buttonColorStates[index]["color"]}
+                    variant={buttonColorStates[index]["variant"]}
+                  >
+                    {content["title"]}
+                  </Button>
+                );
+              })
+            : "No job-request config found."}
+        </div>
+        {renderAvailableSchemas ? (
+          <>
+            <div style={{ fontSize: "20px", padding: "10px 10px 0px 10px" }}>
+              Please select a request schema:
+            </div>
             <div
               style={{
                 display: "flex",
@@ -1185,92 +1334,29 @@ const AdamantMain = () => {
                 padding: "10px 10px 0px 10px",
               }}
             >
-              <Button
-                style={{ width: "100%" }}
-                variant="contained"
-                color="primary"
-                {...getRootProps()}
-              >
-                <input {...getInputProps()} />
-                {isDragActive ? "Drop here" : "Browse Schema"}
-              </Button>
-              <div
-                style={{
-                  paddingLeft: "10px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                OR
-              </div>
-              <TextField
-                onChange={(event) => handleSelectSchemaOnChange(event)}
-                style={{ width: "100%", marginLeft: "10px" }}
-                fullWidth={false}
-                value={selectedSchemaName}
-                select
-                id={"select-schema"}
-                label={"Select existing schema"}
-                variant="outlined"
-                SelectProps={{ native: true }}
-              >
-                {schemaNameList.map((content, index) => (
-                  <option key={index} value={content}>
-                    {content}
-                  </option>
-                ))}
-              </TextField>
-              <div
-                style={{
-                  paddingLeft: "10px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                OR
-              </div>
-              <Button
-                onClick={() => createSchemaFromScratch()}
-                style={{
-                  width: "100%",
-                  marginLeft: "10px",
-                  marginRight: "10px",
-                }}
-                variant="contained"
-                color="primary"
-              >
-                CREATE FROM SCRATCH
-              </Button>
-              <div
-                style={{
-                  paddingLeft: "10px",
-                  width: "100%",
-                  display: "flex",
-                  justifyContent: "right",
-                  alignItems: "center",
-                }}
-              >
-                {/* <Tooltip
-                  placement="top"
-                  title="Wondering how to use this tool?"
-                >
-                  <Button
-                    onClick={() => {
-                      window.open(
-                        "https://github.com/csihda/adamant",
-                        "_blank" // <- This is what makes it open in a new window.
-                      );
-                    }}
-                  >
-                    <HelpIcon />
-                  </Button>
-                  </Tooltip>*/}
-              </div>
+              {availableRequestSchemas.length !== 0
+                ? availableRequestSchemas.map((content, index) => {
+                    return (
+                      <Button
+                        onClick={() => handleSelectSchema(content, index)}
+                        key={index}
+                        style={{
+                          fontSize: "12px",
+                          height: "30px",
+                          width: "auto",
+                          marginRight: "5px",
+                        }}
+                        color={schemaSelectionButtonColors[index]["color"]}
+                        variant={schemaSelectionButtonColors[index]["variant"]}
+                      >
+                        {content["schemaTitle"]}
+                      </Button>
+                    );
+                  })
+                : "No job-request config found."}
             </div>
-          ) : null}
-        </div>
+          </>
+        ) : null}
         {!inputMode ? (
           <div
             style={{
@@ -1353,88 +1439,75 @@ const AdamantMain = () => {
           <Divider />
         </div>
         {renderReady === true ? (
-          <FormRenderer
-            revertAllChanges={revertAllChanges}
-            schema={convertedSchema}
-            setSchemaSpecification={setSchemaSpecification}
-            originalSchema={schema}
-            edit={editMode}
-          />
+          <>
+            <div style={{ padding: "10px" }}>
+              <Divider />
+            </div>
+            <FormRenderer
+              revertAllChanges={revertAllChanges}
+              schema={convertedSchema}
+              setSchemaSpecification={setSchemaSpecification}
+              originalSchema={schema}
+              edit={false}
+            />
+          </>
         ) : null}
         <div style={{ padding: "10px" }}>
           <Divider />
         </div>
-        <div
-          style={{
-            padding: "10px 10px",
-            display: "flex",
-            justifyContent: "right",
-          }}
-        >
-          {inputMode ? (
-            <div style={{ width: "100%", display: "inline-block" }}>
-              <Button
-                onClick={() => toEditMode()}
-                style={{ float: "left", marginRight: "5px" }}
-                variant="outlined"
-              >
-                Back to Edit Mode
-              </Button>
-              <Button
-                onClick={() => handleOnClickProceedButton()}
-                style={{ float: "right" }}
-                variant="contained"
-                color="primary"
-              >
-                Proceed
-              </Button>
-              <Button
-                style={{ float: "right", marginRight: "5px" }}
-                id="demo-positioned-button"
-                aria-controls={open ? "demo-positioned-menu" : undefined}
-                aria-haspopup="true"
-                aria-expanded={open ? "true" : undefined}
-                onClick={handleClick}
-              >
-                <DownloadIcon /> Download Schema/Data
-              </Button>
-              <Menu
-                id="demo-positioned-menu"
-                aria-labelledby="demo-positioned-button"
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "left",
-                }}
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "left",
-                }}
-              >
-                <MenuItem onClick={handleDownloadJsonSchema}>
-                  Download JSON Schema
-                </MenuItem>
-                <MenuItem onClick={handleDownloadFormData}>
-                  Download JSON Data
-                </MenuItem>
-                <MenuItem onClick={handleDownloadDescriptionList}>
-                  Download Description List
-                </MenuItem>
-              </Menu>
-            </div>
-          ) : (
+        {renderReady === true ? (
+          <div
+            style={{
+              padding: "10px 10px",
+              width: "100%",
+              display: "inline-block",
+            }}
+          >
             <Button
-              disabled={disable}
-              onClick={() => compileOnClick()}
+              onClick={() => handleOnClickProceedButton()}
+              style={{ float: "right" }}
               variant="contained"
               color="primary"
             >
-              Compile
+              Proceed
             </Button>
-          )}
-        </div>
+            <Button
+              style={{ float: "right", marginRight: "5px" }}
+              id="demo-positioned-button"
+              aria-controls={open ? "demo-positioned-menu" : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? "true" : undefined}
+              onClick={handleClick}
+            >
+              <DownloadIcon /> Download Schema/Data
+            </Button>
+            <Menu
+              id="demo-positioned-menu"
+              aria-labelledby="demo-positioned-button"
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "left",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "left",
+              }}
+            >
+              <MenuItem onClick={handleDownloadJsonSchema}>
+                Download JSON Schema
+              </MenuItem>
+              <MenuItem onClick={handleDownloadFormData}>
+                Download JSON Data
+              </MenuItem>
+              <MenuItem onClick={handleDownloadDescriptionList}>
+                Download Description List
+              </MenuItem>
+            </Menu>
+          </div>
+        ) : null}
         <div style={{ padding: "10px", color: "grey" }}>ADAMANT v1.0.0</div>
       </FormContext.Provider>
       <CreateELabFTWExperimentDialog
@@ -1472,4 +1545,4 @@ const AdamantMain = () => {
   );
 };
 
-export default AdamantMain;
+export default AdamantRequest;

@@ -88,9 +88,9 @@ def check_mode():
                 listSchemas.append(element["requestSchemaTitle"])
                 listSubmitText.append(element["submitButtonText"])
                 listSubmitText.append(element["submitButtonText"])
-        return {"message": "connection is a success", "jobRequestSchemaList": listSchemas, "submitButtonText": listSubmitText}
+        return {"message": "connection is a success", "jobRequestSchemaList": listSchemas, "submitButtonText": listSubmitText, "configs": emailconf_list}
     except Exception as e:
-        return {"message": "connection is a success", "jobRequestSchemaList": listSchemas, "submitButtonText": listSubmitText}
+        return {"message": "connection is a success", "jobRequestSchemaList": listSchemas, "submitButtonText": listSubmitText, "configs": emailconf_list}
 
 
 # get schemas from backend

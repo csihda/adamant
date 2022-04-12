@@ -2,6 +2,7 @@ import React from "react";
 import "./styles.css";
 import { Route, Switch, Redirect } from "react-router-dom";
 import AdamantMain from "./pages/AdamantMain";
+import AdamantRequest from "./pages/AdamantRequest";
 import "cors";
 import packageJson from "../package.json";
 import { ToastContainer } from "react-toastify";
@@ -21,6 +22,7 @@ export default function App() {
           <Switch>
             <Redirect exact from="/" to="/adamant" />
             <Route exact path="/adamant" component={AdamantMain}></Route>
+            <Route exact path="/adamant/request-job" component={AdamantRequest}></Route>
           </Switch>
         </div>
         <ToastContainer
@@ -39,6 +41,7 @@ export default function App() {
         <div className="the_app">
           <Switch>
             <Route exact path="/" component={AdamantMain}></Route>
+            <Route exact path="/request-job" component={AdamantRequest}></Route>
           </Switch>
         </div>
         <ToastContainer
