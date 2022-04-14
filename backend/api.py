@@ -343,8 +343,9 @@ def submit_job_request():
             except Exception as e:
                 del msg1
                 del msg2
-                print(e)
-                return {"response": 500, "responseText": "Something went wrong"}
+                print(str(e))
+                message = "Something went wrong. Probably the email you entered is wrong!"
+                return {"response": 500, "responseText": message}
 
     except Exception as e:
         print(e)

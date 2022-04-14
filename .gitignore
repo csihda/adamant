@@ -14,6 +14,8 @@
 # some assets
 /src/assets/sem-header-picture.png
 /src/assets/sem-operator-device-list.json
+/src/assets/email_list.json
+/src/assets/*.py
 
 # python floders
 /backend/venv

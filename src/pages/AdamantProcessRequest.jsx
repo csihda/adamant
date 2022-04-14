@@ -1283,7 +1283,7 @@ const AdamantProcessRequest = () => {
           implementedFieldTypes,
         }}
       >
-        <div style={{ paddingBottom: "5px" }}>
+        <div style={{ paddingLeft: "10px", paddingBottom: "5px" }}>
           <img
             style={{ height: "100px", borderRadius: "5px" }}
             alt="header"

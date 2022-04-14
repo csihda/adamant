@@ -12,6 +12,7 @@ import { Route } from 'react-router-dom'
 import { Tooltip } from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";
 import Cowboy from "../assets/cowboy-style.png"
+import AdamantHeader from "../assets/adamant-header-5.svg"
 
 const ChooseUseCasesDialog = ({ openUseCasesDialog, setOpenUseCasesDialog }) => {
 
@@ -56,13 +57,20 @@ const ChooseUseCasesDialog = ({ openUseCasesDialog, setOpenUseCasesDialog }) => 
                     <div style={{ width: "350px" }}>
                         <Tooltip
                             placement="top"
-                            title={<h2 style={{ color: "lightblue" }}>Basically closing this dialog if you click here.</h2>}
+                            title={<h2 style={{ color: "lightblue" }}>Basically closing this dialog if you click here and use Adamant as it is.</h2>}
                         >
-                            <Button onClick={() => setOpenUseCasesDialog(false)} variant="outlined" style={{ height: "340px", width: "340px" }}> <img
-                                style={{ height: "250px", borderRadius: "5px" }}
-                                alt="header"
-                                src={Cowboy}
-                            /> </Button>
+                            <Button onClick={() => setOpenUseCasesDialog(false)} variant="contained" style={{ height: "340px", width: "340px" }}>
+                                <div>
+                                    <div style={{ fontWeight: "bold" }}>
+                                        Metadata and schema creation with
+                                    </div>
+                                    <img
+                                        style={{ width: "300px", borderRadius: "5px" }}
+                                        alt="header"
+                                        src={AdamantHeader}
+                                    />
+                                </div>
+                            </Button>
                         </Tooltip>
                     </div>
                     <div style={{ width: "350px" }}>
@@ -71,14 +79,14 @@ const ChooseUseCasesDialog = ({ openUseCasesDialog, setOpenUseCasesDialog }) => 
                                 placement="top"
                                 title={<h2 style={{ color: "lightblue" }}>Click here if you'd like to request an analysis.</h2>}
                             >
-                                <Button onClick={() => { history.push('/request-job') }} variant="outlined" style={{ height: "165px", width: "340px", marginBottom: "5px" }}>Request Analysis</Button>
+                                <Button onClick={() => { history.push('/request-job') }} variant="contained" style={{ fontWeight: "bold", height: "165px", width: "340px", marginBottom: "5px" }}>Request an Analysis</Button>
                             </Tooltip>)} />
                         <Route render={({ history }) => (
                             <Tooltip
                                 placement="top"
                                 title={<h2 style={{ color: "lightblue" }}>If you are an operator, click here to process a request.</h2>}
                             >
-                                <Button onClick={() => { history.push('/process-request') }} variant="outlined" style={{ height: "165px", width: "340px", marginTop: "5px" }}>Process Request</Button></Tooltip>)} />
+                                <Button onClick={() => { history.push('/process-request') }} variant="contained" style={{ fontWeight: "bold", height: "165px", width: "340px", marginTop: "5px" }}>Process a Request</Button></Tooltip>)} />
                     </div>
                 </div>
             </DialogContent>

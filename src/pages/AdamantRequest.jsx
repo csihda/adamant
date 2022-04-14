@@ -1283,7 +1283,7 @@ const AdamantRequest = () => {
           implementedFieldTypes,
         }}
       >
-        <div style={{ paddingBottom: "5px" }}>
+        <div style={{ paddingLeft: "10px", paddingBottom: "5px" }}>
           <img
             style={{ height: "100px", borderRadius: "5px" }}
             alt="header"
@@ -1324,7 +1324,7 @@ const AdamantRequest = () => {
         {renderAvailableSchemas ? (
           <>
             <div style={{ fontSize: "20px", padding: "10px 10px 0px 10px" }}>
-              Please select a request schema:
+              Please select a device:
             </div>
             <div
               style={{
