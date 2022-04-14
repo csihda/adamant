@@ -9,7 +9,7 @@
             "title": "General Information",
             "description": "General information",
             "type": "object",
-            "required": ["objectives", "purpose", "deadline", "semDevice", "semOperator", "project", "projectLeaderName", "requesterName", "requesterEmail", "requesterPhone"],
+            "required": ["objectives", "deadline", "purpose", "semDevice", "semOperator", "project", "projectLeaderName", "requesterName", "requesterEmail", "requesterPhone"],
             "properties": {
                 "objectives": {
                     "title": "Objective(s)",
@@ -31,12 +31,13 @@
                             "title": "SEM Device",
                             "description": "Specify the required facility.",
                             "type": "string",
-                            "default": "SEM Apreo 2 (Laboratory U.10a)"
+                            "enum": ["SEM Apreo 2 (Laboratory U.10a)"]
                         },
                 "semOperator": {
                             "title": "SEM Operator",
                             "description": "Choose operator for the requested analysis.",
-                            "type": "string"
+                            "type": "string",
+                            "enum": ["", "Blanca Isabel Arias-Serrano", "Basma Mewfay","Camila Andrea Rojas Nunez", "Pablo Collantes Jimenez", "Marcel Wetegrove", "Jan Wallis", "Javier Ignacio Roman Silva", "Martin Rohloff", "Monique Levin"]
                         },
                 "project": {
                             "title": "Project",
@@ -72,7 +73,7 @@
             "type": "array",
             "items": {
                 "type": "object",
-                "required": ["sampleId", "sampleSafety", "chemicalComposition", "geometry", "sampleProperties", "imaging"],
+                "required": ["sampleId", "sampleSafety", "chemicalComposition"],
                 "properties": {
                     "exampleImage":{
                         "title": "Example Image",
@@ -103,7 +104,7 @@
                         },
                     "sampleProperties":{
                         "title" : "Properties",
-                        "description": "Properties of the sample.",
+                        "description": "Properties of the sample. Ferromagnetism, particle size, insulating, etc.",
                         "type": "string" 
                         },
                     "imaging": {

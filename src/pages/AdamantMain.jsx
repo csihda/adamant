@@ -36,6 +36,7 @@ import createDescriptionListFromJSON from "../components/utils/createDescription
 import HelpIcon from "@material-ui/icons/HelpOutlineRounded";
 import { Tooltip } from "@material-ui/core";
 import validateSchemaAgainstSpecification from "../components/utils/validateSchemaAgainstSpecification";
+import ChooseUseCasesDialog from "../components/ChooseUseCasesDialog";
 
 // function that receive the schema and convert it to Form/json data blueprint
 // also to already put the default value to this blueprint
@@ -117,6 +118,7 @@ const AdamantMain = () => {
   const [jobRequestSchemas, setJobRequestSchemas] = useState([]);
   const [submitTextList, setSubmitTextList] = useState([]);
   const [submitText, setSubmitText] = useState("Submit Job Request");
+  const [openUseCasesDialog, setOpenUseCasesDialog] = useState(true);
   // for dropdown buttons
   const [anchorEl, setAnchorEl] = useState(null);
   const [
@@ -1468,6 +1470,10 @@ const AdamantMain = () => {
           submitText={submitText}
         />
       ) : null}
+      <ChooseUseCasesDialog
+        openUseCasesDialog={openUseCasesDialog}
+        setOpenUseCasesDialog={setOpenUseCasesDialog}
+      />
     </>
   );
 };

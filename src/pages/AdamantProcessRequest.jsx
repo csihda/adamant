@@ -110,7 +110,7 @@ const createSchemaButtonColorStates = (availableSchemas) => {
   return buttonStates;
 };
 
-const AdamantRequest = () => {
+const AdamantProcessRequest = () => {
   // state management
   const [disable, setDisable] = useState(true);
   const [schemaMessage, setSchemaMessage] = useState(null);
@@ -144,7 +144,7 @@ const AdamantRequest = () => {
   const [submitTextList, setSubmitTextList] = useState([]);
   const [jobRequestConfList, setJobRequestConfList] = useState([]);
   const [submitText, setSubmitText] = useState("Submit Job Request");
-  const [availableRequestSchemas, setAvailableRequestSchemas] = useState([]);
+  const [availableExpSchemas, setAvailableExpSchemas] = useState([]);
   const [renderAvailableSchemas, setRenderAvailableSchemas] = useState(false);
   const [buttonColorStates, setButtonColorStates] = useState([]);
   const [schemaSelectionButtonColors, setSchemaSelectionButtonColors] =
@@ -1208,15 +1208,15 @@ const AdamantRequest = () => {
     clearSchemaOnClick();
     // and continue
     let availableSchemas = [];
-    for (let i = 0; i < content["requestSchemas"].length; i++) {
+    for (let i = 0; i < content["experimentSchemas"].length; i++) {
       availableSchemas.push({
-        schema: content.requestSchemas[i],
-        schemaTitle: content.requestSchemasTitle[i],
+        schema: content.experimentSchemas[i],
+        schemaTitle: content.experimentSchemasTitle[i],
       });
     }
     if (availableSchemas.length !== 0) {
       setRenderAvailableSchemas(true);
-      setAvailableRequestSchemas(availableSchemas);
+      setAvailableExpSchemas(availableSchemas);
 
       // create default button color states for schema selection buttons
       setSchemaSelectionButtonColors(
@@ -1224,7 +1224,7 @@ const AdamantRequest = () => {
       );
     } else {
       setRenderAvailableSchemas(false);
-      setAvailableRequestSchemas([]);
+      setAvailableExpSchemas([]);
     }
 
     // change the button color
@@ -1237,9 +1237,9 @@ const AdamantRequest = () => {
 
   const handleSelectSchema = (content, index) => {
     // reset the button color
-    if (availableRequestSchemas.length !== 0) {
+    if (availableExpSchemas.length !== 0) {
       let btnStates = schemaSelectionButtonColors;
-      for (let i = 0; i < availableRequestSchemas.length; i++) {
+      for (let i = 0; i < availableExpSchemas.length; i++) {
         btnStates[i]["color"] = "default";
       }
       setSchemaSelectionButtonColors(btnStates);
@@ -1324,7 +1324,7 @@ const AdamantRequest = () => {
         {renderAvailableSchemas ? (
           <>
             <div style={{ fontSize: "20px", padding: "10px 10px 0px 10px" }}>
-              Please select a request schema:
+              Please select an experiment schema:
             </div>
             <div
               style={{
@@ -1333,8 +1333,8 @@ const AdamantRequest = () => {
                 padding: "10px 10px 0px 10px",
               }}
             >
-              {availableRequestSchemas.length !== 0
-                ? availableRequestSchemas.map((content, index) => {
+              {availableExpSchemas.length !== 0
+                ? availableExpSchemas.map((content, index) => {
                     return (
                       <Button
                         onClick={() => handleSelectSchema(content, index)}
@@ -1463,4 +1463,4 @@ const AdamantRequest = () => {
   );
 };
 
-export default AdamantRequest;
+export default AdamantProcessRequest;

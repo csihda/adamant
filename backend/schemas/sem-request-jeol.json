@@ -31,12 +31,13 @@
                             "title": "SEM Device",
                             "description": "Specify the required facility.",
                             "type": "string",
-                            "default":"SEM Jeol JSM-7500F (Laboratory 1.59)"
+                            "enum":["SEM Jeol JSM-7500F (Laboratory 1.59)"]
                         },
                 "semOperator": {
                             "title": "SEM Operator",
                             "description": "Choose operator for the requested analysis.",
-                            "type": "string"
+                            "type": "string",
+                            "enum": ["","Anja Albrecht","Pablo Collantes Jimenez", "Uwe Lindemann", "Camila Andrea Rojas Nunez", "Jan Schäfer", "Gustav Sievers", "Jan Wallis", "Marcel Wetegrove", "Basma Radwan Mewafy", "Kirsten Anklam", "Monique Levien", "Fee Käufer"]
                         },
                 "project": {
                             "title": "Project",
@@ -72,7 +73,7 @@
             "type": "array",
             "items": {
                 "type": "object",
-                "required": ["sampleId", "sampleSafety", "chemicalComposition", "geometry", "sampleProperties", "imaging"],
+                "required": ["sampleId", "sampleSafety", "chemicalComposition"],
                 "properties": {
                     "exampleImage":{
                         "title": "Example Image",
@@ -103,7 +104,7 @@
                         },
                     "sampleProperties":{
                         "title" : "Properties",
-                        "description": "Properties of the sample.",
+                        "description": "Properties of the sample. Ferromagnetism, particle size, insulating, etc.",
                         "type": "string" 
                         },
                     "imaging": {

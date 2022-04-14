@@ -22,6 +22,7 @@
 /backend/conf/jobrequest-conf.json
 /backend/schemas/sem-experiment-request-schema.json
 /backend/schemas/sem-experiment-schema.json
+/backend/schemas/sem-*.json
 /backend/__pycache__
 
 /deployment/adamant-main.nginx
