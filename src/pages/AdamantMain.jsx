@@ -106,7 +106,7 @@ const AdamantMain = () => {
   const [schemaWithValues, setSchemaWithValues] = useState({});
   const [schemaSpecification, setSchemaSpecification] = useState("");
   const [token, setToken] = useState("");
-  const [eLabURL, setELabURL] = useState("");
+  const [eLabURL, setELabURL] = useState("https://pm-labbook.intranet.inp-greifswald.de/");
   const [experimentTitle, setExperimentTitle] = useState("");
   const [onlineMode, setOnlineMode] = useState(false);
   const [tags, setTags] = useState([]);
