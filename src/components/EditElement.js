@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState, useCallback } from 'react'
 import TextField from "@material-ui/core/TextField"
 //import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
@@ -21,6 +21,8 @@ import { IconButton } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import AddIcon from "@material-ui/icons/AddBox";
 import getValue from './utils/getValue';
+import { useDropzone } from "react-dropzone";
+import object2array from './utils/object2array';
 
 /*const useStyles = makeStyles((theme) => ({
     root: {
@@ -53,6 +55,10 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
     const [arrayMinMaxHelperText, setArrayMinMaxHelperText] = useState("Set the minimum and maximum values of the items allowed for this array field.")
     const [numberMinMaxValueHelperText, setNumberMinMaxValueHelpertext] = useState("Set the minimum and maximum values of this field.")
     const [arrayUniqueItems, setArrayUniqueItems] = useState(UISchema !== undefined ? (UISchema["uniqueItems"] !== undefined ? UISchema["uniqueItems"] : false) : false)
+    const [subSchemaValidity, setSubSchemaValidity] = useState(false);
+    const [convertedSubSchema, setConvertedSubSchema] = useState({})
+    const [subSchemaFilename, setSubSchemaFilename] = useState("")
+    const [activeSubSchemaButton, setActiveSubSchemaButton] = useState("") 
 
     let arrayItemTypeList = ["string", "number", "integer"]
     if (UISchema !== undefined) {
@@ -65,6 +71,15 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
 
 
     useEffect(() => {
+        if (field_uri !== undefined){
+            setFieldUri(field_uri)
+        }
+        else if (UISchema["$id"] !== undefined) {
+            setFieldUri(UISchema["$id"])
+        }
+        else {
+            setFieldUri("")
+        }
         // for array
         if (UISchema !== undefined) {
             if (UISchema["type"] === "array") {
@@ -197,9 +212,20 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                 alert("Field Keyword must be defined!")
                 return
             }
-
+            
             if (tempUISchema["type"] === "object") {
-                tempUISchema["properties"] = []
+                if (subSchemaValidity) {
+                    tempUISchema["properties"] = convertedSubSchema["properties"]
+                } else {
+                    tempUISchema["properties"] = []
+                }
+
+                // check required
+                try {
+                    tempUISchema["required"] = convertedSubSchema["required"]
+                } catch (error) {
+                    console.log(error)
+                }
             }
             // more validation keywords for array
             if (tempUISchema["type"] === "array") {
@@ -400,6 +426,16 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
             if (tempUISchema["type"] === "object" & tempUISchema["properties"] === undefined) {
                 tempUISchema["properties"] = []
             }
+            if (tempUISchema["type"] === "object" & subSchemaValidity) {
+                tempUISchema["properties"] = convertedSubSchema["properties"]
+                // check required
+                try {
+                    console.log(convertedSchema["required"])
+                    tempUISchema["required"] = convertedSubSchema["required"]
+                } catch (error) {
+                    console.log(error)
+                }
+            }
 
             // more validation keywords for array
             if (tempUISchema["type"] === "array") {
@@ -579,6 +615,8 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
             case 'defaultValue':
                 return setDefValue(event.target.value)
             case '$id':
+                return setFieldUri(event.target.value)
+            case 'id':
                 return setFieldUri(event.target.value)
             case 'itemType':
                 return setArrayItemType(event.target.value)
@@ -826,6 +864,99 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
         setArrayUniqueItems(prev => !prev)
     }
 
+    // function to check if the file accepted is of json format and json schema valid
+    const checkSubSchemaValidity = (schemaFile) => {
+        // place holder
+        if (schemaFile[0]["type"] === "application/json") {
+            // read the file with FileReadr API
+            const reader = new FileReader();
+            reader.onabort = () => console.log("file reading was aborted");
+            reader.onerror = () => console.log("file reading has failed");
+            reader.onload = () => {
+            const binaryStr = reader.result;
+            const obj = JSON.parse(binaryStr);
+
+            // convert obj schema to iterable array properties
+            let convertedSchema = JSON.parse(JSON.stringify(obj));
+            try {
+                convertedSchema["properties"] = object2array(obj["properties"]);
+                console.log("Converted Schema:", convertedSchema)
+                setConvertedSubSchema(convertedSchema)
+                // update states
+                setSubSchemaValidity(true);
+                setSubSchemaFilename(schemaFile[0]["name"])
+                console.log("Subschema is valid")
+
+                const copiedObj = JSON.parse(JSON.stringify(obj))
+
+                //alert(activeSubSchemaButton)
+                if (activeSubSchemaButton === "subschema") {
+                    Object.keys(copiedObj).forEach(key => {
+                        if (key === "id"){
+                            //return setSelectedType(event.target.value)
+                            //setFieldUri(obj[key])
+                            //alert(key)
+                            //let event = {target: {value: copiedObj[key]}}
+                            //handleChangeUISchema(event, key)
+                            setFieldUri(copiedObj[key])
+                        }
+                        if (key === "$id"){
+                            //let event = {target: {value: copiedObj[key]}}
+                            //handleChangeUISchema(event, key)
+                            setFieldUri(copiedObj[key])
+                        }
+                        if (key === "title"){
+                            //setTitle(obj[key])
+                            let event = {target: {value: copiedObj[key]}}
+                            handleChangeUISchema(event, key)
+                        }
+                        if (key === "description"){
+                            //setDescription(obj[key])
+                            let event = {target: {value: copiedObj[key]}}
+                            handleChangeUISchema(event, key)
+                        }
+                    })
+                }
+
+            } catch (error) {
+                console.log(error);
+                alert(`${schemaFile[0]["name"]} is invalid!`)
+                // update states
+                setSubSchemaValidity(false);
+                setSubSchemaFilename(schemaFile[0]["name"])
+                }
+            };
+            reader.readAsText(schemaFile[0]);
+        } else {
+            // update states
+            alert(`${schemaFile[0]["name"]} is invalid!`)
+            setSubSchemaValidity(false);
+            setSubSchemaFilename(schemaFile[0]["name"])
+        }
+    };
+
+
+    // browse or drag&drop schema file
+    const onDrop = useCallback(
+        (acceptedFile) => {
+            // process the schema, validation etc
+            checkSubSchemaValidity(acceptedFile);
+
+        // store schema file in the state
+        // update states
+        // setRenderReady(false);
+        // setDisable(true);
+        // setCreateScratchMode(false);
+        // setJsonData({});
+        // setSelectedSchemaName("");
+        },
+        [activeSubSchemaButton]
+    );
+    // for upload subschema
+    const { getRootProps, getInputProps } = useDropzone({
+        onDrop,
+        multiple: false,
+    });
 
     return (
         <>
@@ -878,10 +1009,10 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                             <div>
                                 <FormControl component="widget-type">
                                     <FormLabel style={{ color: "#01579b" }} component="legend">Basic Descriptors:</FormLabel>
-                                    <TextField margin="normal" required onChange={event => handleChangeUISchema(event, "fieldKey")} style={{ marginTop: "20px" }} defaultValue={field_key} variant="outlined" fullWidth={true} label={"Field Keyword"} helperText='A unique json keyword for this field. Usually short and has no spaces (use "_" instead). Spaces are replaced automatically with "_" upon saving.' />
-                                    <TextField margin="normal" onChange={event => handleChangeUISchema(event, "$id")} style={{ marginTop: "10px" }} defaultValue={field_uri} variant="outlined" fullWidth={true} label={"Field ID/URI"} helperText='ID or URI for this field if available.' />
-                                    <TextField margin="normal" onChange={event => handleChangeUISchema(event, "title")} style={{ marginTop: "10px" }} defaultValue={tempUISchema["title"]} variant="outlined" fullWidth={true} label={"Field Title"} helperText='Label or title of the field. For a field that requires a unit, the unit can be placed within a square bracket, e,g., "Chamber Pressure [Pa]".' />
-                                    <TextField margin="normal" onChange={event => handleChangeUISchema(event, "description")} style={{ marginTop: "10px" }} defaultValue={tempUISchema["description"]} variant="outlined" fullWidth={true} label={"Field Description"} multiline rows={3} helperText='A detailed description of the field, how the input should be formated, etc.' />
+                                    <TextField margin="normal" required onChange={event => handleChangeUISchema(event, "fieldKey")} style={{ marginTop: "20px" }} value={fieldkey} variant="outlined" fullWidth={true} label={"Field Keyword"} helperText='A unique json keyword for this field. Usually short and has no spaces (use "_" instead). Spaces are replaced automatically with "_" upon saving.' />
+                                    <TextField margin="normal" onChange={event => handleChangeUISchema(event, "$id")} style={{ marginTop: "10px" }} value={fieldUri} variant="outlined" fullWidth={true} label={"Field ID/URI"} helperText='ID or URI for this field if available.' />
+                                    <TextField margin="normal" onChange={event => handleChangeUISchema(event, "title")} style={{ marginTop: "10px" }} value={title} variant="outlined" fullWidth={true} label={"Field Title"} helperText='Label or title of the field. For a field that requires a unit, the unit can be placed within a square bracket, e,g., "Chamber Pressure [Pa]".' />
+                                    <TextField margin="normal" onChange={event => handleChangeUISchema(event, "description")} style={{ marginTop: "10px" }} value={description} variant="outlined" fullWidth={true} label={"Field Description"} multiline rows={3} helperText='A detailed description of the field, how the input should be formated, etc.' />
                                     <div style={{ paddingTop: "10px", paddingBottom: "10px" }}>
                                         <FormControl component="validation-related">
                                             <FormLabel style={{ color: "#01579b" }} component="legend">Validation Related:</FormLabel>
@@ -971,6 +1102,14 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                                                 <FormControlLabel control={<Checkbox onChange={() => handleCheckBoxOnChange()} checked={requiredChecked} />} label="Required. Checked means the field must be filled." />
                                             </>
                                             : null}
+                                        {selectedType === "object" ? <>
+                                        <div style={{ display: "flex", width:"100%", justifyContent:"center" }}>
+                                            <div onClick={()=> setActiveSubSchemaButton("subschema")} style={{paddingRight:"5px", width:"100%"}}><Button fullWidth={true} size="small" color="primary" variant="outlined" {...getRootProps()}> <input {...getInputProps()} />Upload a subschema</Button></div>
+                                            <Button fullWidth={true} size="small" color="primary" variant="outlined" {...getRootProps()}> <input {...getInputProps()} />Upload schema properties</Button>
+                                        </div>
+                                        {subSchemaValidity ? <div style={{color:"green", fontSize: "9pt", paddingLeft:"13px", paddingTop:"5px", paddingBottom:"5px"}}>{subSchemaFilename} is valid.</div>:null}
+                                        <div style={{fontSize: "9pt", paddingLeft:"13px", paddingTop:"5px", paddingBottom:"5px"}}>Upload a subschema or schema properties for this object by clicking on the corresponding button above or drag & drop the JSON Schema on the button.</div>
+                                        </>: null}
                                         {selectedType === "object" ? <FormControlLabel control={<Checkbox onChange={() => handleCheckBoxOnChange()} checked={requiredChecked} />} label="Required. Checked means the field must be filled." /> : null}
                                         {selectedType !== "object" & selectedType !== "array" & selectedType !== "boolean" ?
                                             <>
