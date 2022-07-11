@@ -23,6 +23,7 @@ import AddIcon from "@material-ui/icons/AddBox";
 import getValue from './utils/getValue';
 import { useDropzone } from "react-dropzone";
 import object2array from './utils/object2array';
+import convertedSchemaPropertiesSort from './utils/convertedSchemaPropertiesSort';
 
 /*const useStyles = makeStyles((theme) => ({
     root: {
@@ -212,7 +213,20 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                 alert("Field Keyword must be defined!")
                 return
             }
-            
+            if (tempUISchema["type"] === "object" & subSchemaValidity) {
+                tempUISchema["properties"] = convertedSubSchema["properties"]
+                // check required
+                try {
+                    if (convertedSubSchema["required"] !== undefined) {
+                        tempUISchema["required"] = convertedSubSchema["required"]
+                    } else {
+                        delete tempUISchema["required"]
+                    }
+                } catch (error) {
+                    console.log(error)
+                }
+            }
+            /*
             if (tempUISchema["type"] === "object") {
                 if (subSchemaValidity) {
                     tempUISchema["properties"] = convertedSubSchema["properties"]
@@ -226,7 +240,7 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                 } catch (error) {
                     console.log(error)
                 }
-            }
+            }*/
             // more validation keywords for array
             if (tempUISchema["type"] === "array") {
                 if (arrayItemType === "string") {
@@ -430,8 +444,11 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                 tempUISchema["properties"] = convertedSubSchema["properties"]
                 // check required
                 try {
-                    console.log(convertedSchema["required"])
-                    tempUISchema["required"] = convertedSubSchema["required"]
+                    if (convertedSubSchema["required"] !== undefined) {
+                        tempUISchema["required"] = convertedSubSchema["required"]
+                    } else {
+                        delete tempUISchema["required"]
+                    }
                 } catch (error) {
                     console.log(error)
                 }
@@ -591,6 +608,11 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                     }
                 }
             }
+
+            //let sorted = convertedSchemaPropertiesSort(JSON.parse(JSON.stringify(newConvertedSchema["properties"])))
+            //console.log(sorted)
+            //newConvertedSchema["properties"] = sorted
+
             // update main component
             updateParent(newConvertedSchema)
             setOpenDialog(false)
