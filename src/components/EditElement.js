@@ -1104,8 +1104,8 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                                             : null}
                                         {selectedType === "object" ? <>
                                         <div style={{ display: "flex", width:"100%", justifyContent:"center" }}>
-                                            <div onClick={()=> setActiveSubSchemaButton("subschema")} style={{paddingRight:"5px", width:"100%"}}><Button fullWidth={true} size="small" color="primary" variant="outlined" {...getRootProps()}> <input {...getInputProps()} />Browse & add a subschema</Button></div>
-                                            <Button fullWidth={true} size="small" color="primary" variant="outlined" {...getRootProps()}> <input {...getInputProps()} />Browse & add schema properties</Button>
+                                            <div onClick={()=> setActiveSubSchemaButton("subschema")} style={{paddingRight:"5px", width:"100%"}}><Button fullWidth={true} size="small" color="primary" variant="outlined" {...getRootProps()}> <input {...getInputProps()} />Browse a subschema</Button></div>
+                                            <Button fullWidth={true} size="small" color="primary" variant="outlined" {...getRootProps()}> <input {...getInputProps()} />Browse schema properties</Button>
                                         </div>
                                         {subSchemaValidity ? <div style={{color:"green", fontSize: "9pt", paddingLeft:"13px", paddingTop:"5px", paddingBottom:"5px"}}>{subSchemaFilename} is valid.</div>:null}
                                         <div style={{fontSize: "9pt", paddingLeft:"13px", paddingTop:"5px", paddingBottom:"5px"}}>Browse and add a subschema or schema properties for this object by clicking on the corresponding button above.</div>

@@ -80,11 +80,18 @@ const EditSchemaHeader = ({ schemaVersion, title, description, schemaID, openDia
         } else {
             if (_schemaVersion === "http://json-schema.org/draft-04/schema#") {
                 Object.keys(convertedSchema).forEach(keyword => {
-                    if (keyword === "$id") {
-                        let tempValue = convertedSchema[keyword]
+                    if (keyword === "$id" & convertedSchema["$id"] !== undefined) {
                         delete convertedSchema["$id"]
-                        convertedSchema["id"] = tempValue
-                    } else {
+                        convertedSchema["id"] = _schemaID
+                    }
+                    else if (keyword === "id" & convertedSchema["id"] !== undefined) {
+                        delete convertedSchema["id"]
+                        convertedSchema["$id"] = _schemaID
+                    }
+                    else if (convertedSchema["$id"] === undefined) {
+                        convertedSchema["id"] = _schemaID
+                    }  
+                    else {
                         // to maintain the order
                         let tempValue = convertedSchema[keyword]
                         delete convertedSchema[keyword]
@@ -94,11 +101,18 @@ const EditSchemaHeader = ({ schemaVersion, title, description, schemaID, openDia
                 })
             } else {
                 Object.keys(convertedSchema).forEach(keyword => {
-                    if (keyword === "id") {
-                        let tempValue = convertedSchema[keyword]
+                    if (keyword === "id" & convertedSchema["id"] !== undefined) {
                         delete convertedSchema["id"]
-                        convertedSchema["$id"] = tempValue
-                    } else {
+                        convertedSchema["$id"] = _schemaID
+                    }
+                    else if (keyword === "$id" & convertedSchema["$id"] !== undefined) {
+                        delete convertedSchema["$id"]
+                        convertedSchema["id"] = _schemaID
+                    }
+                    else if (convertedSchema["id"] === undefined) {
+                        convertedSchema["$id"] = _schemaID
+                    }
+                    else {
                         // to maintain the order
                         let tempValue = convertedSchema[keyword]
                         delete convertedSchema[keyword]
@@ -134,7 +148,53 @@ const EditSchemaHeader = ({ schemaVersion, title, description, schemaID, openDia
             convertedSchema["description"] = _description
         };
 
-        updateParent(convertedSchema)
+        // better ordering
+        let emptyObject = {}
+        let emptyArray = []
+        Object.keys(convertedSchema).forEach(keyword=>{
+            emptyArray.push(keyword)
+        })
+        if (emptyArray.includes("$schema")) {
+             emptyObject["$schema"] = convertedSchema["$schema"]
+             emptyArray = emptyArray.filter(function(f) {return f !== "$schema"})
+        }
+        if (emptyArray.includes("$id")) {
+            emptyObject["$id"] = convertedSchema["$id"]
+            emptyArray = emptyArray.filter(function(f) {return f !== "$id"})
+        }
+        if (emptyArray.includes("id")) {
+            emptyObject["id"] = convertedSchema["id"]
+            emptyArray = emptyArray.filter(function(f) {return f !== "id"})
+        }
+        if (emptyArray.includes("title")) {
+            emptyObject["title"] = convertedSchema["title"]
+            emptyArray = emptyArray.filter(function(f) {return f !== "title"})
+        }
+        if (emptyArray.includes("description")) {
+            emptyObject["description"] = convertedSchema["description"]
+            emptyArray = emptyArray.filter(function(f) {return f !== "description"})
+        }
+        if (emptyArray.includes("type")) {
+            emptyObject["type"] = convertedSchema["type"]
+            emptyArray = emptyArray.filter(function(f) {return f !== "type"})
+        }
+        if (emptyArray.includes("properties")){
+            emptyObject["properties"] = convertedSchema["properties"]
+            emptyArray = emptyArray.filter(function(f) {return f !== "properties"})
+        }
+        if (emptyArray.includes("required")){
+            emptyObject["required"] = convertedSchema["required"]
+            emptyArray = emptyArray.filter(function(f) {return f !== "required"})
+        }
+
+        if (emptyArray.length !== 0) {
+            for (let i = 0; i<emptyArray.length; i++){
+                emptyObject[emptyArray[i]] = convertedSchema[emptyArray[i]]
+            }
+        }
+
+
+        updateParent(emptyObject)
         setOpenDialog(false)
     }
 
