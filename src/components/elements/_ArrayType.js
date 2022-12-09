@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, useCallback } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
@@ -21,9 +21,8 @@ import set from "set-value";
 import MuiAccordion from '@material-ui/core/Accordion';
 import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
 import { toast } from "react-toastify";
-import getValueInSchemaFullPath from "../utils/getValueInSchemaFullPath";
 import getFileIndex from "../utils/getFileIndex";
-import { useDropzone } from "react-dropzone";
+import getValueInSchemaFullPath from "../utils/getValueInSchemaFullPath";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -74,122 +73,15 @@ const AccordionSummary = withStyles({
 const ArrayType = ({ adamant_field_error, adamant_error_description, maxItems, minItems, uniqueItems, oSetDataInputItems, oDataInputItems, withinObject, withinArray, field_uri, value, pathFormData, path, pathSchema, field_required, field_key, field_index, edit, field_label, field_description, field_items, field_prefixItems }) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [expand, setExpand] = useState(true);
-    const { handleLoadedFiles, handleRemoveFile, loadedFiles, updateParent, convertedSchema, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
+    const { handleRemoveFile, loadedFiles, updateParent, convertedSchema, handleDataDelete, handleConvertedDataInput } = useContext(FormContext);
     const [inputItems, setInputItems] = useState([]);
     const [dataInputItems, setDataInputItems] = useState([]);
     //const [descriptionText, setDescriptionText] = useState(field_description !== undefined ? field_description : "")
     const [descriptionText, setDescriptionText] = useState()
     const [inputError, setInputError] = useState(false)
-    const [currentFiles, setCurrentFiles] = useState([])
-
-    useEffect(()=>{
-        if (field_items["type"] === "object") {
-            setDataInputItems([{}])
-        }
-
-    },[field_items])
-
-    useEffect(() => {
-        //console.log("currentFiles length:", currentFiles.length)
-        if (currentFiles.length > 0) {
-            // check if current array still has not reached maximum item
-            if (maxItems !== undefined) {
-                if (maxItems === (dataInputItems.length)) {
-                    toast.warning(
-                        `Can not add more item. Maximum number (${maxItems}) of items has been reached.`,
-                        {
-                            toastId: "maxNumberWarning"
-                        }
-                    );
-
-                    return
-                }
-            }
-            let stuff = currentFiles
-            let acceptedFile = stuff.slice(-1)[0]
-            // only works for resource schema first!!! THIS IS ONLY FOR TESTING
-            let desiredValues = {}
-            let inputItemIndex = undefined
-
-            // check if the existing dataInputs already have metadata but not the files yet
-            //console.log("dataInputItems:", dataInputItems)
-            for (let i = 0; i < dataInputItems.length; i++) {
-                if (acceptedFile["name"] === dataInputItems[i]["fileName"]) {
-                    inputItemIndex = i
-                }
-            }
-            // after that insert the files
-            if (inputItemIndex !== undefined) {
-                desiredValues = {
-                    "file": `fileupload:${acceptedFile["type"]};${acceptedFile["name"]};${acceptedFile["size"]}`,
-                    "fileName": acceptedFile["name"],
-                    "filetype": acceptedFile["type"]
-                }
-                let fileAlreadyExist = handleLoadedFiles(acceptedFile)
-                //console.log("does the file already exist?", fileAlreadyExist)
-                if (!fileAlreadyExist) {
-                    handleAddArrayItem(desiredValues, inputItemIndex)
-                    let val = currentFiles
-                    val.pop()
-                    setCurrentFiles(val)
-                } else {
-                    console.log("Not adding this array item.")
-                    let arr = dataInputItems;
-                    const items = Array.from(arr);
-                    setDataInputItems(items)
-                    let val = currentFiles
-                    val.pop()
-                    setCurrentFiles(val)
-                    // insert the newly inserted data to convertedSchema
-                    let newConvertedSchema = convertedSchema
-                    set(newConvertedSchema, path + ".value", items)
-                    updateParent(newConvertedSchema)
-                }
-
-            } else {
-                //console.log("field items:", field_items)
-                if (field_items["properties"]["file"] === undefined) {
-                    desiredValues = {
-                        "fileName": acceptedFile["name"],
-                        "filetype": acceptedFile["type"]
-                    }
-                } else {
-                    desiredValues = {
-                        "file": `fileupload:${acceptedFile["type"]};${acceptedFile["name"]};${acceptedFile["size"]}`,
-                        "fileName": acceptedFile["name"],
-                        "filetype": acceptedFile["type"]
-                    }
-                }
-                let fileAlreadyExist = handleLoadedFiles(acceptedFile)
-                if (!fileAlreadyExist) {
-                    handleAddArrayItem(desiredValues)
-                    let val = currentFiles
-                    val.pop()
-                    setCurrentFiles(val)
-                } else {
-                    console.log("Not adding this array item.")
-                    let arr = dataInputItems;
-                    const items = Array.from(arr);
-                    setDataInputItems(items)
-                    let val = currentFiles
-                    val.pop()
-                    setCurrentFiles(val)
-                    // insert the newly inserted data to convertedSchema
-                    let newConvertedSchema = convertedSchema
-                    set(newConvertedSchema, path + ".value", items)
-                    updateParent(newConvertedSchema)
-                }
-            }
-        } else {
-            //setOpenReadingFilesDialogForArrayType(false)
-        }
-    }, [currentFiles, dataInputItems])
 
     // update description text state as soon as new field description is obtained
-    // also create new items based on the uploaded files if applicable (only for resource array!)
     useEffect(() => {
-
-
         if (adamant_error_description !== undefined) {
             setDescriptionText(adamant_error_description)
         }
@@ -429,45 +321,7 @@ const ArrayType = ({ adamant_field_error, adamant_error_description, maxItems, m
 
     // handle delete object UI
     const handleDeleteElement = () => {
-        /*
-        // remove the file in loadedFiles
-        let metmet = getValueInSchemaFullPath(convertedSchema, path + ".properties")
-        const fileMetadata = getAllFileMetadata(metmet, [])
-        if (fileMetadata.length > 0) {
-            for (let i = 0; i < fileMetadata.length; i++) {
-                const fileIndex = getFileIndex(loadedFiles, fileMetadata[i])
-                handleRemoveFile(fileIndex)
-            }
-        }*/
-        // remove the file in loadedFiles
-        const fileMetadata = getValue(convertedSchema, path + `.value`)
-        //console.log("fileMetadata:", fileMetadata)
-        if (fileMetadata !== undefined) {
-            let keywords = []
-            if (Array.isArray(fileMetadata)) {
-                if (fileMetadata.length > 0) {
-                    for (let i = 0; i < fileMetadata.length; i++) {
-                        if (typeof fileMetadata[i] === "object") {
-                            Object.keys(fileMetadata[i]).forEach((key) => {
-                                if (typeof fileMetadata[i][key] === "string") {
-                                    if (fileMetadata[i][key].includes("fileupload:") && fileMetadata[i][key].split(";").length === 3) {
-                                        keywords.push(fileMetadata[i][key])
-                                    }
-                                }
-                            })
-                        }
-                    }
-                }
-            }
-            //console.log("keywords found:", keywords)
-            if (keywords.length > 0) {
-                for (let i = 0; i < keywords.length; i++) {
-                    const fileIndex = getFileIndex(loadedFiles, keywords[i])
-                    handleRemoveFile(fileIndex)
-                }
-            }
-        }
-
+        // TO DO: must check whether any elements in this array has files!
 
         let value = deleteKey(convertedSchema, path)
         // delete the field key in required array if applicable        
@@ -521,7 +375,7 @@ const ArrayType = ({ adamant_field_error, adamant_error_description, maxItems, m
     }
 
     // handle add array item
-    const handleAddArrayItem = (desiredValues, inputItemIndex) => {
+    const handleAddArrayItem = () => {
         // check if current array still has not reached maximum item
         if (maxItems !== undefined) {
             if (maxItems === (dataInputItems.length)) {
@@ -549,65 +403,27 @@ const ArrayType = ({ adamant_field_error, adamant_error_description, maxItems, m
                 const items2 = Array.from(arr2);
                 items2.push("");
                 setDataInputItems(items2)
-                console.log("Item added.")
             } else {
+                // use existing schema if items is not empty
                 let newFieldItems = JSON.parse(JSON.stringify(field_items))
-                if (inputItemIndex === undefined) {
-                    // use existing schema if items is not empty
-                    newFieldItems["field_key"] = generateUniqueID();
-                    let arr = inputItems;
-                    const items = Array.from(arr);
-                    items.push(newFieldItems);
-                    setInputItems(items);
-                }
+                newFieldItems["field_key"] = generateUniqueID();
+                let arr = inputItems;
+                const items = Array.from(arr);
+                items.push(newFieldItems);
+                setInputItems(items);
 
                 if (["string", "number", "integer", "boolean"].includes(newFieldItems["type"])) {
                     // push a new item for the data
                     let arr2 = dataInputItems;
                     const items2 = Array.from(arr2);
                     items2.push("");
-                    //console.log(items2)
                     console.log(items2)
                     setDataInputItems(items2)
-                    console.log("Item added.")
                 } else if (newFieldItems["type"] === "object") {
-                    if (desiredValues !== undefined) {
-                        if (inputItemIndex !== undefined) {
-                            // for now only works with resource schema!!!!!!!
-                            let arr2 = dataInputItems;
-                            const items2 = Array.from(arr2);
-                            items2[inputItemIndex]["file"] = desiredValues["file"]
-                            items2[inputItemIndex]["fileName"] = desiredValues["fileName"]
-                            items2[inputItemIndex]["fileType"] = desiredValues["fileType"]
-                            setDataInputItems(items2)
-                            console.log("Item added.")
-                            console.log("Finished adding array item.")
-                            // insert the newly inserted data to convertedSchema
-                            let newConvertedSchema = convertedSchema
-                            set(newConvertedSchema, path + ".value", items2)
-                            updateParent(newConvertedSchema)
-
-                        } else {
-                            // for now only works with resource schema!!!!!!!
-                            let arr2 = dataInputItems;
-                            const items2 = Array.from(arr2);
-                            items2.push(desiredValues)
-                            setDataInputItems(items2)
-                            console.log("Item added.")
-                            console.log("Finished adding array item.")
-                            // insert the newly inserted data to convertedSchema
-                            let newConvertedSchema = convertedSchema
-                            set(newConvertedSchema, path + ".value", items2)
-                            updateParent(newConvertedSchema)
-                        }
-                    }
-                    else {
-                        let arr2 = dataInputItems;
-                        const items2 = Array.from(arr2);
-                        items2.push({});
-                        setDataInputItems(items2)
-                        console.log("Item added.")
-                    }
+                    let arr2 = dataInputItems;
+                    const items2 = Array.from(arr2);
+                    items2.push({});
+                    setDataInputItems(items2)
                 }
             }
         }
@@ -615,39 +431,14 @@ const ArrayType = ({ adamant_field_error, adamant_error_description, maxItems, m
 
     // handle delete item
     const handleDeleteArrayItem = (index) => {
-        console.log(edit)
+        // remove the file in loadedFiles
+        const fileMetadata = getValue(convertedSchema, path + `${index}.value`)
+        if (fileMetadata !== undefined) {
+            const fileIndex = getFileIndex(loadedFiles, fileMetadata)
+            handleRemoveFile(fileIndex)
+        }
 
         if (withinArray !== undefined & withinArray === true) {
-            console.log(path)
-            let modPath = path.split('.')
-            let lastKey = path.slice(-1)[0]
-            console.log(modPath)
-            modPath.pop()
-            modPath = modPath.join('.')
-
-            let newPath = modPath + '.value' + `.${lastKey}`+`.${field_key}`
-            console.log(newPath)
-            // remove the file in loadedFiles
-            if (getValue(convertedSchema, newPath) !== undefined) { // which means there is no value yet
-                const fileMetadata = getValue(convertedSchema, newPath + `.${index}`)
-                if (fileMetadata !== undefined) {
-                    let keyword = undefined
-                    if (typeof fileMetadata === "object") {
-                        Object.keys(fileMetadata).forEach((key) => {
-                            if (typeof fileMetadata[key] === "string") {
-                                if (fileMetadata[key].includes("fileupload:") && fileMetadata[key].split(";").length === 3) {
-                                    keyword = fileMetadata[key]
-                                }
-                            }
-                        })
-                    }
-                    if (keyword !== undefined) {
-                        const fileIndex = getFileIndex(loadedFiles, keyword)
-                        handleRemoveFile(fileIndex)
-                    }
-                }
-            }
-
             // for schema
             let arr = inputItems
             const items = Array.from(arr);
@@ -659,32 +450,7 @@ const ArrayType = ({ adamant_field_error, adamant_error_description, maxItems, m
             const items2 = Array.from(arr2);
             items2.splice(index, 1);
             setDataInputItems(items2)
-
-            // conv. schema data
-            console.log(items2)
-            handleConvertedDataInput(items2, newPath, "array")
         } else {
-            // remove the file in loadedFiles
-            if (getValue(convertedSchema, path + `.value`) !== undefined) { // which means there is no value yet
-                const fileMetadata = getValue(convertedSchema, path + `.value.${index}`)
-                if (fileMetadata !== undefined) {
-                    let keyword = undefined
-                    if (typeof fileMetadata === "object") {
-                        Object.keys(fileMetadata).forEach((key) => {
-                            if (typeof fileMetadata[key] === "string") {
-                                if (fileMetadata[key].includes("fileupload:") && fileMetadata[key].split(";").length === 3) {
-                                    keyword = fileMetadata[key]
-                                }
-                            }
-                        })
-                    }
-                    if (keyword !== undefined) {
-                        const fileIndex = getFileIndex(loadedFiles, keyword)
-                        handleRemoveFile(fileIndex)
-                    }
-                }
-            }
-
             // for schema
             let arr = inputItems
             const items = Array.from(arr);
@@ -701,19 +467,6 @@ const ArrayType = ({ adamant_field_error, adamant_error_description, maxItems, m
             handleConvertedDataInput(items2, path + ".value", "array")
         }
     }
-
-
-    // handle read data files, to load a selection of files and to integrate their metadata
-    const onDrop = useCallback(
-        (acceptedFile) => {
-
-            setCurrentFiles(acceptedFile)
-        },
-        [setCurrentFiles])
-    const { getRootProps, getInputProps } = useDropzone({
-        onDrop,
-        multiple: true,
-    });
 
     return (<>
         <div onClick={() => {
@@ -739,7 +492,7 @@ const ArrayType = ({ adamant_field_error, adamant_error_description, maxItems, m
                 }} >
                 <AccordionSummary
                     style={inputError ? { backgroundColor: "white", borderRadius: "4px", borderBottom: '1px solid  #ff7961' } : { backgroundColor: "rgba(232, 244, 253, 1)", borderBottom: '1px solid  rgba(0, 0, 0, .0)' }}
-                    expandIcon={/*withinObject ? null : */
+                    expandIcon={withinObject ? null :
                         <Tooltip placement="top" title={`Collapse/Expand this container`}>
                             <ExpandMoreIcon />
                         </Tooltip>}
@@ -751,12 +504,11 @@ const ArrayType = ({ adamant_field_error, adamant_error_description, maxItems, m
                 >
                     <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
                         <div style={{ width: "100%" }}>
-                            <Typography style={inputError ? { color: "#ff7961", width: "100%" } : { width: "100%" }} className={classes.heading}>{field_label + (required ? "*" : "")} {dataInputItems.length > 0 ? `| ${dataInputItems.length} item(s)` : null} </Typography>
+                            <Typography style={inputError ? { color: "#ff7961" } : {}} className={classes.heading}>{field_label + (required ? "*" : "")}</Typography>
                             {expand ? <div style={inputError ? { color: "#ff7961" } : { color: "gray" }}>
                                 {descriptionText}
                             </div> : null}
                         </div>
-                        {field_key === "resource" ? <Button style={{ width: "200px" }} {...getRootProps()} ><input {...getInputProps()} />Read Resources</Button> : null}
                         <div>
 
                         </div>

@@ -324,6 +324,7 @@ const StringType = ({ adamant_field_error, adamant_error_description, minLength,
                 <>
                     <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
                         <TextField
+                            size='small'
                             onFocus={() => { handleOnFocus() }}
                             error={inputError}
                             multiline
@@ -354,7 +355,8 @@ const StringType = ({ adamant_field_error, adamant_error_description, minLength,
             return (
                 <>
                     <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
-                        < TextField
+                        <TextField
+                            size='small'
                             onFocus={() => { handleOnFocus() }}
                             error={inputError}
                             onBlur={(event) => handleOnBlur(event, pathFormData, "string")}

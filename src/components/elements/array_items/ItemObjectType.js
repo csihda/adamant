@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ElementRenderer from "../../ElementRenderer";
 import Divider from '@material-ui/core/Divider';
 import Accordion from "@material-ui/core/Accordion";
@@ -6,9 +6,16 @@ import { AccordionDetails, AccordionSummary } from '@material-ui/core';
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { Button } from '@material-ui/core';
 import DeleteIcon from "@material-ui/icons/Delete";
+import FileIconx from "../../../assets/file-icon.svg"
+import { FileIcon, defaultStyles } from 'react-file-icon'
+import FileExtensionList from "../../../assets/mime-types-extensions-swapped.json"
 
 const ItemObjectType = ({ path, dataInputItems, setDataInputItems, field_label, pathFormData, field_required, field_items, field_type, edit, index, field_key, handleDeleteArrayItem }) => {
     const [expand, setExpand] = useState(dataInputItems[index]["adamant-ui-specific-expand"] === undefined ? true : dataInputItems[index]["adamant-ui-specific-expand"]); // set to "true" for normally open accordion
+    const [useIcon, setUseIcon] = useState(false);
+    const [mimeType, setMimeType] = useState("");
+    const [fileName, setFileName] = useState("")
+    const [extension, setExtension] = useState("")
     let objectIndex = index;
     let field_properties = field_items["properties"]
     let withinArray = true;
@@ -26,6 +33,23 @@ const ItemObjectType = ({ path, dataInputItems, setDataInputItems, field_label, 
         setDataInputItems(newVal)
     };
 
+    // Check if file keyword has some file there
+    useEffect(() => {
+        if (field_properties["file"] !== undefined) {
+            if (field_properties["file"]["value"] !== undefined) {
+                if (field_properties["file"]["value"] !== "") {
+                    setUseIcon(true);
+                    let something = field_properties["file"]["value"].split(";");
+                    setFileName(something[1])
+                    setMimeType(something[0].replace("fileupload:", ""))//.replace("data:", ""));
+                    let ext = something[1].split(".")
+                    setExtension(ext.slice(-1)[0])
+                }
+            }
+        }
+    }, [field_items])
+
+
     //const classes = useStyles();
 
     return (<>
@@ -33,7 +57,7 @@ const ItemObjectType = ({ path, dataInputItems, setDataInputItems, field_label, 
             <Accordion expanded={expand} >
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
-                    style={{ height: "auto" }}
+                    style={{ verticalAlign: "middle", height: "auto" }}
                     IconButtonProps={{
                         onClick: expandOnChange
                     }}
@@ -41,9 +65,20 @@ const ItemObjectType = ({ path, dataInputItems, setDataInputItems, field_label, 
                     id="panel1a-header"
                 >
                     <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
-                        <div style={{ width: "100%", justifySelf: "center" }}>
-                            {field_label + " #" + parseInt(index + 1)}
+                        <div style={{ lineHeight: "40px", height: "40px", width: "100%", verticalAlign: "middle" }} >
+                            <strong>{field_label + " #" + parseInt(index + 1)}</strong>
                         </div>
+                        {useIcon && !expand ? <div style={{ display: "flex", lineHeight: "40px", height: "40px", width: "100%", verticalAlign: "middle" }}>
+                            {/*<img style={{ paddingRight: "10px" }} alt='fileIcon' src={FileIconx} height="40px" />*/}
+                            <div style={{ display: "inline-flex", lineHeight: "40px", height: "40px", width: "100%", verticalAlign: "middle" }}>
+                                <div style={{ display: "flex", lineHeight: "40px", height: "40px", width: "10%" }}>
+                                    <FileIcon size={48} extension={extension} {...defaultStyles[extension]} />
+                                </div>
+                                <div style={{ width: "50%", whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden", }}>
+                                    {fileName.slice(0, 20) + " | " + mimeType}
+                                </div>
+                            </div>
+                        </div> : <div style={{ width: "100%" }}> </div>}
                         {edit ? <Button onClick={() => handleDeleteArrayItem(index)} style={{ marginLeft: "5px" }}><DeleteIcon color="secondary" /></Button> : null}
                     </div>
                 </AccordionSummary>

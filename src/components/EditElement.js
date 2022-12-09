@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState, useCallback } from 'react'
+import React, { useContext, useEffect, useState, useCallback} from 'react'
 import TextField from "@material-ui/core/TextField"
-//import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import Divider from '@material-ui/core/Divider';
@@ -24,6 +24,23 @@ import getValue from './utils/getValue';
 import { useDropzone } from "react-dropzone";
 import object2array from './utils/object2array';
 import convertedSchemaPropertiesSort from './utils/convertedSchemaPropertiesSort';
+import getFileIndex from './utils/getFileIndex';
+import getValueInSchemaFullPath from './utils/getValueInSchemaFullPath';
+
+const getAllFileMetadata = (object, arr) => {
+    let arrai = arr
+    Object.keys(object).forEach((key) => {
+        if (typeof object[key] === "object") {
+            getAllFileMetadata(object[key], arrai)
+        }
+        if (typeof object[key] === "string") {
+            if (object[key].includes("fileupload:") && object[key].split(";").length === 3) {
+                arr.push(object[key])
+            }
+        }
+    })
+    return arrai
+}
 
 /*const useStyles = makeStyles((theme) => ({
     root: {
@@ -34,6 +51,15 @@ import convertedSchemaPropertiesSort from './utils/convertedSchemaPropertiesSort
         fontWeight: theme.typography.fontWeightRegular,
     },
 })); */
+const useStyles = makeStyles((theme) => ({
+    root: {
+        width: '100%',
+    },
+    input: {
+        fontSize: "12px",
+        fontFamily: "monospace"
+    }
+}));
 
 
 const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_required, field_key, UISchema, path, pathFormData, openDialog, setOpenDialog, defaultValue, field_label }) => {
@@ -44,7 +70,7 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
     const [fieldUri, setFieldUri] = useState(UISchema !== undefined ? UISchema["$id"] : "")
     const [description, setDescription] = useState(UISchema !== undefined ? UISchema["description"] : "")
     const [defValue, setDefValue] = useState(defaultValue !== undefined ? defaultValue : "")
-    const { updateParent, convertedSchema, updateFormDataId, schemaSpecification } = useContext(FormContext);
+    const { loadedFiles, handleRemoveFile, updateParent, convertedSchema, updateFormDataId, schemaSpecification, handleDataDelete, handleCheckIDexistence } = useContext(FormContext);
     const [requiredChecked, setRequiredChecked] = useState(field_required === undefined ? false : field_required)
     const [enumChecked, setEnumChecked] = useState(enumerated === undefined ? false : enumerated)
     const [enumList, setEnumList] = useState(field_enumerate === undefined ? [] : field_enumerate);
@@ -59,9 +85,13 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
     const [subSchemaValidity, setSubSchemaValidity] = useState(false);
     const [convertedSubSchema, setConvertedSubSchema] = useState({})
     const [subSchemaFilename, setSubSchemaFilename] = useState("")
-    const [activeSubSchemaButton, setActiveSubSchemaButton] = useState("") 
+    const [activeSubSchemaButton, setActiveSubSchemaButton] = useState("")
+    const [arrayItemDataType, setArrayItemDataType] = useState("")
+    const [itemSchemaTFrow,setItemSchemaTFrow] = useState(false)
+    const [itemSchemaEdit, setItemSchemaEdit] = useState(false)
+    const [itemSchemaData, setItemSchemaData] = useState("")
 
-    let arrayItemTypeList = ["string", "number", "integer"]
+    let arrayItemTypeList = ["string", "number", "integer", "object"]
     if (UISchema !== undefined) {
         if (UISchema["items"] !== undefined) {
             if (UISchema["items"]["type"] === "object") {
@@ -70,9 +100,11 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
         }
     }
 
+    const classes = useStyles();
+
 
     useEffect(() => {
-        if (field_uri !== undefined){
+        if (field_uri !== undefined) {
             setFieldUri(field_uri)
         }
         else if (UISchema["$id"] !== undefined) {
@@ -84,6 +116,9 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
         // for array
         if (UISchema !== undefined) {
             if (UISchema["type"] === "array") {
+                setArrayItemDataType(UISchema["items"]["type"])
+                setArrayItemType(UISchema["items"]["type"])
+                setItemSchemaData(JSON.stringify(UISchema["items"], null, 2))
                 let value = [...arrayMinMaxItem]
                 if (UISchema["minItems"] !== undefined) {
                     value[0] = UISchema["minItems"]
@@ -93,6 +128,8 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                 }
                 if (UISchema["items"] === undefined) {
                     UISchema["items"] = { "type": "string" }
+                    setArrayItemDataType(UISchema["items"]["type"])
+                    setItemSchemaData(JSON.stringify({ "type": "string" }, null, 2))
                 }
                 if (arrayUniqueItems) {
                     UISchema["uniqueItems"] = arrayUniqueItems
@@ -101,6 +138,9 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                     delete UISchema["uniqueItems"]
                 }
                 setArrayMinMaxItem(value)
+            }
+            else {
+                UISchema["items"] = "None"
             }
         }
 
@@ -140,13 +180,15 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
             "type": "string",
             "fieldKey": "",
             "title": "",
-            "description": ""
+            "description": "",
+            "items": "None"
         }
         tempUISchema = {
             "type": "string",
             "fieldKey": "",
             "title": "",
-            "description": ""
+            "description": "",
+            "items": "None"
         }
     } else {
         tempUISchema = JSON.parse(JSON.stringify(UISchema))
@@ -163,13 +205,25 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
     let datatypes = ["string", "number", "integer", "object", "array", "boolean", "fileupload (string)"]
 
 
-
     const handleOnChangeListField = (event) => {
         setEnumList(event.target.value);
     }
 
     // save the change and update the UI
     const handleUpdateSchemaOnClick = () => {
+        // check if field id/uri already exists or not
+        if (fieldUri !== tempUISchema["$id"] && fieldUri !== tempUISchema["id"]){
+            //alert(fieldUri+","+tempUISchema["$id"])
+            if (handleCheckIDexistence(fieldUri)) {
+                alert("A field element with the same Field ID/URI already exists. Either change the ID or remove it.")
+                return
+            }
+        }
+
+        if (itemSchemaEdit) {
+            alert("You must save the array item schema first.")
+            return
+        }
         // do this if add
         if (editOrAdd === "add") {
             // update default value
@@ -214,7 +268,26 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                 return
             }
             if (tempUISchema["type"] === "object" & subSchemaValidity) {
+                // delete json data for this path first
+                //handleDataDelete(pathFormData)
+
                 tempUISchema["properties"] = convertedSubSchema["properties"]
+                // check required
+                try {
+                    if (convertedSubSchema["required"] !== undefined) {
+                        tempUISchema["required"] = convertedSubSchema["required"]
+                    } else {
+                        delete tempUISchema["required"]
+                    }
+                } catch (error) {
+                    console.log(error)
+                }
+            }
+            if (tempUISchema["type"] === "object" & !subSchemaValidity) {
+                // delete json data for this path first
+                //handleDataDelete(pathFormData)
+
+                tempUISchema["properties"] = []
                 // check required
                 try {
                     if (convertedSubSchema["required"] !== undefined) {
@@ -243,14 +316,20 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
             }*/
             // more validation keywords for array
             if (tempUISchema["type"] === "array") {
+                // remove value
+                delete tempUISchema["value"]
+
                 if (arrayItemType === "string") {
-                    tempUISchema["items"] = { "type": "string" }
+                    tempUISchema["items"] = JSON.parse(itemSchemaData) //{ "type": "string" }
                 }
                 if (arrayItemType === "integer") {
-                    tempUISchema["items"] = { "type": "integer" }
+                    tempUISchema["items"] = JSON.parse(itemSchemaData) //{ "type": "integer" }
                 }
                 if (arrayItemType === "number") {
-                    tempUISchema["items"] = { "type": "number" }
+                    tempUISchema["items"] = JSON.parse(itemSchemaData) //{ "type": "number" }
+                }
+                if (arrayItemType === "object") {
+                    tempUISchema["items"] = JSON.parse(itemSchemaData)
                 }
                 if (arrayMinMaxItem[0] !== "None") {
                     tempUISchema["minItems"] = arrayMinMaxItem[0]
@@ -268,6 +347,11 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                 }
                 else {
                     delete tempUISchema["uniqueItems"]
+                }
+
+                delete tempUISchema["required"]
+                if (UISchema["type"] === "object") {
+                    delete tempUISchema["properties"]
                 }
             }
             // more validation keywords for numeric types
@@ -339,6 +423,9 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                 delete tempUISchema["properties"]
                 delete tempUISchema["maximum"]
                 delete tempUISchema["minimum"]
+
+                // set tempUISchema.value to emptystring
+                tempUISchema["value"] = ""
             }
 
             if (path !== undefined) {
@@ -365,6 +452,67 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
 
                 }
 
+                // delete the file if it's not fileupload and if the file exists
+                if (UISchema["type"] === "fileupload (string)") {
+                    if (UISchema["value"] !== undefined) {
+                        if (typeof UISchema["value"] === "string") {
+                            if (UISchema["value"].includes("fileupload:") && UISchema["value"].split(";").length === 3) {
+                                let fileIndex = getFileIndex(loadedFiles, UISchema["value"])
+                                handleRemoveFile(fileIndex)
+                            }
+                        }
+                    }
+                }
+                // delete all files if the new type is not object
+                // remove the file in loadedFiles
+                if (UISchema["type"] === "object" && tempUISchema["type"] !== "object") {
+                    let cSchema = JSON.parse(JSON.stringify(convertedSchema))
+                    const set = require("set-value");
+                    set(cSchema, path + ".properties", UISchema["properties"])
+                    let metmet = getValueInSchemaFullPath(cSchema, path + ".properties")
+                    const fileMetadata = getAllFileMetadata(metmet, [])
+                    if (fileMetadata.length > 0) {
+                        for (let i = 0; i < fileMetadata.length; i++) {
+                            const fileIndex = getFileIndex(loadedFiles, fileMetadata[i])
+                            handleRemoveFile(fileIndex)
+                        }
+                    }
+                }
+                // delete all files if the new type is not array
+                if (UISchema["type"] === "array" && tempUISchema["type"] !== "array") {
+                    // remove the file in loadedFiles
+                    const fileMetadata = getValue(convertedSchema, path + `.value`)
+                    console.log("fileMetadata:", fileMetadata)
+                    if (fileMetadata !== undefined) {
+                        let keywords = []
+                        if (Array.isArray(fileMetadata)) {
+                            if (fileMetadata.length > 0) {
+                                for (let i = 0; i < fileMetadata.length; i++) {
+                                    if (typeof fileMetadata[i] === "object") {
+                                        Object.keys(fileMetadata[i]).forEach((key) => {
+                                            if (typeof fileMetadata[i][key] === "string") {
+                                                if (fileMetadata[i][key].includes("fileupload:") && fileMetadata[i][key].split(";").length === 3) {
+                                                    keywords.push(fileMetadata[i][key])
+                                                }
+                                            }
+                                        })
+                                    }
+                                }
+                            }
+                        }
+                        if (keywords.length > 0) {
+                            for (let i = 0; i < keywords.length; i++) {
+                                const fileIndex = getFileIndex(loadedFiles, keywords[i])
+                                handleRemoveFile(fileIndex)
+                            }
+                        }
+                    }
+                    // remove the value in general
+                    let temporary = getValue(convertedSchema, path)
+                    delete temporary["value"]
+                    set(newConvertedSchema, path, temporary)
+                }
+                // update main component
                 updateParent(newConvertedSchema)
                 setOpenDialog(false)
             } else {
@@ -390,6 +538,68 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
 
                 }
 
+
+                // delete the file if it's not fileupload and if the file exists
+                if (UISchema["type"] === "fileupload (string)") {
+                    if (UISchema["value"] !== undefined) {
+                        if (typeof UISchema["value"] === "string") {
+                            if (UISchema["value"].includes("fileupload:") && UISchema["value"].split(";").length === 3) {
+                                let fileIndex = getFileIndex(loadedFiles, UISchema["value"])
+                                handleRemoveFile(fileIndex)
+                            }
+                        }
+                    }
+                }
+                // delete all files if the new type is not object
+                // remove the file in loadedFiles
+                if (UISchema["type"] === "object" && tempUISchema["type"] !== "object") {
+                    let cSchema = JSON.parse(JSON.stringify(convertedSchema))
+                    const set = require("set-value");
+                    set(cSchema, path + ".properties", UISchema["properties"])
+                    let metmet = getValueInSchemaFullPath(cSchema, path + ".properties")
+                    const fileMetadata = getAllFileMetadata(metmet, [])
+                    if (fileMetadata.length > 0) {
+                        for (let i = 0; i < fileMetadata.length; i++) {
+                            const fileIndex = getFileIndex(loadedFiles, fileMetadata[i])
+                            handleRemoveFile(fileIndex)
+                        }
+                    }
+                }
+                // delete all files if the new type is not array
+                if (UISchema["type"] === "array" && tempUISchema["type"] !== "array") {
+                    // remove the file in loadedFiles
+                    const fileMetadata = getValue(convertedSchema, path + `.value`)
+                    console.log("fileMetadata:", fileMetadata)
+                    if (fileMetadata !== undefined) {
+                        let keywords = []
+                        if (Array.isArray(fileMetadata)) {
+                            if (fileMetadata.length > 0) {
+                                for (let i = 0; i < fileMetadata.length; i++) {
+                                    if (typeof fileMetadata[i] === "object") {
+                                        Object.keys(fileMetadata[i]).forEach((key) => {
+                                            if (typeof fileMetadata[i][key] === "string") {
+                                                if (fileMetadata[i][key].includes("fileupload:") && fileMetadata[i][key].split(";").length === 3) {
+                                                    keywords.push(fileMetadata[i][key])
+                                                }
+                                            }
+                                        })
+                                    }
+                                }
+                            }
+                        }
+                        if (keywords.length > 0) {
+                            for (let i = 0; i < keywords.length; i++) {
+                                const fileIndex = getFileIndex(loadedFiles, keywords[i])
+                                handleRemoveFile(fileIndex)
+                            }
+                        }
+                    }
+                    // remove the value in general
+                    let temporary = getValue(convertedSchema, path)
+                    delete temporary["value"]
+                    set(newConvertedSchema, path, temporary)
+                }
+                // update main component
                 updateParent(newConvertedSchema)
                 setOpenDialog(false)
             }
@@ -438,9 +648,13 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
             if (description !== undefined) { tempUISchema["description"] = description }
 
             if (tempUISchema["type"] === "object" & tempUISchema["properties"] === undefined) {
+                // delete json data for this path first
+                //handleDataDelete(pathFormData)
                 tempUISchema["properties"] = []
             }
             if (tempUISchema["type"] === "object" & subSchemaValidity) {
+                // delete json data for this path first
+                //handleDataDelete(pathFormData)
                 tempUISchema["properties"] = convertedSubSchema["properties"]
                 // check required
                 try {
@@ -456,14 +670,20 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
 
             // more validation keywords for array
             if (tempUISchema["type"] === "array") {
+                // remove value
+                delete tempUISchema["value"]
+
                 if (arrayItemType === "string") {
-                    tempUISchema["items"] = { "type": "string" }
+                    tempUISchema["items"] = JSON.parse(itemSchemaData) //{ "type": "string" }
                 }
                 if (arrayItemType === "integer") {
-                    tempUISchema["items"] = { "type": "integer" }
+                    tempUISchema["items"] = JSON.parse(itemSchemaData) //{ "type": "integer" }
                 }
                 if (arrayItemType === "number") {
-                    tempUISchema["items"] = { "type": "number" }
+                    tempUISchema["items"] = JSON.parse(itemSchemaData) //{ "type": "number" }
+                }
+                if (arrayItemType === "object") {
+                    tempUISchema["items"] = JSON.parse(itemSchemaData)
                 }
                 if (arrayMinMaxItem[0] !== "None") {
                     tempUISchema["minItems"] = arrayMinMaxItem[0]
@@ -481,6 +701,11 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                 }
                 else {
                     delete tempUISchema["uniqueItems"]
+                }
+
+                delete tempUISchema["required"]
+                if (UISchema["type"] === "object") {
+                    delete tempUISchema["properties"]
                 }
             }
             // more validation keywords for numeric types
@@ -557,6 +782,9 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                 delete tempUISchema["properties"]
                 delete tempUISchema["maximum"]
                 delete tempUISchema["minimum"]
+
+                // set tempUISchema.value to emptystring
+                tempUISchema["value"] = ""
             }
 
             const set = require("set-value");
@@ -613,6 +841,66 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
             //console.log(sorted)
             //newConvertedSchema["properties"] = sorted
 
+            // delete the file if it's not fileupload and if the file exists
+            if (UISchema["type"] === "fileupload (string)") {
+                if (UISchema["value"] !== undefined) {
+                    if (typeof UISchema["value"] === "string") {
+                        if (UISchema["value"].includes("fileupload:") && UISchema["value"].split(";").length === 3) {
+                            let fileIndex = getFileIndex(loadedFiles, UISchema["value"])
+                            handleRemoveFile(fileIndex)
+                        }
+                    }
+                }
+            }
+            // delete all files if the new type is not object
+            // remove the file in loadedFiles
+            if (UISchema["type"] === "object" && tempUISchema["type"] !== "object") {
+                let cSchema = JSON.parse(JSON.stringify(convertedSchema))
+                const set = require("set-value");
+                set(cSchema, path + ".properties", UISchema["properties"])
+                let metmet = getValueInSchemaFullPath(cSchema, path + ".properties")
+                const fileMetadata = getAllFileMetadata(metmet, [])
+                if (fileMetadata.length > 0) {
+                    for (let i = 0; i < fileMetadata.length; i++) {
+                        const fileIndex = getFileIndex(loadedFiles, fileMetadata[i])
+                        handleRemoveFile(fileIndex)
+                    }
+                }
+            }
+            // delete all files if the new type is not array
+            if (UISchema["type"] === "array" && tempUISchema["type"] !== "array") {
+                // remove the file in loadedFiles
+                const fileMetadata = getValue(convertedSchema, path + `.value`)
+                console.log("fileMetadata:", fileMetadata)
+                if (fileMetadata !== undefined) {
+                    let keywords = []
+                    if (Array.isArray(fileMetadata)) {
+                        if (fileMetadata.length > 0) {
+                            for (let i = 0; i < fileMetadata.length; i++) {
+                                if (typeof fileMetadata[i] === "object") {
+                                    Object.keys(fileMetadata[i]).forEach((key) => {
+                                        if (typeof fileMetadata[i][key] === "string") {
+                                            if (fileMetadata[i][key].includes("fileupload:") && fileMetadata[i][key].split(";").length === 3) {
+                                                keywords.push(fileMetadata[i][key])
+                                            }
+                                        }
+                                    })
+                                }
+                            }
+                        }
+                    }
+                    if (keywords.length > 0) {
+                        for (let i = 0; i < keywords.length; i++) {
+                            const fileIndex = getFileIndex(loadedFiles, keywords[i])
+                            handleRemoveFile(fileIndex)
+                        }
+                    }
+                }
+                // remove the value in general
+                let temporary =  getValue(convertedSchema, path)
+                delete temporary["value"]
+                set(newConvertedSchema, path, temporary)
+            }
             // update main component
             updateParent(newConvertedSchema)
             setOpenDialog(false)
@@ -625,8 +913,17 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
 
     // change descriptor value
     const handleChangeUISchema = (event, keyword) => {
+        if (itemSchemaEdit && keyword === "type") {
+            alert("You must save the array item schema edit first.")
+            return
+        } else {
         switch (keyword) {
             case 'type':
+                if (event.target.value === "array") {
+                    if (UISchema["type"] !== "array") {
+                        setItemSchemaData(JSON.stringify({ "type": "string" }, null, 2))
+                    }
+                }
                 return setSelectedType(event.target.value)
             case 'title':
                 return setTitle(event.target.value)
@@ -637,13 +934,16 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
             case 'defaultValue':
                 return setDefValue(event.target.value)
             case '$id':
+                //handleCheckIDexistence(event.target.value)
                 return setFieldUri(event.target.value)
             case 'id':
+                //handleCheckIDexistence(event.target.value)
                 return setFieldUri(event.target.value)
             case 'itemType':
                 return setArrayItemType(event.target.value)
             default:
                 return null;
+        }
         }
     }
 
@@ -871,6 +1171,134 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
         }
     }
 
+    // show / hide item schema textfield
+    const handleShowItemSchemaText = () => {
+        setItemSchemaTFrow(!itemSchemaTFrow)
+    }
+
+    // Edit item schema manually
+    const handleEditItemSchema = () => {
+        if (itemSchemaEdit) {
+            // validate and save the inputed schema
+            let schemaIsValid = handleValidateItemSchema()
+            if (schemaIsValid) {
+                setArrayItemType(JSON.parse(itemSchemaData)["type"])
+                let tempID = JSON.parse(itemSchemaData)["id"]
+                let tempID2 = JSON.parse(itemSchemaData)["$id"]
+                let ID = undefined
+                if (tempID !== undefined){
+                    ID = tempID
+                }
+                if (tempID2 !== undefined){
+                    ID = tempID2
+                }
+
+                //alert(ID + " | " + UISchema["items"]["$id"] + " | " + ID + " | " + UISchema["items"]["id"])
+                if (ID == undefined) {
+                    setItemSchemaEdit(false)
+                } else if (ID === UISchema["items"]["$id"] || ID === UISchema["items"]["id"]) {
+                    //alert(ID + " | " + UISchema["items"]["$id"] + " | " + ID + " | " + UISchema["items"]["id"])
+                    setItemSchemaEdit(false)
+                } else if (ID !== undefined) {
+                    if (handleCheckIDexistence(ID)){
+                        alert("A field element with the same ID already exists. Either change the ID or remove it.")
+                        setItemSchemaEdit(true)
+                        setItemSchemaTFrow(true)
+                    } else {
+                        setItemSchemaEdit(false)
+                    }
+                }
+            }
+        } else {
+            setItemSchemaEdit(true)
+            setItemSchemaTFrow(true)
+        }
+    }
+
+    // handle change itemSchemaData
+    const handleChangeItemSchemaTextField = (event) =>{
+        //console.log(event.target.value)
+        setItemSchemaData(event.target.value)
+    }
+
+    const handleChangeDefaultItemSchema = (itemType) =>{
+        if (UISchema["items"] !== "None") {
+            if (UISchema["items"]["type"] !== itemType){
+                switch (itemType) {
+                    case 'integer':
+                        setItemSchemaData(JSON.stringify({ "type": "integer" }, null, 2))
+                        return
+                    case 'number':
+                        setItemSchemaData(JSON.stringify({ "type": "number" }, null, 2))
+                        return
+                    case 'string':
+                        setItemSchemaData(JSON.stringify({ "type": "string" }, null, 2))
+                        return
+                    case 'object':
+                        setItemSchemaEdit(true)
+                        setItemSchemaTFrow(true)
+                        setItemSchemaData("Browse or copy your item schema here then save.")
+                        return
+                }
+            } else {
+                setItemSchemaData(JSON.stringify(UISchema["items"], null, 2))
+            }
+        } else {
+            if (itemType !== "object") {
+                setItemSchemaData(JSON.stringify({ "type": itemType }, null,2))
+            } else {
+                setItemSchemaEdit(true)
+                setItemSchemaTFrow(true)
+                setItemSchemaData("Browse or copy your item schema here then save.")
+            }
+        }
+    }
+
+    // handle validate on click for Edit item schema 
+    const handleValidateItemSchema = () => {
+        try {
+            // first check if the format is correct
+            let parsed = JSON.parse(itemSchemaData)
+            // then check if the schema is managable
+            /*
+            if (parsed["type"] !== arrayItemDataType) {
+                alert("The inputted schema data type and selected item data type don't match.")
+                return false
+            }*/
+            if (parsed["type"] === "object") {
+                if (parsed["properties"] === undefined){
+                    alert("Object type schema does not have properties.")
+                    return false
+                }
+                if (typeof parsed["properties"] !== 'object'){
+                    alert("Object type properties is not of object type")
+                    return false
+                }
+
+                let tooDeep = false
+                Object.keys(parsed["properties"]).forEach(key =>{
+                    if (parsed["properties"][key]["type"] === "object"){
+                        alert("Schema is too deep. At the moment, this feature only supports a flat schema.")
+                        tooDeep = true
+                    }
+                })
+
+                if (tooDeep){
+                    return false
+                } else {
+                    return true
+                }
+                                
+            } else {
+                return true
+            }
+        } catch(err) {
+            alert("Invalid item schema.")
+            return false
+        }
+        
+    }
+
     // handle change required check box
     const handleCheckBoxOnChange = () => {
         setRequiredChecked(prev => !prev)
@@ -895,57 +1323,57 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
             reader.onabort = () => console.log("file reading was aborted");
             reader.onerror = () => console.log("file reading has failed");
             reader.onload = () => {
-            const binaryStr = reader.result;
-            const obj = JSON.parse(binaryStr);
+                const binaryStr = reader.result;
+                const obj = JSON.parse(binaryStr);
 
-            // convert obj schema to iterable array properties
-            let convertedSchema = JSON.parse(JSON.stringify(obj));
-            try {
-                convertedSchema["properties"] = object2array(obj["properties"]);
-                console.log("Converted Schema:", convertedSchema)
-                setConvertedSubSchema(convertedSchema)
-                // update states
-                setSubSchemaValidity(true);
-                setSubSchemaFilename(schemaFile[0]["name"])
-                console.log("Subschema is valid")
+                // convert obj schema to iterable array properties
+                let convertedSchema = JSON.parse(JSON.stringify(obj));
+                try {
+                    convertedSchema["properties"] = object2array(obj["properties"]);
+                    console.log("Converted Schema:", convertedSchema)
+                    setConvertedSubSchema(convertedSchema)
+                    // update states
+                    setSubSchemaValidity(true);
+                    setSubSchemaFilename(schemaFile[0]["name"])
+                    console.log("Subschema is valid")
 
-                const copiedObj = JSON.parse(JSON.stringify(obj))
+                    const copiedObj = JSON.parse(JSON.stringify(obj))
 
-                //alert(activeSubSchemaButton)
-                if (activeSubSchemaButton === "subschema") {
-                    Object.keys(copiedObj).forEach(key => {
-                        if (key === "id"){
-                            //return setSelectedType(event.target.value)
-                            //setFieldUri(obj[key])
-                            //alert(key)
-                            //let event = {target: {value: copiedObj[key]}}
-                            //handleChangeUISchema(event, key)
-                            setFieldUri(copiedObj[key])
-                        }
-                        if (key === "$id"){
-                            //let event = {target: {value: copiedObj[key]}}
-                            //handleChangeUISchema(event, key)
-                            setFieldUri(copiedObj[key])
-                        }
-                        if (key === "title"){
-                            //setTitle(obj[key])
-                            let event = {target: {value: copiedObj[key]}}
-                            handleChangeUISchema(event, key)
-                        }
-                        if (key === "description"){
-                            //setDescription(obj[key])
-                            let event = {target: {value: copiedObj[key]}}
-                            handleChangeUISchema(event, key)
-                        }
-                    })
-                }
+                    //alert(activeSubSchemaButton)
+                    if (activeSubSchemaButton === "subschema") {
+                        Object.keys(copiedObj).forEach(key => {
+                            if (key === "id") {
+                                //return setSelectedType(event.target.value)
+                                //setFieldUri(obj[key])
+                                //alert(key)
+                                //let event = {target: {value: copiedObj[key]}}
+                                //handleChangeUISchema(event, key)
+                                setFieldUri(copiedObj[key])
+                            }
+                            if (key === "$id") {
+                                //let event = {target: {value: copiedObj[key]}}
+                                //handleChangeUISchema(event, key)
+                                setFieldUri(copiedObj[key])
+                            }
+                            if (key === "title") {
+                                //setTitle(obj[key])
+                                let event = { target: { value: copiedObj[key] } }
+                                handleChangeUISchema(event, key)
+                            }
+                            if (key === "description") {
+                                //setDescription(obj[key])
+                                let event = { target: { value: copiedObj[key] } }
+                                handleChangeUISchema(event, key)
+                            }
+                        })
+                    }
 
-            } catch (error) {
-                console.log(error);
-                alert(`${schemaFile[0]["name"]} is invalid!`)
-                // update states
-                setSubSchemaValidity(false);
-                setSubSchemaFilename(schemaFile[0]["name"])
+                } catch (error) {
+                    console.log(error);
+                    alert(`${schemaFile[0]["name"]} is invalid!`)
+                    // update states
+                    setSubSchemaValidity(false);
+                    setSubSchemaFilename(schemaFile[0]["name"])
                 }
             };
             reader.readAsText(schemaFile[0]);
@@ -962,17 +1390,38 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
     const onDrop = useCallback(
         (acceptedFile) => {
             // process the schema, validation etc
-            checkSubSchemaValidity(acceptedFile);
-
-        // store schema file in the state
-        // update states
-        // setRenderReady(false);
-        // setDisable(true);
-        // setCreateScratchMode(false);
-        // setJsonData({});
-        // setSelectedSchemaName("");
+            if (selectedType !== "array") {
+                checkSubSchemaValidity(acceptedFile);
+            }
+            else {
+                if (acceptedFile[0]["type"] !== "application/json") {
+                    alert("Only json files please.")
+                    return
+                }
+                // read the schema and send it to itemSchemaData
+                console.log("browse item schema for array type")
+                const reader = new FileReader();
+                reader.onabort = () => console.log("file reading was aborted");
+                reader.onerror = () => console.log("file reading has failed");
+                reader.onload = () => {
+                    const binaryStr = reader.result;
+                    const obj = JSON.parse(binaryStr);
+                    let itemSchema = JSON.stringify(obj, null, 2);
+                    setItemSchemaData(itemSchema)
+                    setItemSchemaEdit(true)
+                    setItemSchemaTFrow(true)
+                }
+                reader.readAsText(acceptedFile[0]);
+            }
+            // store schema file in the state
+            // update states
+            // setRenderReady(false);
+            // setDisable(true);
+            // setCreateScratchMode(false);
+            // setJsonData({});
+            // setSelectedSchemaName("");
         },
-        [activeSubSchemaButton]
+        [activeSubSchemaButton, selectedType]
     );
     // for upload subschema
     const { getRootProps, getInputProps } = useDropzone({
@@ -1045,12 +1494,13 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                                         helperText='Data type of the field input.'
                                         onChange={event => handleChangeUISchema(event, "type")}
                                         style={{ marginTop: "10px" }}
-                                        defaultValue={tempUISchema["type"]}
+                                        //defaultValue={tempUISchema["type"]}
                                         select
                                         fullWidth={true}
                                         id={field_key}
                                         label={"Field Data Type"}
                                         variant="outlined"
+                                        value={selectedType}
                                         SelectProps={{
                                             native: true,
                                         }}
@@ -1093,10 +1543,14 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                                     <FormGroup>
                                         {selectedType === "array" ?
                                             <>
+                                                <div style={{ display: "flex" }}>
+                                                    <div style={{ backgroundColor: "#3f51b5", paddingRight: "2px" }}></div>
+                                                    <div style={{ height: "auto", width: "100%", paddingLeft: "5px" }}>
                                                 <TextField
+                                                    size='small'
                                                     margin="normal"
                                                     helperText={'Data type of the array items.'}
-                                                    onChange={event => handleChangeUISchema(event, "itemType")}
+                                                    onChange={event => { handleChangeUISchema(event, "itemType"); setArrayItemDataType(event.target.value); handleChangeDefaultItemSchema(event.target.value)}}
                                                     style={{ marginTop: "10px" }}
                                                     defaultValue={tempUISchema["items"] !== undefined ? tempUISchema["items"]["type"] : "string"}
                                                     select
@@ -1114,6 +1568,16 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                                                         </option>
                                                     ))}
                                                 </TextField>
+                                                        {itemSchemaTFrow ? <TextField fullWidth={true} disabled={!itemSchemaEdit} margin="normal" label={"Item Schema"} onChange={(event) => handleChangeItemSchemaTextField(event)} variant="filled" multiline rows={itemSchemaData.split(/\r?\n|\r|\n/g).length > 10 ? 20 : 2} InputProps={{ className: classes.input }}
+                                                            value={arrayItemDataType === UISchema["items"]["type"] ? itemSchemaData : itemSchemaData}> </TextField> : null}
+                                                    <div style={{ display: "flex", width: "100%", justifyContent: "center" }}>
+                                                            <Button fullWidth={true} size="small" color='primary' margin="normal" variant="outlined" style={{ marginRight: "5px", fontSize: "9pt" }} {...getRootProps()}> <input {...getInputProps()} />Browse Item Schema</Button>
+                                                            <Button fullWidth={true} size="small" color={!itemSchemaEdit ? 'primary':'secondary'} margin="normal" variant="outlined" style={{ fontSize: "9pt" }} onClick={()=> handleEditItemSchema()}> {itemSchemaEdit ? "Save" : "Edit"} Item Schema</Button>
+                                                            <Button fullWidth={true} size="small" color='primary' margin="normal" variant="outlined" style={{ marginLeft: "5px", fontSize: "9pt" }} onClick={() => handleShowItemSchemaText()}> {!itemSchemaTFrow ? "Show" : "Hide" } Item Schema </Button>
+                                                    </div>
+                                                    <div style={{ height:"10px", fontSize: "9pt", paddingLeft: "13px", paddingTop: "5px"}}>This is where you edit the item schema for this array type.</div>
+                                                </div>
+                                                </div>
                                                 <div style={{ display: "flex" }}>
                                                     <TextField value={arrayMinMaxItem[0]} onChange={event => handleMinMaxArrayItem(event, "min")} onBlur={event => { handleMinMaxArrayItemOnBlur(event, "min") }} margin="normal" fullWidth variant='outlined' label="Min. Array Items" />
                                                     <div style={{ paddingLeft: "10px" }}></div>
@@ -1124,14 +1588,19 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                                                 <FormControlLabel control={<Checkbox onChange={() => handleCheckBoxOnChange()} checked={requiredChecked} />} label="Required. Checked means the field must be filled." />
                                             </>
                                             : null}
+                                        <div style={{ display: "flex" }}>
+                                            <div style={{ backgroundColor: "#3f51b5", paddingRight: "2px" }}></div>
+                                            <div style={{ height: "auto", width: "100%", paddingLeft: "5px" }}>
                                         {selectedType === "object" ? <>
-                                        <div style={{ display: "flex", width:"100%", justifyContent:"center" }}>
-                                            <div onClick={()=> setActiveSubSchemaButton("subschema")} style={{paddingRight:"5px", width:"100%"}}><Button fullWidth={true} size="small" color="primary" variant="outlined" {...getRootProps()}> <input {...getInputProps()} />Browse a subschema</Button></div>
-                                            <Button fullWidth={true} size="small" color="primary" variant="outlined" {...getRootProps()}> <input {...getInputProps()} />Browse schema properties</Button>
+                                            <div style={{ display: "flex", width: "100%", justifyContent: "center" }}>
+                                                <div onClick={() => setActiveSubSchemaButton("subschema")} style={{ paddingRight: "5px", width: "100%" }}><Button fullWidth={true} size="small" color="primary" variant="outlined" {...getRootProps()}> <input {...getInputProps()} />Browse a subschema</Button></div>
+                                                <Button fullWidth={true} size="small" color="primary" variant="outlined" {...getRootProps()}> <input {...getInputProps()} />Browse schema properties</Button>
+                                            </div>
+                                            {subSchemaValidity ? <div style={{ color: "green", fontSize: "9pt", paddingLeft: "13px", paddingTop: "5px", paddingBottom: "5px" }}>{subSchemaFilename} is valid.</div> : null}
+                                            <div style={{ fontSize: "9pt", paddingLeft: "13px", paddingTop: "5px", paddingBottom: "5px" }}>Browse and add a subschema or schema properties for this object by clicking on the corresponding button above.</div>
+                                        </> : null}
                                         </div>
-                                        {subSchemaValidity ? <div style={{color:"green", fontSize: "9pt", paddingLeft:"13px", paddingTop:"5px", paddingBottom:"5px"}}>{subSchemaFilename} is valid.</div>:null}
-                                        <div style={{fontSize: "9pt", paddingLeft:"13px", paddingTop:"5px", paddingBottom:"5px"}}>Browse and add a subschema or schema properties for this object by clicking on the corresponding button above.</div>
-                                        </>: null}
+                                        </div>
                                         {selectedType === "object" ? <FormControlLabel control={<Checkbox onChange={() => handleCheckBoxOnChange()} checked={requiredChecked} />} label="Required. Checked means the field must be filled." /> : null}
                                         {selectedType !== "object" & selectedType !== "array" & selectedType !== "boolean" ?
                                             <>
