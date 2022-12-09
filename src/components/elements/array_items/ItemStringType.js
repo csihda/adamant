@@ -22,8 +22,6 @@ const ItemStringType = ({ oDataInputItems, oSetDataInputItems, arrayFieldKey, wi
     const { handleConvertedDataInput } = useContext(FormContext)
     //const [fieldValue, setFieldValue] = useState(value === undefined ? undefined : value[index])
     const [fieldValue, setFieldValue] = useState(dataInputItems[index])
-    console.log(path)
-    console.log(dataInputItems)
 
 
     // handle input field on blur

@@ -22,8 +22,9 @@ const useStyles = makeStyles((theme) => ({
 
 const ItemIntegerType = ({ field_label, oDataInputItems, oSetDataInputItems, arrayFieldKey, withinObject, value, path, pathFormData, dataInputItems, setDataInputItems, edit, index, field_key, handleDeleteArrayItem }) => {
     const classes = useStyles();
-    const [inputValue, setInputValue] = useState(value === undefined ? "" : value[index] === undefined ? "" : value[index]);
+    //const [inputValue, setInputValue] = useState(value === undefined ? "" : value[index] === undefined ? "" : value[index]);
     const { handleConvertedDataInput } = useContext(FormContext);
+    const [inputValue, setInputValue] = useState(dataInputItems[index])
 
     let unit = getUnit(field_label)
     if (unit[0] === '%') {
