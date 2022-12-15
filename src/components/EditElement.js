@@ -401,6 +401,14 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                 setEnumChecked(false);
             }
 
+            // get rid of array-specific keywords if selectedType is not array
+            if (selectedType !== "array" & tempUISchema["items"] !== undefined) {
+                delete tempUISchema["items"]
+                delete tempUISchema["minItems"]
+                delete tempUISchema["maxItems"]
+                delete tempUISchema["uniqueItems"]
+            }
+
             if (selectedType === "fileupload (string)" && schemaSpecification === "http://json-schema.org/draft-04/schema#") {
                 delete tempUISchema["contentEncoding"]
             }

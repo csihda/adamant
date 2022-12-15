@@ -626,7 +626,7 @@ const ArrayType = ({ adamant_field_error, adamant_error_description, maxItems, m
             modPath = modPath.join('.')
 
             let newPath = modPath + '.value' + `.${lastKey}`+`.${field_key}`
-            console.log(newPath)
+            console.log("new path:",newPath)
             // remove the file in loadedFiles
             if (getValue(convertedSchema, newPath) !== undefined) { // which means there is no value yet
                 const fileMetadata = getValue(convertedSchema, newPath + `.${index}`)
