@@ -15,6 +15,19 @@ A live demo of Adamant (client only) is available at: https://csihda.github.io/a
 
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/csihda/adamant/blob/main/LICENSE)
 
+# Changelog
+
+## [1.2.0] Christmas release - December 15, 2022
+### Fixed
+- Minor bugs
+### Added
+- Searchable existing schemas
+- Browse-able sub-schema for Object type
+- Editable & browse-able item schema for Array type
+### Changed
+- Re-organized schema buttons & selection field
+- Leaner fields
+
 # Supported JSON schema keywords
 Currently, Adamant supports the rendering and editing of JSON schemas with a specification version draft 4 and 7. The following table lists all the implemented JSON schema keywords in the current version of Adamant. Note that the `id` keyword only works with the JSON schema specification version draft 4, whereas `$id` is used for the newer specification drafts. Lastly, the `contentEncoding` keyword is intended to be used with the specification version draft 7 or newer.
 
