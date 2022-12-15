@@ -31,11 +31,15 @@ import fillValueWithEmptyString from "../components/utils/fillValueWithEmptyStri
 import convData2FormData from "../components/utils/convData2FormData";
 import FormReviewBeforeSubmit from "../components/FormReviewBeforeSubmit";
 import changeKeywords from "../components/utils/changeKeywords";
-import QPTDATLogo from "../assets/adamant-header-5.svg";
+//import QPTDATLogo from "../assets/adamant-header-5.svg";
+import QPTDATLogo from "../assets/adamant-header-christmas2022.svg";
 import createDescriptionListFromJSON from "../components/utils/createDescriptionListFromJSON";
 import HelpIcon from "@material-ui/icons/HelpOutlineRounded";
 import { Tooltip } from "@material-ui/core";
 import validateSchemaAgainstSpecification from "../components/utils/validateSchemaAgainstSpecification";
+import { Autocomplete } from "@mui/material";
+import getPaths from "../components/utils/getPaths";
+import checkIDexistence from "../components/utils/checkIDexistence";
 
 // function that receive the schema and convert it to Form/json data blueprint
 // also to already put the default value to this blueprint
@@ -130,6 +134,13 @@ const AdamantMain = () => {
   const handleClose = () => {
     setAnchorEl(null);
   }; //
+
+  // loaded files object
+  const [loadedFiles, setLoadedFiles] = useState([]);
+
+  // FilesDialog
+  const [openFilesDialog, setOpenFilesDialog] = useState(false);
+  const [filesDialogContent, setFilesDialogContent] = useState(["", "", ""]);
 
   let implementedFieldTypes = [
     "string",
@@ -253,7 +264,14 @@ const AdamantMain = () => {
   }, [onlineMode]);
 
   // handle select schema on change
-  const handleSelectSchemaOnChange = (event) => {
+  const handleSelectSchemaOnChange = (schemaName) => {
+    if (schemaName === null) {
+      clearSchemaOnClick()
+
+      return 
+    }
+    
+    //console.log(event)
     // first reset states
     setRenderReady(false);
     setDisable(true);
@@ -261,10 +279,10 @@ const AdamantMain = () => {
     setJsonData({});
     //
 
-    console.log("selected schema:", event.target.value);
-    setSelectedSchemaName(event.target.value);
+    console.log("selected schema:", schemaName);
+    setSelectedSchemaName(schemaName);
 
-    let selectedSchema = schemaList[schemaNameList.indexOf(event.target.value)];
+    let selectedSchema = schemaList[schemaNameList.indexOf(schemaName)];
 
     // reset everything when selectedSchema is empty
     if (selectedSchema === null) {
@@ -287,7 +305,7 @@ const AdamantMain = () => {
 
       // update states
       setSchemaValidity(true);
-      setSchemaMessage(`${event.target.value} is a valid schema`);
+      setSchemaMessage(`${schemaName} is a valid schema`);
       setSchema(selectedSchema);
       let oriSchema = JSON.parse(JSON.stringify(selectedSchema));
       setOriginalSchema(oriSchema);
@@ -320,7 +338,7 @@ const AdamantMain = () => {
       console.log(error);
       // update states
       setSchemaValidity(false);
-      setSchemaMessage(`${event.target.value} is invalid`);
+      setSchemaMessage(`${schemaName} is invalid`);
       setSchema(null);
     }
   };
@@ -658,7 +676,7 @@ const AdamantMain = () => {
     }
     set(convSchemaData, path, value);
     setConvertedSchema(convSchemaData);
-    //console.log(convSchemaData);
+    console.log(convSchemaData);
 
     let data = convData2FormData(
       JSON.parse(JSON.stringify(convSchemaData["properties"]))
@@ -675,11 +693,20 @@ const AdamantMain = () => {
 
   // delete data in jsonData when the field in schema is deleted
   const handleDataDelete = (path) => {
+    console.log("path", path)
+    console.log(jsonData)
     let jData = { ...jsonData };
     let value = deleteKeySchema(jData, path);
     setJsonData(value);
     console.log("Current form data:", value);
   };
+
+  // handle check if id already exists in the schema
+  const handleCheckIDexistence = (id) =>{
+    let result = false
+    result = checkIDexistence(schema, id, result);
+    return result
+  }
 
   // update form data id if a fieldkey changes, simply delete key value pair of the oldfieldid from jsonData
   const updateFormDataId = (
@@ -847,7 +874,7 @@ const AdamantMain = () => {
       return;
     }
     // create description list
-    let footnote = `<div> This template was generated with <span><a title=https://github.com/csihda/adamant href=https://github.com/csihda/adamant>ADAMANT v1.0.0</a></span> </div>`;
+    let footnote = `<div> This template was generated with <span><a title=https://github.com/csihda/adamant href=https://github.com/csihda/adamant>ADAMANT v1.2.0</a></span> </div>`;
     let descList = createDescriptionListFromJSON(
       cleaned,
       convSch,
@@ -919,7 +946,30 @@ const AdamantMain = () => {
     if (content === undefined) {
       content = {};
     }
-    //console.log("content", content);
+    console.log("content", content);
+    //console.log("loadedFiles", loadedFiles)
+
+    /*
+    // get the paths where the uploaded files are from content
+    let fileEntries = []
+    for (let i=0; i<loadedFiles.length; i++) {
+      let file = loadedFiles[i]
+      let fileName = file["name"]
+      let fileType = file["type"]
+      let fileSize = file["size"]
+      //console.log(file["name"])
+      fileEntries.push(`fileupload:${fileType};${fileName};${fileSize}`)
+    }
+    //console.log(fileEntries)
+    let paths = []
+    for (let i=0; i<fileEntries.length; i++) {
+      let path = getPaths(content, fileEntries[i])
+      paths.push(path)
+    }
+    console.log(paths)
+
+    // read files from loadedFiles then insert it to the content
+    */
 
     //
     // validate jsonData against its schema before submission
@@ -951,7 +1001,6 @@ const AdamantMain = () => {
       setTags([]);
       return;
     }
-
     // call create experiment api
     console.log("tags:", tags);
     var $ = require("jquery");
@@ -1155,10 +1204,73 @@ const AdamantMain = () => {
     }
   };
 
+  // gather all loaded files in one object
+  const handleLoadedFiles = (file) => {
+    let files = loadedFiles;
+    //console.log(files);
+
+    // check if file already exists
+    let isFileAlreadyExist = false;
+    for (let i = 0; i < files.length; i++) {
+      if (files[i]["name"] === file["name"]) {
+        isFileAlreadyExist = true;
+      }
+    }
+
+    if (isFileAlreadyExist) {
+      console.log("File already exists. Skipping it.");
+      toast.warning(
+        <>
+          <div>
+            <strong>File already loaded: {`${file["name"]}`}.</strong>
+          </div>
+        </>,
+        {
+          toastId: "fileAlreadyLoaded" + file["name"],
+        }
+      );
+      //console.log("loaded files:", files);
+      return true;
+    } else {
+      console.log("File not exist yet. Pushing it.");
+      files.push(file);
+      //console.log("loaded files:", files);
+      setLoadedFiles(files);
+      console.log("File added. Current files:", loadedFiles);
+      toast.success(
+        <>
+          <div>
+            <strong>File successfully loaded:</strong>
+            {` ${file["name"]}`}.
+          </div>
+        </>,
+        {
+          toastId: "fileLoadedSuccessfully" + file["name"],
+        }
+      );
+      return false;
+    }
+  };
+
+  // remove file from loadedFiles based on its index
+  const handleRemoveFile = (fileIndex) => {
+    let files = loadedFiles;
+    if (fileIndex > -1) {
+      files.splice(fileIndex, 1);
+      setLoadedFiles(files);
+      console.log("File removed. Current files:", loadedFiles);
+    } else {
+      console.log("No file needs to be removed. Current files:", loadedFiles);
+    }
+  };
+
   return (
     <>
       <FormContext.Provider
         value={{
+          loadedFiles,
+          handleRemoveFile,
+          handleLoadedFiles,
           updateParent,
           convertedSchema,
           updateFormDataId,
@@ -1169,6 +1281,7 @@ const AdamantMain = () => {
           setSchemaSpecification,
           setSEMSelectedDevice,
           implementedFieldTypes,
+          handleCheckIDexistence,
         }}
       >
         <div style={{ paddingBottom: "5px" }}>
@@ -1185,28 +1298,26 @@ const AdamantMain = () => {
                 padding: "10px 10px 0px 10px",
               }}
             >
-              <Button
+              <Autocomplete
+                disablePortal
+                value={selectedSchemaName}
+                onChange={(event, newValue) =>
+                  handleSelectSchemaOnChange(newValue)
+                }
+                id="select-available-schema"
+                options={schemaNameList}
                 style={{ width: "100%" }}
-                variant="contained"
-                color="primary"
-                {...getRootProps()}
-              >
-                <input {...getInputProps()} />
-                {isDragActive ? "Drop here" : "Browse Schema"}
-              </Button>
-              <div
-                style={{
-                  paddingLeft: "10px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                OR
-              </div>
-              <TextField
+                renderInput={(params) => (
+                  <TextField
+                    variant="outlined"
+                    {...params}
+                    label="Select existing schema"
+                  />
+                )}
+              />
+              {/* <TextField
                 onChange={(event) => handleSelectSchemaOnChange(event)}
-                style={{ width: "100%", marginLeft: "10px" }}
+                style={{ width: "100%" }}
                 fullWidth={false}
                 value={selectedSchemaName}
                 select
@@ -1221,6 +1332,26 @@ const AdamantMain = () => {
                   </option>
                 ))}
               </TextField>
+              */}
+              <div
+                style={{
+                  paddingLeft: "10px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                OR
+              </div>
+              <Button
+                style={{ width: "100%", marginLeft: "10px" }}
+                variant="contained"
+                color="primary"
+                {...getRootProps()}
+              >
+                <input {...getInputProps()} />
+                {isDragActive ? "Drop here" : "Browse Schema"}
+              </Button>
               <div
                 style={{
                   paddingLeft: "10px",
@@ -1435,7 +1566,7 @@ const AdamantMain = () => {
             </Button>
           )}
         </div>
-        <div style={{ padding: "10px", color: "grey" }}>ADAMANT v1.0.0</div>
+        <div style={{ padding: "10px", color: "grey" }}>ADAMANT v1.2.0</div>
       </FormContext.Provider>
       <CreateELabFTWExperimentDialog
         setTags={setTags}

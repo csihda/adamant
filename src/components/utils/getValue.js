@@ -8,6 +8,9 @@ const getValue = (json, path) => {
     let tempValue = jsonData
     for (let i = 0; i < path.length; i++) {
         tempValue = tempValue[path[i]]
+        if (tempValue === undefined){
+            return tempValue
+        }
     }
     return tempValue
 };

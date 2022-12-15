@@ -20,6 +20,8 @@ import getValue from "../utils/getValue";
 import set from "set-value";
 import MuiAccordion from '@material-ui/core/Accordion';
 import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
+import getValueInSchemaFullPath from "../utils/getValueInSchemaFullPath";
+import getFileIndex from "../utils/getFileIndex";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -71,10 +73,11 @@ const ObjectType = ({ adamant_error_description, adamant_field_error, dataInputI
     const [openDialog, setOpenDialog] = useState(false);
     const [openDialogAddElement, setOpenDialogAddElement] = useState(false);
     const [expand, setExpand] = useState(true)// set to "true" for normally open accordion
-    const { updateParent, convertedSchema, handleDataDelete } = useContext(FormContext);
+    const { handleRemoveFile, loadedFiles, updateParent, convertedSchema, handleDataDelete } = useContext(FormContext);
     //const [descriptionText, setDescriptionText] = useState(field_description !== undefined ? field_description : "")
     const [descriptionText, setDescriptionText] = useState()
     const [inputError, setInputError] = useState(false)
+
 
     // update description text state as soon as new field description is obtained
     useEffect(() => {
@@ -130,8 +133,34 @@ const ObjectType = ({ adamant_error_description, adamant_field_error, dataInputI
         updateParent(value);
     }
 
+    const getAllFileMetadata = (object, arr) => {
+        let arrai = arr
+        Object.keys(object).forEach((key) => {
+            if (typeof object[key] === "object") {
+                getAllFileMetadata(object[key], arrai)
+            }
+            if (typeof object[key] === "string") {
+                if (object[key].includes("fileupload:") && object[key].split(";").length === 3) {
+                    arr.push(object[key])
+                }
+            }
+        })
+        return arrai
+    }
+
     // handle delete object UI
     const handleDeleteElement = () => {
+        // remove the file in loadedFiles
+        let metmet = getValueInSchemaFullPath(convertedSchema, path + ".properties")
+        const fileMetadata = getAllFileMetadata(metmet, [])
+        if (fileMetadata.length > 0) {
+            for (let i = 0; i < fileMetadata.length; i++) {
+                const fileIndex = getFileIndex(loadedFiles, fileMetadata[i])
+                handleRemoveFile(fileIndex)
+            }
+        }
+
+
         let value = deleteKey(convertedSchema, path)
         // delete the field key in required array if applicable        
         let pathArr = path.split(".")

@@ -9,7 +9,7 @@ import AnyOfKeywordPlaceHolder from './elements/AnyOfKeywordPlaceHolder';
 import FileUpload from './elements/FileUpload';
 
 
-const ElementRenderer = ({ withinObject, dataInputItems, setDataInputItems, withinArray, path, pathSchema, pathFormData, elementRequired, fieldkey, fieldIndex, edit, field: { minItems, maxItems, uniqueItems, minimum, maximum, minLength, maxLength, type, $id, id, title, contentEncoding, description, properties, required, enumerate, items, defaultValue, value, anyOf, adamant_field_error, adamant_error_description } }) => {
+const ElementRenderer = ({withinObject, dataInputItems, setDataInputItems, withinArray, path, pathSchema, pathFormData, elementRequired, fieldkey, fieldIndex, edit, field: { minItems, maxItems, uniqueItems, minimum, maximum, minLength, maxLength, type, $id, id, title, contentEncoding, description, properties, required, enumerate, items, defaultValue, value, anyOf, adamant_field_error, adamant_error_description } }) => {
 
     switch (type) {
         case 'string':
@@ -130,29 +130,56 @@ const ElementRenderer = ({ withinObject, dataInputItems, setDataInputItems, with
                 edit={edit}
             />)
         case 'array':
-            return (<ArrayType
-                adamant_field_error={adamant_field_error}
-                adamant_error_description={adamant_error_description}
-                value={value}
-                maxItems={maxItems}
-                minItems={minItems}
-                uniqueItems={uniqueItems}
-                oDataInputItems={dataInputItems}
-                oSetDataInputItems={setDataInputItems}
-                withinArray={withinArray}
-                withinObject={withinObject}
-                path={path + "." + fieldIndex}
-                pathSchema={pathSchema + "." + fieldkey}
-                pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldkey : fieldkey}
-                field_key={fieldkey}
-                field_index={fieldIndex}
-                field_uri={$id !== undefined ? $id : id}
-                field_label={title}
-                field_description={description}
-                field_required={elementRequired}
-                field_items={items}
-                edit={edit}
-            />)
+            if (fieldkey === "resource") {
+                return (<ArrayType
+                    adamant_field_error={adamant_field_error}
+                    adamant_error_description={adamant_error_description}
+                    value={value}
+                    maxItems={maxItems}
+                    minItems={minItems}
+                    uniqueItems={uniqueItems}
+                    oDataInputItems={dataInputItems}
+                    oSetDataInputItems={setDataInputItems}
+                    withinArray={withinArray}
+                    withinObject={withinObject}
+                    path={path + "." + fieldIndex}
+                    pathSchema={pathSchema + "." + fieldkey}
+                    pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldkey : fieldkey}
+                    field_key={fieldkey}
+                    field_index={fieldIndex}
+                    field_uri={$id !== undefined ? $id : id}
+                    field_label={title}
+                    field_description={description}
+                    field_required={elementRequired}
+                    field_items={items}
+                    edit={edit}
+                />)
+            }
+            else {
+                return (<ArrayType
+                    adamant_field_error={adamant_field_error}
+                    adamant_error_description={adamant_error_description}
+                    value={value}
+                    maxItems={maxItems}
+                    minItems={minItems}
+                    uniqueItems={uniqueItems}
+                    oDataInputItems={dataInputItems}
+                    oSetDataInputItems={setDataInputItems}
+                    withinArray={withinArray}
+                    withinObject={withinObject}
+                    path={path + "." + fieldIndex}
+                    pathSchema={pathSchema + "." + fieldkey}
+                    pathFormData={pathFormData !== undefined ? pathFormData + "." + fieldkey : fieldkey}
+                    field_key={fieldkey}
+                    field_index={fieldIndex}
+                    field_uri={$id !== undefined ? $id : id}
+                    field_label={title}
+                    field_description={description}
+                    field_required={elementRequired}
+                    field_items={items}
+                    edit={edit}
+                />)
+            }
         case 'object':
             if (anyOf !== undefined) {
                 return (

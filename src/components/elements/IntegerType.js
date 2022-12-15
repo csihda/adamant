@@ -289,7 +289,7 @@ const IntegerType = ({ adamant_error_description, adamant_field_error, minimum, 
         return (
             <>
                 <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
-                    <TextField onFocus={() => {
+                    <TextField size='small' onFocus={() => {
                         if (adamant_error_description !== undefined && adamant_field_error !== undefined) {
                             set(convertedSchema, path + ".adamant_error_description", (field_description !== undefined ? field_description : ""))
                             set(convertedSchema, path + ".adamant_field_error", false)
@@ -335,6 +335,7 @@ const IntegerType = ({ adamant_error_description, adamant_field_error, minimum, 
             <>
                 <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
                     <TextField
+                        size='small'
                         onFocus={() => {
                             if (adamant_error_description !== undefined && adamant_field_error !== undefined) {
                                 set(convertedSchema, path + ".adamant_error_description", (field_description !== undefined ? field_description : ""))

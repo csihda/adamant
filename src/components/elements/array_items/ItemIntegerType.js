@@ -22,8 +22,9 @@ const useStyles = makeStyles((theme) => ({
 
 const ItemIntegerType = ({ field_label, oDataInputItems, oSetDataInputItems, arrayFieldKey, withinObject, value, path, pathFormData, dataInputItems, setDataInputItems, edit, index, field_key, handleDeleteArrayItem }) => {
     const classes = useStyles();
-    const [inputValue, setInputValue] = useState(value === undefined ? "" : value[index] === undefined ? "" : value[index]);
+    //const [inputValue, setInputValue] = useState(value === undefined ? "" : value[index] === undefined ? "" : value[index]);
     const { handleConvertedDataInput } = useContext(FormContext);
+    const [inputValue, setInputValue] = useState(dataInputItems[index])
 
     let unit = getUnit(field_label)
     if (unit[0] === '%') {
@@ -99,7 +100,7 @@ const ItemIntegerType = ({ field_label, oDataInputItems, oSetDataInputItems, arr
                 <Typography className={classes.heading}>{index + 1}.</Typography>
             </div> : null}
             <div style={{ paddingTop: "10px", paddingBottom: "10px", display: 'inline-flex', width: '100%' }}>
-                <TextField onBlur={() => handleInputOnBlur()} onChange={e => handleInputOnChange(e)} value={inputValue} fullWidth={true} className={classes.heading} id={field_key} variant="outlined" InputProps={{
+                <TextField size='small' onBlur={() => handleInputOnBlur()} onChange={e => handleInputOnChange(e)} value={inputValue} fullWidth={true} className={classes.heading} id={field_key} variant="outlined" InputProps={{
                     endAdornment: <InputAdornment position="start">{<MathComponent tex={String.raw`\\${unit}`} />}</InputAdornment>,
                 }} />
                 {edit ? <>
