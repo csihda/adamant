@@ -146,6 +146,8 @@ def create_experiment():
         endpoint=elabURL, token=token)
     response = manager.create_experiment()
 
+    print("response:",response)
+
     # create the experiment body which is the description list attained by converting the jsdata
 
     # update the experiment
@@ -202,7 +204,8 @@ def create_experiment():
     # now delete everything in temp-files directory
     dir = './temp-files'
     for f in os.listdir(dir):
-        os.remove(os.path.join(dir, f))
+        if f != ".placeholder":
+            os.remove(os.path.join(dir, f))
 
     # check if this process is related to job request workflow, if yes then send an e-mail notif to the requester
     try:
