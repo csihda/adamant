@@ -64,7 +64,6 @@ We recommend deploying Adamant with docker-compose, which can be done with ease:
 
 By default, the deployed system can be accessed at `http://localhost:3000`.
 
-
 # Citation
 
 Please cite this paper if you use this code/tool. 
