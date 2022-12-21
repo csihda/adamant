@@ -64,5 +64,24 @@ We recommend deploying Adamant with docker-compose, which can be done with ease:
 
 By default, the deployed system can be accessed at `http://localhost:3000`.
 
+
+# Citation
+
+Please cite this paper if you use this code/tool. 
+```
+@article{ 10.12688/f1000research.110875.2,
+author = {Chaerony Siffa, I and Schäfer, J and Becker, MM},
+title = {Adamant: a JSON schema-based metadata editor for research data management workflows 
+[version 2; peer review: 3 approved]},
+journal = {F1000Research},
+volume = {11},
+year = {2022},
+number = {475},
+doi = {10.12688/f1000research.110875.2}
+}
+```
+
+[![DOI:10.12688/f1000research.110875.2](http://img.shields.io/badge/DOI-10.12688/f1000research.110875.2-B31B1B.svg)](https://doi.org/10.12688/f1000research.110875.2)
+
 # Grant information
 The work was funded by the Federal Ministry of Education and Research (BMBF) under the grant mark 16QK03A. The responsibility for the content of this repository lies with the authors.
