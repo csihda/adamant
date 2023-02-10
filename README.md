@@ -66,7 +66,7 @@ By default, the deployed system can be accessed at `http://localhost:3000`.
 
 # Citation
 
-Please cite this paper if you use this code/tool. 
+Please cite this paper if you use this code/tool in your publication. 
 ```
 @article{ 10.12688/f1000research.110875.2,
 author = {Chaerony Siffa, I and Schäfer, J and Becker, MM},
