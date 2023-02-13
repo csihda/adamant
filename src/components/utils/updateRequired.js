@@ -14,7 +14,15 @@ const getValue = (json, path) => {
     return tempValue
 }
 
-const updateRequired = ({ selectedType, path, requiredChecked, field_key, convertedSchema }) => {
+const removeValue = (arr, value) => {
+    const index = arr.indexOf(value);
+    if (index > -1) { // only splice array when item is found
+        arr.splice(index, 1); // 2nd parameter means remove one item only
+    }
+    return arr
+}
+
+const updateRequired = ({ selectedType, path, requiredChecked, field_key, old_field_key, convertedSchema }) => {
 
     /*if (selectedType === "object") {
         requiredChecked = false
@@ -32,8 +40,10 @@ const updateRequired = ({ selectedType, path, requiredChecked, field_key, conver
         if (immediateValue["required"] !== undefined) {
             let requiredArray = immediateValue["required"]
             if (requiredChecked) {
+                // remove old value
+                requiredArray = removeValue(requiredArray, old_field_key)
+                // add new value
                 requiredArray.push(field_key)
-                requiredArray = [...new Set(requiredArray)]
                 set(convertedSchema, newPath + ".required", requiredArray)
             } else {
                 // check if the field id exists
@@ -58,10 +68,14 @@ const updateRequired = ({ selectedType, path, requiredChecked, field_key, conver
         if (convertedSchema["required"] !== undefined) {
             let requiredArray = convertedSchema["required"]
             if (requiredChecked) {
+                // remove old value
+                requiredArray = removeValue(requiredArray, old_field_key)
+                // add new value
                 requiredArray.push(field_key)
-                requiredArray = [...new Set(requiredArray)]
+                // finally push it into the schema
                 convertedSchema["required"] = requiredArray
             } else {
+                //alert("4")
                 // check if the field id exists
                 if (requiredArray.includes(field_key)) {
                     requiredArray = requiredArray.filter(item => item !== field_key)

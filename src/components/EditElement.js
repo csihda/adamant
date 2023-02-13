@@ -67,6 +67,7 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
     const [selectedType, setSelectedType] = useState(UISchema !== undefined ? UISchema["type"] : "string")
     const [title, setTitle] = useState(UISchema !== undefined ? UISchema["title"] : "")
     const [fieldkey, setFieldKey] = useState(UISchema !== undefined ? UISchema["fieldKey"] : "")
+    const [oldFieldkey, setOldFieldkey] = useState(UISchema !== undefined ? UISchema["fieldKey"] : "")
     const [fieldUri, setFieldUri] = useState(UISchema !== undefined ? UISchema["$id"] : "")
     const [description, setDescription] = useState(UISchema !== undefined ? UISchema["description"] : "")
     const [defValue, setDefValue] = useState(defaultValue !== undefined ? defaultValue : "")
@@ -101,7 +102,6 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
     }
 
     const classes = useStyles();
-
 
     useEffect(() => {
         if (field_uri !== undefined) {
@@ -227,19 +227,28 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
         // do this if add
         if (editOrAdd === "add") {
             // update default value
-            if (defValue === undefined & defaultValue === undefined) {
+            let defValueState = defValue
+            if (selectedType === 'number' && defValueState !== "" && defaultValue !== undefined) {
+                defValueState = parseFloat(defValueState)
+            }
+            if (selectedType === 'integer' && defValueState !== "" && defaultValue !== undefined) {
+                defValueState = parseInt(defValueState)
+            }
+            if (defValueState === undefined & defaultValue === undefined) {
                 // do nothing
-            } else if (defValue.toString().replace(/\s+/g, '') === "" & defaultValue === undefined) {
+            } else if (defValueState.toString().replace(/\s+/g, '') === "" & defaultValue === undefined) {
                 // do nothing
-            } else if (selectedType === "boolean" & defValue.toString().replace(/\s+/g, '') === "" & defaultValue === undefined) {
+            } else if (selectedType === "boolean" & defValueState.toString().replace(/\s+/g, '') === "" & defaultValue === undefined) {
                 // do nothing
-            } else if (selectedType === "boolean" & defValue.toString().replace(/\s+/g, '') !== "" & defaultValue !== undefined) {
-                tempUISchema["defaultValue"] = (defValue === "true")
-            } else if (defValue.toString().replace(/\s+/g, '') === "") {
+            } else if (selectedType === "boolean" & defValueState.toString().replace(/\s+/g, '') !== "") {
+                tempUISchema["defaultValue"] = (defValueState === "true" ? true : false)
+            } else if (defValueState.toString().replace(/\s+/g, '') === "") {
                 delete tempUISchema["defaultValue"]
             }
             else {
-                tempUISchema["defaultValue"] = defValue
+                //console.log("default value:", defValue)
+                //console.log("type default value:", typeof defValue)
+                tempUISchema["defaultValue"] = defValueState
             };
 
             // check if fieldkey already exist
@@ -445,9 +454,10 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
 
                 // create a new path to the new element
                 path = path + ".properties." + (properties.length - 1).toString()
-                let field_key = fieldkey
                 // update the required value
-                const newConvertedSchema = updateRequired({ selectedType, path, requiredChecked, field_key, convertedSchema })
+                let old_field_key = oldFieldkey
+                let field_key = fieldkey
+                let newConvertedSchema = updateRequired({ selectedType, path, requiredChecked, field_key, old_field_key, convertedSchema })
                 // update enum
                 if (tempUISchema["type"] === "string" & enumChecked) {
                     let newList = enumList
@@ -531,9 +541,10 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
 
                 // create a new path to the new element
                 path = "properties." + (properties.length - 1).toString()
-                let field_key = fieldkey
                 // update the required value
-                let newConvertedSchema = updateRequired({ selectedType, path, requiredChecked, field_key, convertedSchema })
+                let old_field_key = oldFieldkey
+                let field_key = fieldkey
+                let newConvertedSchema = updateRequired({ selectedType, path, requiredChecked, field_key, old_field_key, convertedSchema })
                 // update enum
                 if (tempUISchema["type"] === "string" & enumChecked) {
                     let newList = enumList
@@ -612,23 +623,30 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                 setOpenDialog(false)
             }
         }
-        else {
-            // and do this if edit
-
+        else { // and do this if edit
             // update default value
-            if (defValue === undefined & defaultValue === undefined) {
+            let defValueState = defValue
+            if (selectedType === 'number' && defValueState !== "" && defaultValue !== undefined) {
+                defValueState = parseFloat(defValueState)
+            }
+            if (selectedType === 'integer' && defValueState !== "" && defaultValue !== undefined) {
+                defValueState = parseInt(defValueState)
+            }
+            if (defValueState === undefined & defaultValue === undefined) {
                 // do nothing
-            } else if (defValue.toString().replace(/\s+/g, '') === "" & defaultValue === undefined) {
+            } else if (defValueState.toString().replace(/\s+/g, '') === "" & defaultValue === undefined) {
                 // do nothing
-            } else if (selectedType === "boolean" & defValue.toString().replace(/\s+/g, '') === "" & defaultValue === undefined) {
+            } else if (selectedType === "boolean" & defValueState.toString().replace(/\s+/g, '') === "" & defaultValue === undefined) {
                 // do nothing
-            } else if (selectedType === "boolean" & defValue.toString().replace(/\s+/g, '') !== "" & defaultValue !== undefined) {
-                tempUISchema["defaultValue"] = (defValue === "true")
-            } else if (defValue.toString().replace(/\s+/g, '') === "") {
+            } else if (selectedType === "boolean" & defValueState.toString().replace(/\s+/g, '') !== "") {
+                tempUISchema["defaultValue"] = (defValueState === "true" ? true : false)
+            } else if (defValueState.toString().replace(/\s+/g, '') === "") {
                 delete tempUISchema["defaultValue"]
             }
             else {
-                tempUISchema["defaultValue"] = defValue
+                //console.log("default value:", defValue)
+                //console.log("type default value:", typeof defValue)
+                tempUISchema["defaultValue"] = defValueState
             };
 
             // check if fieldkey already exist
@@ -798,8 +816,11 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
             const set = require("set-value");
             set(convertedSchema, path, tempUISchema)
             // update the required value
-            let newConvertedSchema = updateRequired({ selectedType, path, requiredChecked, field_key, convertedSchema })
-            //console.log("stuff:", newConvertedSchema)
+            let old_field_key = oldFieldkey
+            let field_key = fieldkey
+            let newConvertedSchema = updateRequired({ selectedType, path, requiredChecked, field_key, old_field_key, convertedSchema })
+            //console.log("path:", path)
+            console.log("stuff:", newConvertedSchema)
             // update enum
             if (["string", "integer", "number"].includes(tempUISchema["type"]) & enumChecked) {
                 let newList = enumList
@@ -927,6 +948,9 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
         } else {
         switch (keyword) {
             case 'type':
+                // change default value to empty string
+                setDefValue("")
+                // special treatment for array
                 if (event.target.value === "array") {
                     if (UISchema["type"] !== "array") {
                         setItemSchemaData(JSON.stringify({ "type": "string" }, null, 2))
@@ -940,7 +964,37 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
             case 'fieldKey':
                 return setFieldKey(event.target.value.replace(/ /g, "_"))
             case 'defaultValue':
-                return setDefValue(event.target.value)
+                let newValue = event.target.value
+                if (selectedType === "number") {
+                    if (event.target.value.at(-1) === '.') {
+                        newValue = newValue.replace(/ /g, '')
+                    } else {
+                        newValue = newValue.replace(/(?!^-)[^0-9.]/g, "").replace(/(\..*)\./g, '$1')
+                        newValue = newValue.replace(/ /g, '')
+                        if (newValue.toString().length - event.target.value.length !== 0) {
+                            alert("Invalid input type. This field only accepts input of a number type.")
+                            newValue = parseFloat(newValue)
+                        }
+                        newValue = parseFloat(newValue)
+                        if (!isFinite(newValue)){
+                            newValue = ""
+                        }
+                    }
+                }
+                if (selectedType === "integer") {
+                    newValue = newValue.replace(/(?!^-)[^0-9]/g, "")
+                    newValue = newValue.replace(/ /g, '')
+                    if (newValue.toString().length - event.target.value.length !== 0) {
+                        alert("Invalid input type. This field only accepts input of an integer type.")
+                        newValue = parseInt(newValue)
+                    }
+                    newValue = parseInt(newValue)
+                    if (!isFinite(newValue)) {
+                        newValue = ""
+                    }
+                }
+                console.log(newValue)
+                return setDefValue(newValue)
             case '$id':
                 //handleCheckIDexistence(event.target.value)
                 return setFieldUri(event.target.value)
@@ -1618,7 +1672,7 @@ const EditElement = ({ editOrAdd, field_uri, enumerated, field_enumerate, field_
                                                         <FormLabel style={{ color: "#01579b" }} component="legend">Misc.:</FormLabel>
                                                     </FormControl>
                                                 </div>
-                                                {selectedType === "fileupload (string)" ? null : <TextField margin='normal' onChange={event => handleChangeUISchema(event, "defaultValue")} style={{ marginTop: "10px" }} defaultValue={defaultValue} variant="outlined" fullWidth={true} label={"Field Default Value"} helperText="Initial value of the field." />}
+                                                {selectedType === "fileupload (string)" ? null : <TextField margin='normal' onChange={event => handleChangeUISchema(event, "defaultValue")} style={{ marginTop: "10px" }} value={defValue} variant="outlined" fullWidth={true} label={"Field Default Value"} helperText="Initial value of the field." />}
                                             </>
                                             : null}
                                         {selectedType === "boolean" ?

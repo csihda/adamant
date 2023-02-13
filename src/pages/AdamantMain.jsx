@@ -32,7 +32,7 @@ import convData2FormData from "../components/utils/convData2FormData";
 import FormReviewBeforeSubmit from "../components/FormReviewBeforeSubmit";
 import changeKeywords from "../components/utils/changeKeywords";
 //import QPTDATLogo from "../assets/adamant-header-5.svg";
-import QPTDATLogo from "../assets/adamant-header-christmas2022.svg";
+import QPTDATLogo from "../assets/adamant-header-5.svg";
 import createDescriptionListFromJSON from "../components/utils/createDescriptionListFromJSON";
 import HelpIcon from "@material-ui/icons/HelpOutlineRounded";
 import { Tooltip } from "@material-ui/core";
